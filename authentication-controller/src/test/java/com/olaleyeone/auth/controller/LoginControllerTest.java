@@ -1,8 +1,8 @@
 package com.olaleyeone.auth.controller;
 
 import com.olaleyeone.auth.data.entity.AuthenticationResponse;
-import com.olaleyeone.auth.data.entity.User;
-import com.olaleyeone.auth.data.entity.UserIdentifier;
+import com.olaleyeone.auth.data.entity.PortalUser;
+import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.dto.LoginRequestDto;
 import com.olaleyeone.auth.response.pojo.UserPojo;
@@ -40,7 +40,7 @@ class LoginControllerTest extends ControllerTest {
         Mockito.when(authenticationService.getAuthenticationResponse(Mockito.any(), Mockito.any()))
                 .then(invocation -> {
                     AuthenticationResponse authenticationResponse = new AuthenticationResponse();
-                    authenticationResponse.setAuthenticationResponseType(AuthenticationResponseType.INCORRECT_CREDENTIAL);
+                    authenticationResponse.setResponseType(AuthenticationResponseType.INCORRECT_CREDENTIAL);
                     return authenticationResponse;
                 });
         mockMvc.perform(MockMvcRequestBuilders.post("/login")
@@ -51,18 +51,18 @@ class LoginControllerTest extends ControllerTest {
 
     @Test
     void loginWithCorrectCredentials() throws Exception {
-        User user = new User();
+        PortalUser user = new PortalUser();
         user.setFirstName(faker.name().firstName());
         user.setLastName(faker.name().lastName());
 
-        UserIdentifier userIdentifier = new UserIdentifier();
-        userIdentifier.setUser(user);
+        PortalUserIdentifier userIdentifier = new PortalUserIdentifier();
+        userIdentifier.setPortalUser(user);
 
         Mockito.when(authenticationService.getAuthenticationResponse(Mockito.any(), Mockito.any()))
                 .then(invocation -> {
                     AuthenticationResponse authenticationResponse = new AuthenticationResponse();
-                    authenticationResponse.setAuthenticationResponseType(AuthenticationResponseType.SUCCESSFUL);
-                    authenticationResponse.setUserIdentifier(userIdentifier);
+                    authenticationResponse.setResponseType(AuthenticationResponseType.SUCCESSFUL);
+                    authenticationResponse.setPortalUserIdentifier(userIdentifier);
                     return authenticationResponse;
                 });
         mockMvc.perform(MockMvcRequestBuilders.post("/login")

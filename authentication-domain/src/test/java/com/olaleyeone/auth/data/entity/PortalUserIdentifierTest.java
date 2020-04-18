@@ -9,11 +9,11 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserIdentifierTest extends EntityTest {
+public class PortalUserIdentifierTest extends EntityTest {
 
     @Test
     void shouldNotSaveWithoutUser() {
-        UserIdentifier userIdentifier = new UserIdentifier();
+        PortalUserIdentifier userIdentifier = new PortalUserIdentifier();
         userIdentifier.setIdentifier(UUID.randomUUID().toString());
         userIdentifier.setIdentifierType(UserIdentifierType.EMAIL);
         assertThrows(PersistenceException.class, () -> saveAndFlush(userIdentifier));
@@ -23,17 +23,17 @@ public class UserIdentifierTest extends EntityTest {
     void shouldSaveWithUser() {
         String identifier = UUID.randomUUID().toString();
         UserIdentifierType identifierType = UserIdentifierType.EMAIL;
-        User user = modelFactory.create(User.class);
+        PortalUser user = modelFactory.create(PortalUser.class);
 
-        UserIdentifier userIdentifier = new UserIdentifier();
+        PortalUserIdentifier userIdentifier = new PortalUserIdentifier();
         userIdentifier.setIdentifier(identifier);
         userIdentifier.setIdentifierType(identifierType);
-        userIdentifier.setUser(user);
+        userIdentifier.setPortalUser(user);
         saveAndFlush(userIdentifier);
         entityManager.refresh(userIdentifier);
         assertEquals(identifier, userIdentifier.getIdentifier());
         assertEquals(identifierType, userIdentifier.getIdentifierType());
-        assertEquals(user.getId(), userIdentifier.getUser().getId());
+        assertEquals(user.getId(), userIdentifier.getPortalUser().getId());
         assertNotNull(userIdentifier.getDateCreated());
     }
 }

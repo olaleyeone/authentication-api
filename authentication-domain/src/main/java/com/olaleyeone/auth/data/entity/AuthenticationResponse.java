@@ -22,7 +22,8 @@ public class AuthenticationResponse {
     private String identifier;
 
     @Column(nullable = false)
-    private AuthenticationResponseType authenticationResponseType;
+    @Enumerated(EnumType.STRING)
+    private AuthenticationResponseType responseType;
 
     @Column(nullable = false)
     private String ipAddress;
@@ -31,7 +32,7 @@ public class AuthenticationResponse {
     private String userAgent;
 
     @ManyToOne
-    private UserIdentifier userIdentifier;
+    private PortalUserIdentifier portalUserIdentifier;
 
     @Embedded
     @Delegate

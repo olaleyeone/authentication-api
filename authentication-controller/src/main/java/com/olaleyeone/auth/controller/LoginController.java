@@ -26,8 +26,8 @@ public class LoginController {
     @PostMapping("/login")
     public UserPojo login(@Valid @RequestBody LoginRequestDto dto) {
         AuthenticationResponse authenticationResponse = authenticationService.getAuthenticationResponse(dto, requestMetadata.get());
-        if (authenticationResponse.getAuthenticationResponseType() == AuthenticationResponseType.SUCCESSFUL) {
-            return new UserPojo(authenticationResponse.getUserIdentifier().getUser());
+        if (authenticationResponse.getResponseType() == AuthenticationResponseType.SUCCESSFUL) {
+            return new UserPojo(authenticationResponse.getPortalUserIdentifier().getPortalUser());
         }
         throw new ErrorResponse(HttpStatus.UNAUTHORIZED);
     }

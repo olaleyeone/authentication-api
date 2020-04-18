@@ -3,18 +3,18 @@ package com.olaleyeone.auth.test.data.factory;
 import com.github.heywhy.springentityfactory.contracts.FactoryHelper;
 import com.github.heywhy.springentityfactory.contracts.ModelFactory;
 import com.github.javafaker.Faker;
-import com.olaleyeone.auth.data.entity.User;
+import com.olaleyeone.auth.data.entity.PortalUser;
 
-public class UserFactory implements FactoryHelper<User> {
+public class PortalUserFactory implements FactoryHelper<PortalUser> {
 
     @Override
-    public Class<User> getEntity() {
-        return User.class;
+    public Class<PortalUser> getEntity() {
+        return PortalUser.class;
     }
 
     @Override
-    public User apply(Faker faker, ModelFactory factory) {
-        User user = new User();
+    public PortalUser apply(Faker faker, ModelFactory factory) {
+        PortalUser user = new PortalUser();
         user.setFirstName(faker.name().firstName());
         user.setLastName(faker.name().lastName());
         user.setPassword(faker.internet().password());

@@ -9,11 +9,11 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UserTest extends EntityTest {
+class PortalUserTest extends EntityTest {
 
     @Test
     void saveUser() {
-        User user = new User();
+        PortalUser user = new PortalUser();
         user.setFirstName(faker.name().firstName());
         user.setLastName(faker.name().lastName());
         saveAndFlush(user);
@@ -23,7 +23,7 @@ class UserTest extends EntityTest {
 
     @Test
     void shouldNotSaveUserWithoutFirstName() {
-        User user = new User();
+        PortalUser user = new PortalUser();
         user.setLastName(faker.name().lastName());
         assertThrows(PersistenceException.class, () -> saveAndFlush(user));
     }
@@ -32,7 +32,7 @@ class UserTest extends EntityTest {
     void dateCreatedShouldBeImmutable() {
         String password = UUID.randomUUID().toString();
 
-        User user = modelFactory.pipe(User.class)
+        PortalUser user = modelFactory.pipe(PortalUser.class)
                 .then(it -> {
                     it.setPassword(password);
                     return it;

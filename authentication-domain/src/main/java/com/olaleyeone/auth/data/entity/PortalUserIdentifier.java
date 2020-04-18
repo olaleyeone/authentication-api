@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.data.entity;
 
+import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.data.shared.PersistTimeSetter;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -11,24 +12,27 @@ import javax.persistence.*;
 
 @Entity
 @Data
-public class User {
+public class PortalUserIdentifier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String password;
-
     @Column(nullable = false)
-    private String firstName;
+    @Enumerated(EnumType.STRING)
+    private UserIdentifierType identifierType;
 
-    private String lastName;
+    @Column(nullable = false, unique = true)
+    private String identifier;
 
-    private String otherName;
+    private Boolean verified;
 
     @Embedded
     @Delegate
     @Setter(value = AccessLevel.NONE)
     @Getter(value = AccessLevel.NONE)
     private PersistTimeSetter persistTimeSetter = new PersistTimeSetter();
+
+    @ManyToOne(optional = false)
+    private PortalUser portalUser;
 }

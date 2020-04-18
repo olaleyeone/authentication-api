@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.olaleyeone.auth.bootstrap;
 
 import com.olaleyeone.auth.configuration.WebConfiguration;
 import org.springframework.boot.SpringApplication;
@@ -18,5 +18,4 @@ public class AuthenticationApplication {
     public static void main(String[] args) {
         SpringApplication.run(AuthenticationApplication.class, args);
     }
-
 }
