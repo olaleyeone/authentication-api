@@ -1,0 +1,20 @@
+package com.olaleyeone.auth.response.pojo;
+
+import com.olaleyeone.auth.data.entity.User;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+public class UserPojo {
+
+    private Long id;
+    private String firstName;
+    private String lastName;
+
+    public UserPojo(User user) {
+        this.id = user.getId();
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+    }
+}

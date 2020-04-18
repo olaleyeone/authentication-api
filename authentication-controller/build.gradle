@@ -1,0 +1,44 @@
+apply plugin: 'jacoco'
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+dependencies {
+    implementation(project(":${projectName}-domain"))
+    implementation(project(":${projectName}-repository")) {
+        exclude module: "hibernate-jpa-2.1-api"
+        exclude module: "spring-tx"
+    }
+
+    implementation(project(":${projectName}-service"))
+    implementation(project(":${projectName}-integration"))
+
+    implementation group: 'org.springframework', name: 'spring-webmvc', version: "$springVersion"
+
+    compileOnly "javax.servlet:javax.servlet-api:$servletVersion"
+    implementation "javax.validation:validation-api:$validationApiVersion"
+    implementation "javax.inject:javax.inject:1"
+
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.2.32'
+
+    testImplementation(project(":${projectName}-test-starter"))
+    testImplementation "javax.servlet:javax.servlet-api:$servletVersion"
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                minimum = 0.95
+            }
+            excludes = [
+                    'com.olaleyeone.auth.advice.*',
+                    'com.olaleyeone.auth.exception.*'
+            ]
+        }
+    }
+}
+check.dependsOn jacocoTestCoverageVerification
