@@ -9,8 +9,7 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 import java.time.temporal.ChronoUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RefreshTokenServiceImplTest extends ServiceTest {
 
@@ -35,7 +34,9 @@ class RefreshTokenServiceImplTest extends ServiceTest {
         assertNotNull(refreshToken);
         assertNotNull(refreshToken.getId());
         assertEquals(authenticationResponse.getId(), refreshToken.getActualAuthentication().getId());
-        assertEquals((duration * 60) - 1, refreshToken.getDateCreated().until(refreshToken.getExpiresAt(), ChronoUnit.SECONDS));
+        int durationInSeconds = duration * 60;
+        long actualExpiryDurationInSeconds = refreshToken.getDateCreated().until(refreshToken.getExpiresAt(), ChronoUnit.SECONDS);
+        assertTrue((durationInSeconds - 1) == actualExpiryDurationInSeconds || durationInSeconds == actualExpiryDurationInSeconds);
     }
 
     @Test
