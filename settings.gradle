@@ -1,0 +1,10 @@
+include "${projectName}-domain",
+        "${projectName}-repository",
+        "${projectName}-test-starter",
+        "${projectName}-service",
+        "${projectName}-service-impl",
+        "${projectName}-integration",
+        "${projectName}-integration-impl",
+        "${projectName}-infrastructure",
+        "${projectName}-web-infrastructure",
+        "${projectName}-controller"

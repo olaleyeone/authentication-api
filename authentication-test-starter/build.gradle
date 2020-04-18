@@ -1,0 +1,16 @@
+dependencies {
+    api(project(":${projectName}-domain"))
+    api "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:$hibernateJpaVersion"
+
+    api "com.github.heywhy:spring-entity-factory:$springEntityFactoryVersion"
+    api "com.github.javafaker:javafaker:$javaFakerVersion"
+    implementation "com.google.guava:guava:$guavaVersion"
+
+    api("org.springframework.boot:spring-boot-starter-test:$springBootVersion") {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    implementation "org.springframework:spring-tx:$springVersion"
+
+    runtimeOnly "com.h2database:h2:$h2Version"
+    runtimeOnly "org.hibernate:hibernate-core:$hibernateVersion"
+}

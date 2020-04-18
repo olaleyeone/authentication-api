@@ -1,0 +1,27 @@
+apply plugin: 'jacoco'
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                minimum = 0.95
+            }
+        }
+    }
+}
+check.dependsOn jacocoTestCoverageVerification
+
+dependencies {
+    implementation "javax.inject:javax.inject:1"
+    implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
+    implementation "javax.validation:validation-api:$validationApiVersion"
+    implementation "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:$hibernateJpaVersion"
+
+    testImplementation(project(":${projectName}-test-starter"))
+}

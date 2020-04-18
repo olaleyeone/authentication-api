@@ -1,0 +1,37 @@
+apply plugin: 'jacoco'
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+dependencies {
+
+    api(project(":${projectName}-domain"))
+    implementation(project(":${projectName}-repository")) {
+        exclude module: "hibernate-jpa-2.1-api"
+        exclude module: "spring-beans"
+        exclude module: "spring-tx"
+    }
+    api(project(":${projectName}-service"))
+    implementation(project(":${projectName}-integration"))
+
+    implementation "javax.inject:javax.inject:1"
+    implementation "javax.transaction:javax.transaction-api:1.2"
+
+    implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
+
+    testImplementation(project(":${projectName}-test-starter"))
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                minimum = 0.95
+            }
+        }
+    }
+}
+check.dependsOn jacocoTestCoverageVerification
