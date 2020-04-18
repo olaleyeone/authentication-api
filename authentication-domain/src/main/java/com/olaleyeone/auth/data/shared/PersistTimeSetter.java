@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 public class PersistTimeSetter {
 
-    @Column(updatable = false)
+    @Column(updatable = false, nullable = false)
     private LocalDateTime dateCreated;
 
     @PrePersist
