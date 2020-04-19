@@ -5,25 +5,28 @@ import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.dto.constraints.UniqueIdentifier;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.service.PhoneNumberService;
+import com.olaleyeone.auth.test.ComponentTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class UniqueIdentifierValidatorTest {
+class UniqueIdentifierValidatorTest extends ComponentTest {
 
     private UniqueIdentifierValidator validator;
 
+    @MockBean
     private PortalUserIdentifierRepository portalUserIdentifierRepository;
+    @MockBean
     private PhoneNumberService phoneNumberService;
 
     @BeforeEach
     public void setUp() {
-        phoneNumberService = Mockito.mock(PhoneNumberService.class);
-        portalUserIdentifierRepository = Mockito.mock(PortalUserIdentifierRepository.class);
         validator = new UniqueIdentifierValidator(portalUserIdentifierRepository, phoneNumberService);
     }
 

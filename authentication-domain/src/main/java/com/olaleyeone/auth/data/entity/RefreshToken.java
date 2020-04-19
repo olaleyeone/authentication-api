@@ -18,7 +18,7 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     private AuthenticationResponse actualAuthentication;
 
     @Embedded

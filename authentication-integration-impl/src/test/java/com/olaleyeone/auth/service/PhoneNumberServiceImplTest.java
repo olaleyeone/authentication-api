@@ -5,9 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author Olaleye Afolabi <oafolabi@byteworks.com.ng>
- */
 class PhoneNumberServiceImplTest {
 
     private PhoneNumberServiceImpl phoneNumberService;

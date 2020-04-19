@@ -1,20 +1,23 @@
 package com.olaleyeone.auth.validator;
 
 import com.olaleyeone.auth.service.PhoneNumberService;
+import com.olaleyeone.auth.test.ComponentTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ValidPhoneNumberValidatorTest {
+class ValidPhoneNumberValidatorTest extends ComponentTest {
 
     private ValidPhoneNumberValidator validator;
+
+    @MockBean
     private PhoneNumberService phoneNumberService;
 
     @BeforeEach
     public void setUp() {
-        phoneNumberService = Mockito.mock(PhoneNumberService.class);
         validator = new ValidPhoneNumberValidator(phoneNumberService);
     }
 

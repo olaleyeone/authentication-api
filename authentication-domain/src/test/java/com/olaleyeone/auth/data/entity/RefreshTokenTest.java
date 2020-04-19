@@ -33,10 +33,12 @@ class RefreshTokenTest extends EntityTest {
     }
 
     @Test
-    public void shouldNotSaveWithoutActualAuthentication() {
+    public void shouldSaveWithoutActualAuthentication() {
         RefreshToken refreshToken = new RefreshToken();
         LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(20);
         refreshToken.setExpiresAt(expiresAt);
-        assertThrows(PersistenceException.class, () -> saveAndFlush(refreshToken));
+        saveAndFlush(refreshToken);
+        entityManager.refresh(refreshToken);
+        assertNotNull(refreshToken.getId());
     }
 }
