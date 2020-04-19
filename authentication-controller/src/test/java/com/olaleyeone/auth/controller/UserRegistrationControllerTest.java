@@ -6,6 +6,8 @@ import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
 import com.olaleyeone.auth.service.UserRegistrationService;
 import com.olaleyeone.auth.test.ControllerTest;
+import com.olaleyeone.auth.validator.UniqueIdentifierValidator;
+import com.olaleyeone.auth.validator.ValidPhoneNumberValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,6 +27,12 @@ class UserRegistrationControllerTest extends ControllerTest {
     @Autowired
     private UserApiResponseHandler userApiResponseHandler;
 
+    @Autowired
+    private UniqueIdentifierValidator uniqueIdentifierValidator;
+
+    @Autowired
+    private ValidPhoneNumberValidator validPhoneNumberValidator;
+
     private UserRegistrationApiRequest userRegistrationApiRequest;
 
     @BeforeEach
@@ -34,10 +42,15 @@ class UserRegistrationControllerTest extends ControllerTest {
         userRegistrationApiRequest.setPhoneNumber(faker.phoneNumber().phoneNumber());
         userRegistrationApiRequest.setEmail(faker.internet().emailAddress());
         userRegistrationApiRequest.setPassword(faker.internet().password());
+
+        Mockito.doReturn(true)
+                .when(validPhoneNumberValidator).isValid(Mockito.anyString(), Mockito.any());
+        Mockito.doReturn(true)
+                .when(uniqueIdentifierValidator).isValid(Mockito.anyString(), Mockito.any());
     }
 
     @Test
-    void loginWithCorrectCredentials() throws Exception {
+    void registerUser() throws Exception {
 
         UserApiResponse userApiResponse = new UserApiResponse();
         PortalUser portalUser = new PortalUser();
@@ -53,10 +66,25 @@ class UserRegistrationControllerTest extends ControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(result -> {
                     UserApiResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), UserApiResponse.class);
-                    assertNotNull(response);
                     assertEquals(userApiResponse, response);
                 });
         Mockito.verify(userRegistrationService, Mockito.times(1))
                 .registerUser(userRegistrationApiRequest);
+    }
+
+    @Test
+    void shouldValidateRequest() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userRegistrationApiRequest)));
+
+        Mockito.verify(validPhoneNumberValidator, Mockito.times(1))
+                .isValid(Mockito.eq(userRegistrationApiRequest.getPhoneNumber()), Mockito.any());
+
+        Mockito.verify(uniqueIdentifierValidator, Mockito.times(1))
+                .isValid(Mockito.eq(userRegistrationApiRequest.getEmail()), Mockito.any());
+        Mockito.verify(uniqueIdentifierValidator, Mockito.times(1))
+                .isValid(Mockito.eq(userRegistrationApiRequest.getPhoneNumber()), Mockito.any());
     }
 }

@@ -25,6 +25,8 @@ dependencies {
 
     testImplementation(project(":${projectName}-test-starter"))
     testImplementation "javax.servlet:javax.servlet-api:$servletVersion"
+    testRuntimeOnly "org.hibernate.validator:hibernate-validator:$hibernateValidator"
+    testRuntimeOnly "org.apache.tomcat.embed:tomcat-embed-el:9.0.34"
 }
 
 jacocoTestCoverageVerification {
@@ -36,7 +38,8 @@ jacocoTestCoverageVerification {
             }
             excludes = [
                     'com.olaleyeone.auth.advice.*',
-                    'com.olaleyeone.auth.exception.*'
+                    'com.olaleyeone.auth.exception.*',
+                    'com.olaleyeone.auth.configuration.*'
             ]
         }
     }

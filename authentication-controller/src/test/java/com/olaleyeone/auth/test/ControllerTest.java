@@ -4,10 +4,13 @@ package com.olaleyeone.auth.test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import com.olaleyeone.auth.configuration.AdditionalComponentsConfiguration;
+import com.olaleyeone.auth.configuration.BeanValidationConfiguration;
 import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import com.olaleyeone.auth.service.AuthenticationService;
 import com.olaleyeone.auth.service.PhoneNumberService;
 import com.olaleyeone.auth.service.UserRegistrationService;
+import com.olaleyeone.auth.validator.UniqueIdentifierValidator;
+import com.olaleyeone.auth.validator.ValidPhoneNumberValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.mockito.internal.creation.bytebuddy.MockAccess;
@@ -34,8 +37,7 @@ public abstract class ControllerTest {
     @Autowired
     protected ObjectMapper objectMapper;
 
-    @Autowired
-    protected Faker faker;
+    protected Faker faker = Faker.instance(new Random());
 
     @Inject
     private ApplicationContext applicationContext;
@@ -49,16 +51,10 @@ public abstract class ControllerTest {
     @Configuration
     @ComponentScan({
             "com.olaleyeone.auth.controller",
-            "com.olaleyeone.auth.advice",
-            "com.olaleyeone.auth.validator"
+            "com.olaleyeone.auth.advice"
     })
-    @Import(AdditionalComponentsConfiguration.class)
+    @Import({AdditionalComponentsConfiguration.class, BeanValidationConfiguration.class})
     static class $Config {
-
-        @Bean
-        public Faker faker() {
-            return Faker.instance(new Random());
-        }
 
         @Bean
         public PhoneNumberService phoneNumberService() {
@@ -76,8 +72,18 @@ public abstract class ControllerTest {
         }
 
         @Bean
-        public UserApiResponseHandler userPojoHandler() {
+        public UserApiResponseHandler userApiResponseHandler() {
             return Mockito.mock(UserApiResponseHandler.class);
+        }
+
+        @Bean
+        public UniqueIdentifierValidator uniqueIdentifierValidator() {
+            return Mockito.mock(UniqueIdentifierValidator.class);
+        }
+
+        @Bean
+        public ValidPhoneNumberValidator validPhoneNumberValidator() {
+            return Mockito.mock(ValidPhoneNumberValidator.class);
         }
     }
 }
