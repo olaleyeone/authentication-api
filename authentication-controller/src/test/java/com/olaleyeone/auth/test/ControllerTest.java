@@ -4,7 +4,9 @@ package com.olaleyeone.auth.test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import com.olaleyeone.auth.configuration.WebConfiguration;
+import com.olaleyeone.auth.service.PhoneNumberService;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +37,11 @@ public abstract class ControllerTest {
         @Bean
         public Faker faker() {
             return Faker.instance(new Random());
+        }
+
+        @Bean
+        public PhoneNumberService phoneNumberService() {
+            return Mockito.mock(PhoneNumberService.class);
         }
     }
 }

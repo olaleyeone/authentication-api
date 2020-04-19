@@ -5,7 +5,7 @@ import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
-import com.olaleyeone.auth.dto.LoginRequestDto;
+import com.olaleyeone.auth.dto.data.LoginRequestDto;
 import com.olaleyeone.auth.response.pojo.UserPojo;
 import com.olaleyeone.auth.service.AuthenticationService;
 import com.olaleyeone.auth.service.JwtService;

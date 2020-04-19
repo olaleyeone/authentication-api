@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.dto;
+package com.olaleyeone.auth.dto.data;
 
 import lombok.Data;
 

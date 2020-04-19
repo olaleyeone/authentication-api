@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.configuration;
 
-import com.olaleyeone.auth.dto.RequestMetadata;
+import com.olaleyeone.auth.dto.data.RequestMetadata;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 @Configuration
 @ComponentScan({
         "com.olaleyeone.auth.controller",
-        "com.olaleyeone.auth.advice"
+        "com.olaleyeone.auth.advice",
+        "com.olaleyeone.auth.validator"
 })
 public class WebConfiguration {
 

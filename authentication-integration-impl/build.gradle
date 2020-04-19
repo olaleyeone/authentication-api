@@ -16,6 +16,8 @@ dependencies {
 
     implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
 
+    implementation "com.googlecode.libphonenumber:libphonenumber:8.10.20"
+
     implementation "at.favre.lib:bcrypt:0.9.0"
 
     implementation 'io.jsonwebtoken:jjwt-api:0.11.1'

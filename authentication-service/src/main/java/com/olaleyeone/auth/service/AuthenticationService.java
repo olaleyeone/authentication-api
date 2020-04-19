@@ -1,8 +1,8 @@
 package com.olaleyeone.auth.service;
 
 import com.olaleyeone.auth.data.entity.AuthenticationResponse;
-import com.olaleyeone.auth.dto.LoginRequestDto;
-import com.olaleyeone.auth.dto.RequestMetadata;
+import com.olaleyeone.auth.dto.data.LoginRequestDto;
+import com.olaleyeone.auth.dto.data.RequestMetadata;
 
 public interface AuthenticationService {
 

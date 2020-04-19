@@ -2,9 +2,7 @@ package com.olaleyeone.auth.bootstrap;
 
 import com.olaleyeone.auth.configuration.WebConfiguration;
 import com.olaleyeone.auth.qualifier.JwtEncryptionKey;
-import com.olaleyeone.auth.service.JwtService;
-import com.olaleyeone.auth.service.JwtServiceImpl;
-import com.olaleyeone.auth.service.SettingService;
+import com.olaleyeone.auth.service.*;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.boot.SpringApplication;
@@ -38,5 +36,10 @@ public class AuthenticationApplication {
     @Bean
     public JwtService jwtService(ApplicationContext applicationContext) {
         return applicationContext.getAutowireCapableBeanFactory().createBean(JwtServiceImpl.class);
+    }
+
+    @Bean
+    public PhoneNumberService phoneNumberService() {
+        return new PhoneNumberServiceImpl("US");
     }
 }
