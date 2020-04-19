@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Delegate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -25,6 +26,7 @@ public class PortalUserIdentifier {
     @Column(nullable = false, unique = true)
     private String identifier;
 
+    private LocalDateTime dateVerified;
     private Boolean verified;
 
     @Embedded

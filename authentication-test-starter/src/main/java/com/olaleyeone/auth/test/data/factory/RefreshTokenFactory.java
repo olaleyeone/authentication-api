@@ -19,6 +19,7 @@ public class RefreshTokenFactory implements FactoryHelper<RefreshToken> {
     public RefreshToken apply(Faker faker, ModelFactory factory) {
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setActualAuthentication(factory.create(AuthenticationResponse.class));
+        refreshToken.setPortalUser(refreshToken.getActualAuthentication().getPortalUserIdentifier().getPortalUser());
         refreshToken.setExpiresAt(LocalDateTime.now().plusMinutes(10));
         return refreshToken;
     }

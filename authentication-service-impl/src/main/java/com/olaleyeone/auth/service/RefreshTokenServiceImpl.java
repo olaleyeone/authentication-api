@@ -1,6 +1,7 @@
 package com.olaleyeone.auth.service;
 
 import com.olaleyeone.auth.data.entity.AuthenticationResponse;
+import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     public static String REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES = "REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES";
+    private final int REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES_VALUE = 30;
 
     private final SettingService settingService;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -25,8 +27,23 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 .forEach(this::deactivateRefreshToken);
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setActualAuthentication(authenticationResponse);
-        refreshToken.setExpiresAt(LocalDateTime.now().plusMinutes(settingService.getInteger(REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES, 30)));
+        refreshToken.setPortalUser(authenticationResponse.getPortalUserIdentifier().getPortalUser());
+        refreshToken.setExpiresAt(getExpiresAt());
         return refreshTokenRepository.save(refreshToken);
+    }
+
+    @Transactional
+    @Override
+    public RefreshToken createRefreshToken(PortalUser portalUser) {
+        RefreshToken refreshToken = new RefreshToken();
+        refreshToken.setPortalUser(portalUser);
+        refreshToken.setExpiresAt(getExpiresAt());
+        return refreshTokenRepository.save(refreshToken);
+    }
+
+    private LocalDateTime getExpiresAt() {
+        return LocalDateTime.now().plusMinutes(settingService.getInteger(REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES,
+                REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES_VALUE));
     }
 
     @Transactional

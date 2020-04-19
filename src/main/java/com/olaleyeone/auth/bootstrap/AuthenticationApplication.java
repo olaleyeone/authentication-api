@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.bootstrap;
 
+import com.olaleyeone.auth.configuration.OpenApiConfiguration;
 import com.olaleyeone.auth.configuration.WebConfiguration;
 import com.olaleyeone.auth.qualifier.JwtEncryptionKey;
 import com.olaleyeone.auth.service.*;
@@ -17,7 +18,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import java.security.Key;
 
 @SpringBootApplication
-@Import({WebConfiguration.class})
+@Import({WebConfiguration.class, OpenApiConfiguration.class})
 @EnableJpaRepositories({"com.olaleyeone.auth.repository"})
 @EntityScan("com.olaleyeone.auth.data")
 @ComponentScan("com.olaleyeone.auth.service")

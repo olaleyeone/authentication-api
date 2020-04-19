@@ -1,12 +1,14 @@
 package com.olaleyeone.auth.response.pojo;
 
 import com.olaleyeone.auth.data.entity.PortalUser;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class UserPojo {
+public class UserApiResponse {
 
     private Long id;
     private String firstName;
@@ -14,7 +16,7 @@ public class UserPojo {
     private String accessToken;
     private String refreshToken;
 
-    public UserPojo(PortalUser user) {
+    public UserApiResponse(PortalUser user) {
         this.id = user.getId();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();

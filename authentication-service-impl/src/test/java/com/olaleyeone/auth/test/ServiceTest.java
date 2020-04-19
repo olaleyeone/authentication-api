@@ -1,6 +1,7 @@
 package com.olaleyeone.auth.test;
 
 import com.olaleyeone.auth.service.PasswordService;
+import com.olaleyeone.auth.service.PhoneNumberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.mockito.internal.creation.bytebuddy.MockAccess;
@@ -11,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import javax.inject.Inject;
-import java.util.Arrays;
 
 @Import(ServiceTest.$Config.class)
 public class ServiceTest extends EntityTest {
@@ -32,6 +32,11 @@ public class ServiceTest extends EntityTest {
         @Bean
         public PasswordService passwordService() {
             return Mockito.mock(PasswordService.class);
+        }
+
+        @Bean
+        public PhoneNumberService phoneNumberService() {
+            return Mockito.mock(PhoneNumberService.class);
         }
 
     }

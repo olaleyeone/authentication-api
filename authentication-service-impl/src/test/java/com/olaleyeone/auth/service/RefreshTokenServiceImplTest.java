@@ -1,6 +1,7 @@
 package com.olaleyeone.auth.service;
 
 import com.olaleyeone.auth.data.entity.AuthenticationResponse;
+import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.test.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,13 +28,27 @@ class RefreshTokenServiceImplTest extends ServiceTest {
     }
 
     @Test
-    public void createRefreshToken() {
+    public void createRefreshTokenForAuthenticatedUser() {
         int duration = 5;
         settingService.getInteger(RefreshTokenServiceImpl.REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES, duration);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(authenticationResponse);
         assertNotNull(refreshToken);
         assertNotNull(refreshToken.getId());
         assertEquals(authenticationResponse.getId(), refreshToken.getActualAuthentication().getId());
+        int durationInSeconds = duration * 60;
+        long actualExpiryDurationInSeconds = refreshToken.getDateCreated().until(refreshToken.getExpiresAt(), ChronoUnit.SECONDS);
+        assertTrue((durationInSeconds - 1) == actualExpiryDurationInSeconds || durationInSeconds == actualExpiryDurationInSeconds);
+    }
+
+    @Test
+    public void createRefreshTokenForPortal() {
+        int duration = 5;
+        PortalUser portalUser = modelFactory.create(PortalUser.class);
+        settingService.getInteger(RefreshTokenServiceImpl.REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES, duration);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(portalUser);
+        assertNotNull(refreshToken);
+        assertNotNull(refreshToken.getId());
+        assertEquals(portalUser.getId(), refreshToken.getPortalUser().getId());
         int durationInSeconds = duration * 60;
         long actualExpiryDurationInSeconds = refreshToken.getDateCreated().until(refreshToken.getExpiresAt(), ChronoUnit.SECONDS);
         assertTrue((durationInSeconds - 1) == actualExpiryDurationInSeconds || durationInSeconds == actualExpiryDurationInSeconds);

@@ -9,7 +9,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Data
-public class UserRegistrationDto {
+public class UserRegistrationApiRequest {
 
     @NotBlank
     private String password;

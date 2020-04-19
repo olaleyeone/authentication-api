@@ -2,11 +2,11 @@ package com.olaleyeone.auth.controller;
 
 import com.olaleyeone.auth.data.entity.AuthenticationResponse;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
-import com.olaleyeone.auth.dto.data.LoginRequestDto;
+import com.olaleyeone.auth.dto.data.LoginApiRequest;
 import com.olaleyeone.auth.dto.data.RequestMetadata;
 import com.olaleyeone.auth.exception.ErrorResponse;
-import com.olaleyeone.auth.response.handler.UserPojoHandler;
-import com.olaleyeone.auth.response.pojo.UserPojo;
+import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
+import com.olaleyeone.auth.response.pojo.UserApiResponse;
 import com.olaleyeone.auth.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,14 +23,14 @@ public class LoginController {
 
     private final AuthenticationService authenticationService;
     private final Provider<RequestMetadata> requestMetadata;
-    private final UserPojoHandler userPojoHandler;
+    private final UserApiResponseHandler userApiResponseHandler;
 
     @PostMapping("/login")
-    public UserPojo login(@Valid @RequestBody LoginRequestDto dto) {
+    public UserApiResponse login(@Valid @RequestBody LoginApiRequest dto) {
         AuthenticationResponse authenticationResponse = authenticationService.getAuthenticationResponse(dto, requestMetadata.get());
         if (authenticationResponse.getResponseType() != AuthenticationResponseType.SUCCESSFUL) {
             throw new ErrorResponse(HttpStatus.UNAUTHORIZED);
         }
-        return userPojoHandler.getUserPojo(authenticationResponse);
+        return userApiResponseHandler.getUserApiResponse(authenticationResponse);
     }
 }

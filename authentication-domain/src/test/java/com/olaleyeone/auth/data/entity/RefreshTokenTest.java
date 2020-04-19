@@ -15,6 +15,7 @@ class RefreshTokenTest extends EntityTest {
         RefreshToken refreshToken = new RefreshToken();
         AuthenticationResponse actualAuthentication = modelFactory.create(AuthenticationResponse.class);
         refreshToken.setActualAuthentication(actualAuthentication);
+        refreshToken.setPortalUser(actualAuthentication.getPortalUserIdentifier().getPortalUser());
         LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(20);
         refreshToken.setExpiresAt(expiresAt);
         saveAndFlush(refreshToken);
@@ -27,6 +28,7 @@ class RefreshTokenTest extends EntityTest {
     @Test
     public void shouldNotSaveWithoutExpiryTime() {
         RefreshToken refreshToken = new RefreshToken();
+        refreshToken.setPortalUser(modelFactory.create(PortalUser.class));
         AuthenticationResponse actualAuthentication = modelFactory.create(AuthenticationResponse.class);
         refreshToken.setActualAuthentication(actualAuthentication);
         assertThrows(PersistenceException.class, () -> saveAndFlush(refreshToken));
@@ -35,6 +37,7 @@ class RefreshTokenTest extends EntityTest {
     @Test
     public void shouldSaveWithoutActualAuthentication() {
         RefreshToken refreshToken = new RefreshToken();
+        refreshToken.setPortalUser(modelFactory.create(PortalUser.class));
         LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(20);
         refreshToken.setExpiresAt(expiresAt);
         saveAndFlush(refreshToken);

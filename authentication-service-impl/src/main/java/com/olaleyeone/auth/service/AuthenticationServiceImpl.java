@@ -3,7 +3,7 @@ package com.olaleyeone.auth.service;
 import com.olaleyeone.auth.data.entity.AuthenticationResponse;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
-import com.olaleyeone.auth.dto.data.LoginRequestDto;
+import com.olaleyeone.auth.dto.data.LoginApiRequest;
 import com.olaleyeone.auth.dto.data.RequestMetadata;
 import com.olaleyeone.auth.repository.AuthenticationResponseRepository;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
@@ -23,7 +23,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Transactional
     @Override
-    public AuthenticationResponse getAuthenticationResponse(LoginRequestDto requestDto, RequestMetadata requestMetadata) {
+    public AuthenticationResponse getAuthenticationResponse(LoginApiRequest requestDto, RequestMetadata requestMetadata) {
         Optional<PortalUserIdentifier> optionalUserIdentifier = portalUserIdentifierRepository.findByIdentifier(requestDto.getIdentifier());
         if (!optionalUserIdentifier.isPresent()) {
             return createUnknownAccountResponse(requestDto, requestMetadata);
@@ -35,24 +35,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return createSuccessfulAuthenticationResponse(userIdentifier, requestDto, requestMetadata);
     }
 
-    private AuthenticationResponse createUnknownAccountResponse(LoginRequestDto requestDto, RequestMetadata requestMetadata) {
+    private AuthenticationResponse createUnknownAccountResponse(LoginApiRequest requestDto, RequestMetadata requestMetadata) {
         AuthenticationResponse authenticationResponse = makeAuthenticationResponse(requestDto, requestMetadata, AuthenticationResponseType.UNKNOWN_ACCOUNT);
         return authenticationResponseRepository.save(authenticationResponse);
     }
 
-    private AuthenticationResponse createInvalidCredentialResponse(PortalUserIdentifier userIdentifier, LoginRequestDto requestDto, RequestMetadata requestMetadata) {
+    private AuthenticationResponse createInvalidCredentialResponse(PortalUserIdentifier userIdentifier, LoginApiRequest requestDto, RequestMetadata requestMetadata) {
         AuthenticationResponse authenticationResponse = makeAuthenticationResponse(requestDto, requestMetadata, AuthenticationResponseType.INCORRECT_CREDENTIAL);
         authenticationResponse.setPortalUserIdentifier(userIdentifier);
         return authenticationResponseRepository.save(authenticationResponse);
     }
 
-    private AuthenticationResponse createSuccessfulAuthenticationResponse(PortalUserIdentifier userIdentifier, LoginRequestDto requestDto, RequestMetadata requestMetadata) {
+    private AuthenticationResponse createSuccessfulAuthenticationResponse(PortalUserIdentifier userIdentifier, LoginApiRequest requestDto, RequestMetadata requestMetadata) {
         AuthenticationResponse authenticationResponse = makeAuthenticationResponse(requestDto, requestMetadata, AuthenticationResponseType.SUCCESSFUL);
         authenticationResponse.setPortalUserIdentifier(userIdentifier);
         return authenticationResponseRepository.save(authenticationResponse);
     }
 
-    private AuthenticationResponse makeAuthenticationResponse(LoginRequestDto requestDto, RequestMetadata requestMetadata, AuthenticationResponseType authenticationResponseType) {
+    private AuthenticationResponse makeAuthenticationResponse(LoginApiRequest requestDto, RequestMetadata requestMetadata, AuthenticationResponseType authenticationResponseType) {
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
         authenticationResponse.setResponseType(authenticationResponseType);
         authenticationResponse.setIdentifier(requestDto.getIdentifier());

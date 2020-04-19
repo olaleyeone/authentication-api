@@ -21,6 +21,9 @@ public class RefreshToken {
     @ManyToOne
     private AuthenticationResponse actualAuthentication;
 
+    @ManyToOne(optional = false)
+    private PortalUser portalUser;
+
     @Embedded
     @Delegate
     @Setter(value = AccessLevel.NONE)
