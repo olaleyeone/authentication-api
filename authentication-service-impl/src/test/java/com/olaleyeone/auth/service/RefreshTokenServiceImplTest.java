@@ -1,7 +1,6 @@
 package com.olaleyeone.auth.service;
 
-import com.olaleyeone.auth.data.entity.AuthenticationResponse;
-import com.olaleyeone.auth.data.entity.PortalUser;
+import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.test.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RefreshTokenServiceImplTest extends ServiceTest {
 
-    private AuthenticationResponse authenticationResponse;
+    private PortalUserAuthentication userAuthentication;
 
     @Inject
     private RefreshTokenService refreshTokenService;
@@ -24,31 +23,17 @@ class RefreshTokenServiceImplTest extends ServiceTest {
 
     @BeforeEach
     public void setUp() {
-        authenticationResponse = modelFactory.create(AuthenticationResponse.class);
+        userAuthentication = modelFactory.create(PortalUserAuthentication.class);
     }
 
     @Test
     public void createRefreshTokenForAuthenticatedUser() {
         int duration = 5;
         settingService.getInteger(RefreshTokenServiceImpl.REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES, duration);
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(authenticationResponse);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userAuthentication);
         assertNotNull(refreshToken);
         assertNotNull(refreshToken.getId());
-        assertEquals(authenticationResponse.getId(), refreshToken.getActualAuthentication().getId());
-        int durationInSeconds = duration * 60;
-        long actualExpiryDurationInSeconds = refreshToken.getDateCreated().until(refreshToken.getExpiresAt(), ChronoUnit.SECONDS);
-        assertTrue((durationInSeconds - 1) == actualExpiryDurationInSeconds || durationInSeconds == actualExpiryDurationInSeconds);
-    }
-
-    @Test
-    public void createRefreshTokenForPortal() {
-        int duration = 5;
-        PortalUser portalUser = modelFactory.create(PortalUser.class);
-        settingService.getInteger(RefreshTokenServiceImpl.REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES, duration);
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(portalUser);
-        assertNotNull(refreshToken);
-        assertNotNull(refreshToken.getId());
-        assertEquals(portalUser.getId(), refreshToken.getPortalUser().getId());
+        assertEquals(userAuthentication.getId(), refreshToken.getActualAuthentication().getId());
         int durationInSeconds = duration * 60;
         long actualExpiryDurationInSeconds = refreshToken.getDateCreated().until(refreshToken.getExpiresAt(), ChronoUnit.SECONDS);
         assertTrue((durationInSeconds - 1) == actualExpiryDurationInSeconds || durationInSeconds == actualExpiryDurationInSeconds);
@@ -59,14 +44,14 @@ class RefreshTokenServiceImplTest extends ServiceTest {
         int duration = 5;
         RefreshToken prevRefreshToken = modelFactory.pipe(RefreshToken.class)
                 .then(it -> {
-                    it.setActualAuthentication(authenticationResponse);
+                    it.setActualAuthentication(userAuthentication);
                     return it;
                 }).create();
         settingService.getInteger(RefreshTokenServiceImpl.REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES, duration);
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(authenticationResponse);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userAuthentication);
         assertNotNull(refreshToken);
         assertNotNull(refreshToken.getId());
-        assertEquals(authenticationResponse.getId(), refreshToken.getActualAuthentication().getId());
+        assertEquals(userAuthentication.getId(), refreshToken.getActualAuthentication().getId());
         assertNotNull(prevRefreshToken.getTimeDeactivated());
     }
 

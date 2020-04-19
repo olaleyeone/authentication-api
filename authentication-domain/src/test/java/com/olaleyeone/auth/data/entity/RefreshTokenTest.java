@@ -13,35 +13,30 @@ class RefreshTokenTest extends EntityTest {
     @Test
     public void saveToken() {
         RefreshToken refreshToken = new RefreshToken();
-        AuthenticationResponse actualAuthentication = modelFactory.create(AuthenticationResponse.class);
-        refreshToken.setActualAuthentication(actualAuthentication);
-        refreshToken.setPortalUser(actualAuthentication.getPortalUserIdentifier().getPortalUser());
+        PortalUserAuthentication userAuthentication = modelFactory.create(PortalUserAuthentication.class);
+        refreshToken.setActualAuthentication(userAuthentication);
         LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(20);
         refreshToken.setExpiresAt(expiresAt);
         saveAndFlush(refreshToken);
         entityManager.refresh(refreshToken);
         assertNotNull(refreshToken.getDateCreated());
         assertEquals(expiresAt, refreshToken.getExpiresAt());
-        assertEquals(actualAuthentication.getId(), refreshToken.getActualAuthentication().getId());
+        assertEquals(userAuthentication.getId(), refreshToken.getActualAuthentication().getId());
     }
 
     @Test
     public void shouldNotSaveWithoutExpiryTime() {
         RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setPortalUser(modelFactory.create(PortalUser.class));
-        AuthenticationResponse actualAuthentication = modelFactory.create(AuthenticationResponse.class);
-        refreshToken.setActualAuthentication(actualAuthentication);
+        PortalUserAuthentication userAuthentication = modelFactory.create(PortalUserAuthentication.class);
+        refreshToken.setActualAuthentication(userAuthentication);
         assertThrows(PersistenceException.class, () -> saveAndFlush(refreshToken));
     }
 
     @Test
-    public void shouldSaveWithoutActualAuthentication() {
+    public void shouldNotSaveWithoutActualAuthentication() {
         RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setPortalUser(modelFactory.create(PortalUser.class));
         LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(20);
         refreshToken.setExpiresAt(expiresAt);
-        saveAndFlush(refreshToken);
-        entityManager.refresh(refreshToken);
-        assertNotNull(refreshToken.getId());
+        assertThrows(PersistenceException.class, () -> saveAndFlush(refreshToken));
     }
 }

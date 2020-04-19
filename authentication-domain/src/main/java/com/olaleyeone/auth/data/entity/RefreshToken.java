@@ -18,11 +18,8 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private AuthenticationResponse actualAuthentication;
-
     @ManyToOne(optional = false)
-    private PortalUser portalUser;
+    private PortalUserAuthentication actualAuthentication;
 
     @Embedded
     @Delegate

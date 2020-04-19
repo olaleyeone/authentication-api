@@ -1,11 +1,11 @@
 package com.olaleyeone.auth.controller;
 
-import com.olaleyeone.auth.data.entity.AuthenticationResponse;
+import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.dto.data.LoginApiRequest;
 import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
-import com.olaleyeone.auth.service.AuthenticationService;
+import com.olaleyeone.auth.service.LoginAuthenticationService;
 import com.olaleyeone.auth.test.ControllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class LoginControllerTest extends ControllerTest {
 
     @Autowired
-    private AuthenticationService authenticationService;
+    private LoginAuthenticationService authenticationService;
 
     @Autowired
     private UserApiResponseHandler userApiResponseHandler;
@@ -39,9 +39,9 @@ class LoginControllerTest extends ControllerTest {
     void loginWithIncorrectCredentials() throws Exception {
         Mockito.when(authenticationService.getAuthenticationResponse(Mockito.any(), Mockito.any()))
                 .then(invocation -> {
-                    AuthenticationResponse authenticationResponse = new AuthenticationResponse();
-                    authenticationResponse.setResponseType(AuthenticationResponseType.INCORRECT_CREDENTIAL);
-                    return authenticationResponse;
+                    PortalUserAuthentication userAuthentication = new PortalUserAuthentication();
+                    userAuthentication.setResponseType(AuthenticationResponseType.INCORRECT_CREDENTIAL);
+                    return userAuthentication;
                 });
         mockMvc.perform(MockMvcRequestBuilders.post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -56,11 +56,11 @@ class LoginControllerTest extends ControllerTest {
 
         Mockito.when(authenticationService.getAuthenticationResponse(Mockito.any(), Mockito.any()))
                 .then(invocation -> {
-                    AuthenticationResponse authenticationResponse = new AuthenticationResponse();
-                    authenticationResponse.setResponseType(AuthenticationResponseType.SUCCESSFUL);
-                    return authenticationResponse;
+                    PortalUserAuthentication userAuthentication = new PortalUserAuthentication();
+                    userAuthentication.setResponseType(AuthenticationResponseType.SUCCESSFUL);
+                    return userAuthentication;
                 });
-        Mockito.when(userApiResponseHandler.getUserApiResponse(Mockito.any(AuthenticationResponse.class)))
+        Mockito.when(userApiResponseHandler.getUserApiResponse(Mockito.any(PortalUserAuthentication.class)))
                 .then(invocation -> userApiResponse);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/login")

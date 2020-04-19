@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.controller;
 
-import com.olaleyeone.auth.data.entity.PortalUser;
+import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.dto.data.UserRegistrationApiRequest;
 import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
@@ -16,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class UserRegistrationControllerTest extends ControllerTest {
@@ -53,11 +52,11 @@ class UserRegistrationControllerTest extends ControllerTest {
     void registerUser() throws Exception {
 
         UserApiResponse userApiResponse = new UserApiResponse();
-        PortalUser portalUser = new PortalUser();
+        PortalUserAuthentication userAuthentication = new PortalUserAuthentication();
 
-        Mockito.when(userRegistrationService.registerUser(Mockito.any()))
-                .then(invocation -> portalUser);
-        Mockito.when(userApiResponseHandler.getUserApiResponse(Mockito.any(PortalUser.class)))
+        Mockito.when(userRegistrationService.registerUser(Mockito.any(), Mockito.any()))
+                .then(invocation -> userAuthentication);
+        Mockito.when(userApiResponseHandler.getUserApiResponse(Mockito.any()))
                 .then(invocation -> userApiResponse);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
@@ -69,7 +68,7 @@ class UserRegistrationControllerTest extends ControllerTest {
                     assertEquals(userApiResponse, response);
                 });
         Mockito.verify(userRegistrationService, Mockito.times(1))
-                .registerUser(userRegistrationApiRequest);
+                .registerUser(Mockito.eq(userRegistrationApiRequest), Mockito.any());
     }
 
     @Test

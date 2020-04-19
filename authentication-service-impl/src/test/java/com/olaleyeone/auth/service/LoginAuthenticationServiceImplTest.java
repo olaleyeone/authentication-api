@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.service;
 
-import com.olaleyeone.auth.data.entity.AuthenticationResponse;
+import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.dto.data.LoginApiRequest;
@@ -14,10 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class AuthenticationServiceImplTest extends ServiceTest {
+class LoginAuthenticationServiceImplTest extends ServiceTest {
 
     @Autowired
-    private AuthenticationService authenticationService;
+    private LoginAuthenticationService authenticationService;
 
     @Autowired
     private PasswordService passwordService;
@@ -37,38 +37,39 @@ class AuthenticationServiceImplTest extends ServiceTest {
 
     @Test
     void authenticationShouldFailForUnknownUser() {
-        AuthenticationResponse authenticationResponse = authenticationService.getAuthenticationResponse(loginApiRequest, requestMetadata);
-        assertNotNull(authenticationResponse);
-        assertNotNull(authenticationResponse.getId());
-        assertNotNull(authenticationResponse.getDateCreated());
-        assertEquals(AuthenticationResponseType.UNKNOWN_ACCOUNT, authenticationResponse.getResponseType());
-        assertEquals(loginApiRequest.getIdentifier(), authenticationResponse.getIdentifier());
+        PortalUserAuthentication userAuthentication = authenticationService.getAuthenticationResponse(loginApiRequest, requestMetadata);
+        assertNotNull(userAuthentication);
+        assertNotNull(userAuthentication.getId());
+        assertNotNull(userAuthentication.getDateCreated());
+        assertEquals(AuthenticationResponseType.UNKNOWN_ACCOUNT, userAuthentication.getResponseType());
+        assertEquals(loginApiRequest.getIdentifier(), userAuthentication.getIdentifier());
     }
 
     @Test
     void authenticationShouldFailForWrongCredential() {
         Mockito.when(passwordService.isSameHash(Mockito.anyString(), Mockito.anyString())).thenReturn(false);
         PortalUserIdentifier userIdentifier = getUserIdentifier();
-        AuthenticationResponse authenticationResponse = authenticationService.getAuthenticationResponse(loginApiRequest, requestMetadata);
+        PortalUserAuthentication userAuthentication = authenticationService.getAuthenticationResponse(loginApiRequest, requestMetadata);
         Mockito.verify(passwordService, Mockito.times(1))
                 .isSameHash(loginApiRequest.getPassword(), userIdentifier.getPortalUser().getPassword());
-        assertNotNull(authenticationResponse);
-        assertNotNull(authenticationResponse.getId());
-        assertEquals(AuthenticationResponseType.INCORRECT_CREDENTIAL, authenticationResponse.getResponseType());
-        assertEquals(userIdentifier.getId(), authenticationResponse.getPortalUserIdentifier().getId());
+        assertNotNull(userAuthentication);
+        assertNotNull(userAuthentication.getId());
+        assertEquals(AuthenticationResponseType.INCORRECT_CREDENTIAL, userAuthentication.getResponseType());
+        assertEquals(userIdentifier.getId(), userAuthentication.getPortalUserIdentifier().getId());
     }
 
     @Test
     void authenticationShouldSucceedForCorrectCredential() {
         Mockito.when(passwordService.isSameHash(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
         PortalUserIdentifier userIdentifier = getUserIdentifier();
-        AuthenticationResponse authenticationResponse = authenticationService.getAuthenticationResponse(loginApiRequest, requestMetadata);
+        PortalUserAuthentication userAuthentication = authenticationService.getAuthenticationResponse(loginApiRequest, requestMetadata);
         Mockito.verify(passwordService, Mockito.times(1))
                 .isSameHash(loginApiRequest.getPassword(), userIdentifier.getPortalUser().getPassword());
-        assertNotNull(authenticationResponse);
-        assertNotNull(authenticationResponse.getId());
-        assertEquals(AuthenticationResponseType.SUCCESSFUL, authenticationResponse.getResponseType());
-        assertEquals(userIdentifier.getId(), authenticationResponse.getPortalUserIdentifier().getId());
+        assertNotNull(userAuthentication);
+        assertNotNull(userAuthentication.getId());
+        assertEquals(AuthenticationResponseType.SUCCESSFUL, userAuthentication.getResponseType());
+        assertEquals(userIdentifier, userAuthentication.getPortalUserIdentifier());
+        assertEquals(userIdentifier.getPortalUser(), userAuthentication.getPortalUser());
     }
 
     private PortalUserIdentifier getUserIdentifier() {

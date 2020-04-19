@@ -6,7 +6,7 @@ import com.github.javafaker.Faker;
 import com.olaleyeone.auth.configuration.AdditionalComponentsConfiguration;
 import com.olaleyeone.auth.configuration.BeanValidationConfiguration;
 import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
-import com.olaleyeone.auth.service.AuthenticationService;
+import com.olaleyeone.auth.service.LoginAuthenticationService;
 import com.olaleyeone.auth.service.PhoneNumberService;
 import com.olaleyeone.auth.service.UserRegistrationService;
 import com.olaleyeone.auth.validator.UniqueIdentifierValidator;
@@ -62,8 +62,8 @@ public abstract class ControllerTest {
         }
 
         @Bean
-        public AuthenticationService authenticationService() {
-            return Mockito.mock(AuthenticationService.class);
+        public LoginAuthenticationService authenticationService() {
+            return Mockito.mock(LoginAuthenticationService.class);
         }
 
         @Bean

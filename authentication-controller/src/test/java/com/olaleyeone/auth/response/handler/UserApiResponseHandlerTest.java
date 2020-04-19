@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.response.handler;
 
-import com.olaleyeone.auth.data.entity.AuthenticationResponse;
+import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.RefreshToken;
@@ -33,7 +33,7 @@ class UserApiResponseHandlerTest extends ComponentTest {
     private PortalUser user;
     private PortalUserIdentifier userIdentifier;
     private RefreshToken refreshToken;
-    private AuthenticationResponse authenticationResponse;
+    private PortalUserAuthentication userAuthentication;
 
     @BeforeEach
     void setUp() {
@@ -45,12 +45,12 @@ class UserApiResponseHandlerTest extends ComponentTest {
         userIdentifier = new PortalUserIdentifier();
         userIdentifier.setPortalUser(user);
 
-        authenticationResponse = new AuthenticationResponse();
-        authenticationResponse.setResponseType(AuthenticationResponseType.SUCCESSFUL);
-        authenticationResponse.setPortalUserIdentifier(userIdentifier);
+        userAuthentication = new PortalUserAuthentication();
+        userAuthentication.setResponseType(AuthenticationResponseType.SUCCESSFUL);
+        userAuthentication.setPortalUserIdentifier(userIdentifier);
 
         refreshToken = new RefreshToken();
-        refreshToken.setActualAuthentication(authenticationResponse);
+        refreshToken.setActualAuthentication(userAuthentication);
     }
 
     @Test
@@ -58,33 +58,14 @@ class UserApiResponseHandlerTest extends ComponentTest {
         String refreshJws = UUID.randomUUID().toString();
         String accessJws = UUID.randomUUID().toString();
 
-        Mockito.when(refreshTokenService.createRefreshToken(Mockito.any(AuthenticationResponse.class)))
+        Mockito.when(refreshTokenService.createRefreshToken(Mockito.any(PortalUserAuthentication.class)))
                 .then(invocation -> refreshToken);
         Mockito.when(jwtService.getRefreshToken(Mockito.any()))
                 .then(invocation -> refreshJws);
         Mockito.when(jwtService.getAccessToken(Mockito.any()))
                 .then(invocation -> accessJws);
 
-        UserApiResponse userApiResponse = handler.getUserApiResponse(authenticationResponse);
-        assertEquals(user.getFirstName(), userApiResponse.getFirstName());
-        assertEquals(user.getLastName(), userApiResponse.getLastName());
-        assertEquals(refreshJws, userApiResponse.getRefreshToken());
-        assertEquals(accessJws, userApiResponse.getAccessToken());
-    }
-
-    @Test
-    public void getUserPojoForUser() {
-        String refreshJws = UUID.randomUUID().toString();
-        String accessJws = UUID.randomUUID().toString();
-
-        Mockito.when(refreshTokenService.createRefreshToken(Mockito.any(PortalUser.class)))
-                .then(invocation -> refreshToken);
-        Mockito.when(jwtService.getRefreshToken(Mockito.any()))
-                .then(invocation -> refreshJws);
-        Mockito.when(jwtService.getAccessToken(Mockito.any()))
-                .then(invocation -> accessJws);
-
-        UserApiResponse userApiResponse = handler.getUserApiResponse(user);
+        UserApiResponse userApiResponse = handler.getUserApiResponse(userAuthentication);
         assertEquals(user.getFirstName(), userApiResponse.getFirstName());
         assertEquals(user.getLastName(), userApiResponse.getLastName());
         assertEquals(refreshJws, userApiResponse.getRefreshToken());

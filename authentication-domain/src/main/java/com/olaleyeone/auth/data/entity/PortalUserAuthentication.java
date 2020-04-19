@@ -1,6 +1,7 @@
 package com.olaleyeone.auth.data.entity;
 
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
+import com.olaleyeone.auth.data.enums.AuthenticationType;
 import com.olaleyeone.auth.data.shared.PersistTimeSetter;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -12,18 +13,22 @@ import javax.persistence.*;
 
 @Entity
 @Data
-public class AuthenticationResponse {
+public class PortalUserAuthentication {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String identifier;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AuthenticationResponseType responseType;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AuthenticationType type;
 
     @Column(nullable = false)
     private String ipAddress;
@@ -33,6 +38,9 @@ public class AuthenticationResponse {
 
     @ManyToOne
     private PortalUserIdentifier portalUserIdentifier;
+
+    @ManyToOne
+    private PortalUser portalUser;
 
     @Embedded
     @Delegate

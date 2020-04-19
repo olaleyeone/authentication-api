@@ -1,7 +1,6 @@
 package com.olaleyeone.auth.service;
 
-import com.olaleyeone.auth.data.entity.AuthenticationResponse;
-import com.olaleyeone.auth.data.entity.PortalUser;
+import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,21 +21,11 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Transactional
     @Override
-    public RefreshToken createRefreshToken(AuthenticationResponse authenticationResponse) {
-        refreshTokenRepository.findActiveTokens(authenticationResponse, LocalDateTime.now())
+    public RefreshToken createRefreshToken(PortalUserAuthentication userAuthentication) {
+        refreshTokenRepository.findActiveTokens(userAuthentication, LocalDateTime.now())
                 .forEach(this::deactivateRefreshToken);
         RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setActualAuthentication(authenticationResponse);
-        refreshToken.setPortalUser(authenticationResponse.getPortalUserIdentifier().getPortalUser());
-        refreshToken.setExpiresAt(getExpiresAt());
-        return refreshTokenRepository.save(refreshToken);
-    }
-
-    @Transactional
-    @Override
-    public RefreshToken createRefreshToken(PortalUser portalUser) {
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setPortalUser(portalUser);
+        refreshToken.setActualAuthentication(userAuthentication);
         refreshToken.setExpiresAt(getExpiresAt());
         return refreshTokenRepository.save(refreshToken);
     }

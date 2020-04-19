@@ -1,8 +1,10 @@
 package com.olaleyeone.auth.service;
 
 import com.olaleyeone.auth.data.entity.PortalUser;
+import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
+import com.olaleyeone.auth.dto.data.RequestMetadata;
 import com.olaleyeone.auth.dto.data.UserRegistrationApiRequest;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.repository.PortalUserRepository;
@@ -23,10 +25,11 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     private final PortalUserIdentifierRepository portalUserIdentifierRepository;
     private final PhoneNumberService phoneNumberService;
     private final PasswordService passwordService;
+    private final ImplicitAuthenticationService implicitAuthenticationService;
 
     @Transactional
     @Override
-    public PortalUser registerUser(UserRegistrationApiRequest dto) {
+    public PortalUserAuthentication registerUser(UserRegistrationApiRequest dto, RequestMetadata requestMetadata) {
         PortalUser portalUser = new PortalUser();
         portalUser.setFirstName(StringUtils.normalizeSpace(dto.getFirstName()));
         portalUser.setLastName(getNonEmptyString(dto.getLastName()));
@@ -49,7 +52,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
             throw new IllegalArgumentException();
         }
 
-        return portalUser;
+        return implicitAuthenticationService.createSignUpAuthentication(portalUser, requestMetadata);
     }
 
     private String getNonEmptyString(String value) {
