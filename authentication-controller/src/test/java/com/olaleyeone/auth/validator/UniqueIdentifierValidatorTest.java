@@ -6,10 +6,10 @@ import com.olaleyeone.auth.dto.constraints.UniqueIdentifier;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.service.PhoneNumberService;
 import com.olaleyeone.auth.test.ComponentTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Optional;
 
@@ -18,17 +18,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UniqueIdentifierValidatorTest extends ComponentTest {
 
+    @InjectMocks
     private UniqueIdentifierValidator validator;
 
-    @MockBean
+    @Mock
     private PortalUserIdentifierRepository portalUserIdentifierRepository;
-    @MockBean
+
+    @Mock
     private PhoneNumberService phoneNumberService;
 
-    @BeforeEach
-    public void setUp() {
-        validator = new UniqueIdentifierValidator(portalUserIdentifierRepository, phoneNumberService);
-    }
+    @Mock
+    private UniqueIdentifier uniqueIdentifier;
 
     @Test
     void nullShouldBeValid() {
@@ -42,15 +42,16 @@ class UniqueIdentifierValidatorTest extends ComponentTest {
 
     @Test
     void shouldFormatPhoneNumber() {
-        String value1 = "1234";
-        String value2 = "5678";
-        UniqueIdentifier uniqueIdentifier = Mockito.mock(UniqueIdentifier.class);
+        Mockito.when(portalUserIdentifierRepository.findByIdentifier(Mockito.anyString())).thenReturn(Optional.empty());
         Mockito.when(uniqueIdentifier.value()).thenReturn(UserIdentifierType.PHONE_NUMBER);
         validator.initialize(uniqueIdentifier);
-        Mockito.when(phoneNumberService.formatPhoneNumber(Mockito.anyString())).thenReturn(value2);
-        Mockito.when(portalUserIdentifierRepository.findByIdentifier(Mockito.anyString())).thenReturn(Optional.empty());
 
-        assertTrue(validator.isValid(value1, null));
+        String value1 = "1234";
+        String value2 = "5678";
+
+        Mockito.when(phoneNumberService.formatPhoneNumber(Mockito.anyString())).thenReturn(value2);
+
+        validator.isValid(value1, null);
 
         Mockito.verify(phoneNumberService, Mockito.times(1))
                 .formatPhoneNumber(value1);
@@ -59,24 +60,25 @@ class UniqueIdentifierValidatorTest extends ComponentTest {
     }
 
     @Test
-    void shouldOnlyFormatPhoneNumber() {
-        String value1 = "1234";
-        UniqueIdentifier uniqueIdentifier = Mockito.mock(UniqueIdentifier.class);
-        Mockito.when(uniqueIdentifier.value()).thenReturn(UserIdentifierType.EMAIL);
-        validator.initialize(uniqueIdentifier);
+    void shouldNotFormatUsername() {
         Mockito.when(portalUserIdentifierRepository.findByIdentifier(Mockito.anyString())).thenReturn(Optional.empty());
 
-        assertTrue(validator.isValid(value1, null));
+        Mockito.when(uniqueIdentifier.value()).thenReturn(UserIdentifierType.USERNAME);
+        validator.initialize(uniqueIdentifier);
 
-        Mockito.verify(phoneNumberService, Mockito.never()).formatPhoneNumber(value1);
+        String value1 = "1234";
+        validator.isValid(value1, null);
+
+        Mockito.verify(phoneNumberService, Mockito.never()).formatPhoneNumber(Mockito.anyString());
         Mockito.verify(portalUserIdentifierRepository, Mockito.times(1))
                 .findByIdentifier(value1);
     }
 
     @Test
     void shouldBeValid() {
-        String value1 = "1234";
         Mockito.when(portalUserIdentifierRepository.findByIdentifier(Mockito.anyString())).thenReturn(Optional.empty());
+
+        String value1 = "1234";
         assertTrue(validator.isValid(value1, null));
         Mockito.verify(portalUserIdentifierRepository, Mockito.times(1))
                 .findByIdentifier(value1);
@@ -84,8 +86,9 @@ class UniqueIdentifierValidatorTest extends ComponentTest {
 
     @Test
     void shouldBeInValid() {
-        String value1 = "1234";
         Mockito.when(portalUserIdentifierRepository.findByIdentifier(Mockito.anyString())).thenReturn(Optional.of(new PortalUserIdentifier()));
+
+        String value1 = "1234";
         assertFalse(validator.isValid(value1, null));
         Mockito.verify(portalUserIdentifierRepository, Mockito.times(1))
                 .findByIdentifier(value1);

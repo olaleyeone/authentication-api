@@ -27,7 +27,6 @@ class AuthenticationServiceImplTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        Mockito.reset(passwordService);
         loginRequestDto = new LoginRequestDto();
         loginRequestDto.setIdentifier(faker.internet().emailAddress());
         loginRequestDto.setPassword(faker.internet().password());

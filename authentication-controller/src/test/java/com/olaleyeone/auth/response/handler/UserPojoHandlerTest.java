@@ -11,8 +11,9 @@ import com.olaleyeone.auth.service.RefreshTokenService;
 import com.olaleyeone.auth.test.ComponentTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.UUID;
 
@@ -20,12 +21,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UserPojoHandlerTest extends ComponentTest {
 
-    @MockBean
+    @Mock
     private RefreshTokenService refreshTokenService;
 
-    @MockBean
+    @Mock
     private JwtService jwtService;
 
+    @InjectMocks
     private UserPojoHandler handler;
 
     private PortalUser user;
@@ -49,8 +51,6 @@ class UserPojoHandlerTest extends ComponentTest {
 
         refreshToken = new RefreshToken();
         refreshToken.setActualAuthentication(authenticationResponse);
-
-        handler = new UserPojoHandler(refreshTokenService, jwtService);
     }
 
     @Test

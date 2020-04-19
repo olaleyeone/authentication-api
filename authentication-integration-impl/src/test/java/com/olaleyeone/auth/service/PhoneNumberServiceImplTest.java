@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.service;
 
+import com.google.i18n.phonenumbers.NumberParseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +32,7 @@ class PhoneNumberServiceImplTest {
 
     @Test
     void formatPhoneNumberWithBadInput() {
-        assertThrows(RuntimeException.class, () -> phoneNumberService.formatPhoneNumber("jdhfhfh"));
+        assertThrows(NumberParseException.class, () -> phoneNumberService.formatPhoneNumber("jdhfhfh"));
     }
 
     @Test

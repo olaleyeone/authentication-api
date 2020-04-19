@@ -1,14 +1,17 @@
 package com.olaleyeone.auth.service;
 
+import com.olaleyeone.auth.test.ComponentTest;
 import org.junit.jupiter.api.Test;
+import org.mockito.Spy;
 
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PasswordServiceImplTest {
+class PasswordServiceImplTest extends ComponentTest {
 
-    private PasswordService passwordService = new PasswordServiceImpl();
+    @Spy
+    private PasswordServiceImpl passwordService;
 
     @Test
     void hashPassword() {

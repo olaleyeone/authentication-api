@@ -2,26 +2,28 @@ package com.olaleyeone.auth.service;
 
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.RefreshToken;
+import com.olaleyeone.auth.test.ComponentTest;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class JwtServiceImplTest {
+class JwtServiceImplTest extends ComponentTest {
 
     private JwtServiceImpl jwtService;
 
+    @Mock
     private SettingService settingService;
 
     @BeforeEach
     public void setUp() {
-        settingService = Mockito.mock(SettingService.class);
         jwtService = new JwtServiceImpl(Keys.secretKeyFor(SignatureAlgorithm.HS256), settingService);
     }
 
