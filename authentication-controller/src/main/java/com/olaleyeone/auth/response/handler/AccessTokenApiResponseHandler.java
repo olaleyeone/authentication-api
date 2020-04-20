@@ -1,7 +1,7 @@
 package com.olaleyeone.auth.response.handler;
 
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUser;
+import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.dto.AccessTokenDto;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
@@ -18,7 +18,7 @@ public class AccessTokenApiResponseHandler {
     private final RefreshTokenService refreshTokenService;
     private final JwtService jwtService;
 
-    public AccessTokenApiResponse getUserApiResponse(PortalUserAuthentication portalUserAuthentication) {
+    public AccessTokenApiResponse getAccessToken(PortalUserAuthentication portalUserAuthentication) {
         PortalUser portalUser = portalUserAuthentication.getPortalUserIdentifier().getPortalUser();
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(portalUserAuthentication);
 
@@ -27,6 +27,9 @@ public class AccessTokenApiResponseHandler {
         AccessTokenDto accessToken = jwtService.getAccessToken(portalUser);
         accessTokenApiResponse.setAccessToken(accessToken.getToken());
         accessTokenApiResponse.setSecondsTillExpiry(accessToken.getSecondsTillExpiry());
+
+//        httpServletResponse.setHeader(HttpHeaders.CACHE_CONTROL, "no-store");
+//        httpServletResponse.setHeader(HttpHeaders.PRAGMA, "no-cache");
         return accessTokenApiResponse;
     }
 }

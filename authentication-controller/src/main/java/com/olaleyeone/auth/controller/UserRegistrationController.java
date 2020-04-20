@@ -30,6 +30,6 @@ public class UserRegistrationController {
     @PostMapping("/users")
     public AccessTokenApiResponse registerUser(@Valid @RequestBody UserRegistrationApiRequest dto) {
         PortalUserAuthentication portalUserAuthentication = userRegistrationService.registerUser(dto, requestMetadata.get());
-        return accessTokenApiResponseHandler.getUserApiResponse(portalUserAuthentication);
+        return accessTokenApiResponseHandler.getAccessToken(portalUserAuthentication);
     }
 }

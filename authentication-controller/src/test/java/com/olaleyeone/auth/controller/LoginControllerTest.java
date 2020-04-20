@@ -60,7 +60,7 @@ class LoginControllerTest extends ControllerTest {
                     userAuthentication.setResponseType(AuthenticationResponseType.SUCCESSFUL);
                     return userAuthentication;
                 });
-        Mockito.when(accessTokenApiResponseHandler.getUserApiResponse(Mockito.any(PortalUserAuthentication.class)))
+        Mockito.when(accessTokenApiResponseHandler.getAccessToken(Mockito.any(PortalUserAuthentication.class)))
                 .then(invocation -> accessTokenApiResponse);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/login")

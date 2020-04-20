@@ -1,7 +1,7 @@
 package com.olaleyeone.auth.response.handler;
 
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUser;
+import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
@@ -66,7 +66,7 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
         Mockito.when(jwtService.getAccessToken(Mockito.any()))
                 .then(invocation -> AccessTokenDto.builder().token(accessJws).build());
 
-        AccessTokenApiResponse accessTokenApiResponse = handler.getUserApiResponse(userAuthentication);
+        AccessTokenApiResponse accessTokenApiResponse = handler.getAccessToken(userAuthentication);
         assertEquals(user.getFirstName(), accessTokenApiResponse.getFirstName());
         assertEquals(user.getLastName(), accessTokenApiResponse.getLastName());
         assertEquals(refreshJws, accessTokenApiResponse.getRefreshToken());

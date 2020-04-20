@@ -9,6 +9,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.http.HttpHeaders;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class RequestMetadataFactory implements FactoryBean<RequestMetadata> {
@@ -41,16 +42,20 @@ public class RequestMetadataFactory implements FactoryBean<RequestMetadata> {
     }
 
     private RequestMetadataImpl getRequestMetadata() {
-        RequestMetadataImpl requestMetadata = new RequestMetadataImpl();
-        requestMetadata.setIpAddress(getActualIpAddress(httpServletRequest));
-        requestMetadata.setUserAgent(httpServletRequest.getHeader(HttpHeaders.USER_AGENT));
-        requestMetadata.setLocalhost(isLocalhost(requestMetadata.getIpAddress()));
-        String authorizationHeader = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
-        if (StringUtils.isNotBlank(authorizationHeader) && authorizationHeader.startsWith(tokenPrefix)) {
-            requestMetadata.setAccessToken(authorizationHeader.substring(tokenPrefix.length()));
-            requestMetadata.setUserId(accessTokenValidator.resolveToUserId(requestMetadata.getAccessToken()));
-        }
-        return requestMetadata;
+        return Optional.ofNullable((RequestMetadataImpl) httpServletRequest.getAttribute(RequestMetadataImpl.class.getName()))
+                .orElseGet(() -> {
+                    RequestMetadataImpl requestMetadata = new RequestMetadataImpl();
+                    requestMetadata.setIpAddress(getActualIpAddress(httpServletRequest));
+                    requestMetadata.setUserAgent(httpServletRequest.getHeader(HttpHeaders.USER_AGENT));
+                    requestMetadata.setLocalhost(isLocalhost(requestMetadata.getIpAddress()));
+                    String authorizationHeader = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
+                    if (StringUtils.isNotBlank(authorizationHeader) && authorizationHeader.startsWith(tokenPrefix)) {
+                        requestMetadata.setAccessToken(authorizationHeader.substring(tokenPrefix.length()));
+                        requestMetadata.setUserId(accessTokenValidator.resolveToUserId(requestMetadata.getAccessToken()));
+                    }
+                    httpServletRequest.setAttribute(RequestMetadataImpl.class.getName(), requestMetadata);
+                    return requestMetadata;
+                });
     }
 
     public String getActualIpAddress(HttpServletRequest request) {

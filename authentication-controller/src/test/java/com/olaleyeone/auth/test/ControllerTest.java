@@ -7,6 +7,8 @@ import com.olaleyeone.auth.configuration.AdditionalComponentsConfiguration;
 import com.olaleyeone.auth.configuration.BeanValidationConfiguration;
 import com.olaleyeone.auth.configuration.SecurityConfiguration;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
+import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
+import com.olaleyeone.auth.response.pojo.UserApiResponse;
 import com.olaleyeone.auth.security.access.AccessTokenValidator;
 import com.olaleyeone.auth.security.access.TrustedIpAddressAccessManager;
 import com.olaleyeone.auth.service.LoginAuthenticationService;
@@ -81,8 +83,13 @@ public abstract class ControllerTest {
         }
 
         @Bean
-        public AccessTokenApiResponseHandler userApiResponseHandler() {
+        public AccessTokenApiResponseHandler accessTokenApiResponseHandler() {
             return Mockito.mock(AccessTokenApiResponseHandler.class);
+        }
+
+        @Bean
+        public UserApiResponseHandler userApiResponseHandler() {
+            return Mockito.mock(UserApiResponseHandler.class);
         }
 
         @Bean

@@ -56,7 +56,7 @@ class UserRegistrationControllerTest extends ControllerTest {
 
         Mockito.when(userRegistrationService.registerUser(Mockito.any(), Mockito.any()))
                 .then(invocation -> userAuthentication);
-        Mockito.when(accessTokenApiResponseHandler.getUserApiResponse(Mockito.any()))
+        Mockito.when(accessTokenApiResponseHandler.getAccessToken(Mockito.any()))
                 .then(invocation -> accessTokenApiResponse);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")

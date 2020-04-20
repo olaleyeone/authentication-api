@@ -33,6 +33,6 @@ public class LoginController {
         if (portalUserAuthentication.getResponseType() != AuthenticationResponseType.SUCCESSFUL) {
             throw new ErrorResponse(HttpStatus.UNAUTHORIZED);
         }
-        return accessTokenApiResponseHandler.getUserApiResponse(portalUserAuthentication);
+        return accessTokenApiResponseHandler.getAccessToken(portalUserAuthentication);
     }
 }
