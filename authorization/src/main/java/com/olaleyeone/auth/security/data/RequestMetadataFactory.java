@@ -51,7 +51,7 @@ public class RequestMetadataFactory implements FactoryBean<RequestMetadata> {
                     String authorizationHeader = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
                     if (StringUtils.isNotBlank(authorizationHeader) && authorizationHeader.startsWith(tokenPrefix)) {
                         requestMetadata.setAccessToken(authorizationHeader.substring(tokenPrefix.length()));
-                        requestMetadata.setUserId(accessTokenValidator.resolveToUserId(requestMetadata.getAccessToken()));
+                        requestMetadata.setTokenClaims(accessTokenValidator.parseToken(requestMetadata.getAccessToken()));
                     }
                     httpServletRequest.setAttribute(RequestMetadataImpl.class.getName(), requestMetadata);
                     return requestMetadata;

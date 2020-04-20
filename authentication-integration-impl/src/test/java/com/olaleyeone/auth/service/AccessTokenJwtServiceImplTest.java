@@ -1,8 +1,10 @@
 package com.olaleyeone.auth.service;
 
+import com.google.gson.Gson;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.RefreshToken;
+import com.olaleyeone.auth.security.data.JsonWebToken;
 import com.olaleyeone.auth.test.ComponentTest;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -12,13 +14,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import java.time.LocalDateTime;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-class JwtServiceImplTest extends ComponentTest {
+class AccessTokenJwtServiceImplTest extends ComponentTest {
 
-    private JwtServiceImpl jwtService;
+    private AccessTokenJwtServiceImpl jwtService;
 
     @Mock
     private SettingService settingService;
@@ -29,11 +29,12 @@ class JwtServiceImplTest extends ComponentTest {
 
     @BeforeEach
     public void setUp() {
-        jwtService = new JwtServiceImpl(Keys.secretKeyFor(SignatureAlgorithm.HS256), settingService);
+        jwtService = new AccessTokenJwtServiceImpl(Keys.secretKeyFor(SignatureAlgorithm.HS256), settingService, new Gson());
         portalUser = new PortalUser();
         portalUser.setId(faker.number().randomNumber());
         userAuthentication = new PortalUserAuthentication();
         userAuthentication.setPortalUser(portalUser);
+
         refreshToken = new RefreshToken();
         refreshToken.setId(faker.number().randomNumber());
         refreshToken.setActualAuthentication(userAuthentication);
@@ -41,45 +42,28 @@ class JwtServiceImplTest extends ComponentTest {
     }
 
     @Test
-    void getRefreshToken() {
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setId(1L);
-        refreshToken.setExpiresAt(LocalDateTime.now().plusMinutes(1));
-        String jws = jwtService.getRefreshToken(refreshToken);
-        assertNotNull(jws);
-        assertEquals(refreshToken.getId().toString(), jwtService.getSubject(jws));
-    }
-
-    @Test
-    void shouldFailForExpiredRefreshToken() {
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setId(1L);
-        refreshToken.setExpiresAt(LocalDateTime.now());
-        String jws = jwtService.getRefreshToken(refreshToken);
-        assertNotNull(jws);
-        assertThrows(ExpiredJwtException.class, () -> jwtService.getSubject(jws));
-    }
-
-    @Test
     void getAccessToken() {
         long accessTokenDurationInSeconds = 20;
-        Mockito.when(settingService.getLong(Mockito.eq(JwtServiceImpl.ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS),
+        Mockito.when(settingService.getLong(Mockito.eq(AccessTokenJwtServiceImpl.ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS),
                 Mockito.anyLong()))
                 .thenReturn(accessTokenDurationInSeconds);
 
-        String jws = jwtService.getAccessToken(refreshToken).getToken();
+        String jws = jwtService.generateJwt(refreshToken).getToken();
         assertNotNull(jws);
-        assertEquals(portalUser.getId().toString(), jwtService.getSubject(jws));
+
+        JsonWebToken jsonWebToken = jwtService.parseAccessToken(jws);
+        assertEquals(refreshToken.getId().toString(), jsonWebToken.getId());
+        assertEquals(portalUser.getId().toString(), jsonWebToken.getSubject());
     }
 
     @Test
     void shouldFailForExpiredAccessToken() {
         long accessTokenDurationInSeconds = -20;
-        Mockito.when(settingService.getLong(Mockito.eq(JwtServiceImpl.ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS),
+        Mockito.when(settingService.getLong(Mockito.eq(AccessTokenJwtServiceImpl.ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS),
                 Mockito.anyLong()))
                 .thenReturn(accessTokenDurationInSeconds);
-        String jws = jwtService.getAccessToken(refreshToken).getToken();
+        String jws = jwtService.generateJwt(refreshToken).getToken();
         assertNotNull(jws);
-        assertThrows(ExpiredJwtException.class, () -> jwtService.getSubject(jws));
+        assertThrows(ExpiredJwtException.class, () -> jwtService.parseAccessToken(jws));
     }
 }

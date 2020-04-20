@@ -3,6 +3,7 @@ package com.olaleyeone.auth.controller;
 import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
 import com.olaleyeone.auth.security.access.AccessTokenValidator;
+import com.olaleyeone.auth.security.data.JsonWebToken;
 import com.olaleyeone.auth.test.ControllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,14 +27,15 @@ class AuthenticatedUserControllerTest extends ControllerTest {
     private UserApiResponseHandler userApiResponseHandler;
 
     private String token;
-    private String userId;
+    private JsonWebToken jwt;
 
     @BeforeEach
     public void setUp() {
         token = UUID.randomUUID().toString();
-        userId = String.valueOf(faker.number().randomNumber());
-        Mockito.when(accessTokenValidator.resolveToUserId(Mockito.any()))
-                .then(invocation -> userId);
+        jwt = Mockito.mock(JsonWebToken.class);
+        Mockito.doReturn(String.valueOf(faker.number().randomNumber())).when(jwt)
+                .getSubject();
+        Mockito.doReturn(jwt).when(accessTokenValidator).parseToken(Mockito.any());
     }
 
     @Test
@@ -50,7 +52,7 @@ class AuthenticatedUserControllerTest extends ControllerTest {
                     assertEquals(userApiResponse.getId(), response.getId());
                 });
         Mockito.verify(userApiResponseHandler, Mockito.times(1))
-                .getUserApiResponse(Long.valueOf(userId));
+                .getUserApiResponse(Long.valueOf(jwt.getSubject()));
     }
 
     @Test
@@ -59,16 +61,16 @@ class AuthenticatedUserControllerTest extends ControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isOk());
         Mockito.verify(accessTokenValidator, Mockito.times(1))
-                .resolveToUserId(token);
+                .parseToken(token);
     }
 
     @Test
     void shouldRejectInvalidToken() throws Exception {
-        Mockito.doReturn(null).when(accessTokenValidator).resolveToUserId(Mockito.any());
+        Mockito.doReturn(null).when(accessTokenValidator).parseToken(Mockito.any());
         mockMvc.perform(MockMvcRequestBuilders.get("/me")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isUnauthorized());
         Mockito.verify(accessTokenValidator, Mockito.times(1))
-                .resolveToUserId(token);
+                .parseToken(token);
     }
 }

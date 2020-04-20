@@ -1,9 +1,12 @@
 package com.olaleyeone.auth.configuration;
 
+import com.olaleyeone.auth.qualifier.JwtToken;
+import com.olaleyeone.auth.qualifier.JwtTokenType;
 import com.olaleyeone.auth.security.access.AccessStatus;
 import com.olaleyeone.auth.security.access.AccessTokenValidator;
 import com.olaleyeone.auth.security.access.TrustedIpAddressAccessManager;
 import com.olaleyeone.auth.security.annotations.TrustedIpAddress;
+import com.olaleyeone.auth.security.data.JsonWebToken;
 import com.olaleyeone.auth.security.data.RequestMetadataFactory;
 import com.olaleyeone.auth.security.interceptors.AccessConstraintHandlerInterceptor;
 import com.olaleyeone.auth.security.interceptors.RemoteAddressConstraintHandlerInterceptor;
@@ -62,12 +65,12 @@ public class SecurityConfiguration implements WebMvcConfigurer {
 
     @Profile("!test")
     @Bean
-    public AccessTokenValidator accessTokenValidator(JwtService jwtService) {
+    public AccessTokenValidator accessTokenValidator(@JwtToken(JwtTokenType.ACCESS) JwtService jwtService) {
         return new AccessTokenValidator() {
             @Override
-            public String resolveToUserId(String token) {
+            public JsonWebToken parseToken(String token) {
                 try {
-                    return jwtService.getSubject(token);
+                    return jwtService.parseAccessToken(token);
                 } catch (Exception e) {
                     return null;
                 }

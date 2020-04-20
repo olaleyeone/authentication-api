@@ -5,7 +5,7 @@ import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
-import com.olaleyeone.auth.dto.AccessTokenDto;
+import com.olaleyeone.auth.dto.JwtDto;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.JwtService;
 import com.olaleyeone.auth.service.RefreshTokenService;
@@ -42,8 +42,8 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
     private RefreshToken refreshToken;
     private PortalUserAuthentication userAuthentication;
 
-    private String refreshJws;
-    private AccessTokenDto accessTokenDto;
+    private JwtDto refreshJwt;
+    private JwtDto accessJwt;
 
     @BeforeEach
     void setUp() {
@@ -64,20 +64,19 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
         refreshToken.setActualAuthentication(userAuthentication);
         refreshToken.setExpiresAt(LocalDateTime.now().plusDays(1));
 
-        refreshJws = UUID.randomUUID().toString();
-        String accessJws = UUID.randomUUID().toString();
-        accessTokenDto = AccessTokenDto.builder()
-                .token(accessJws)
+        refreshJwt = JwtDto.builder()
+                .token(UUID.randomUUID().toString())
                 .secondsTillExpiry(faker.number().randomNumber())
                 .build();
+        accessJwt = refreshJwt;
 
 
         Mockito.when(refreshTokenService.createRefreshToken(Mockito.any(PortalUserAuthentication.class)))
                 .then(invocation -> refreshToken);
-        Mockito.when(jwtService.getRefreshToken(Mockito.any()))
-                .then(invocation -> refreshJws);
-        Mockito.when(jwtService.getAccessToken(Mockito.any()))
-                .then(invocation -> accessTokenDto);
+        Mockito.when(jwtService.generateJwt(Mockito.any()))
+                .then(invocation -> refreshJwt);
+        Mockito.when(jwtService.generateJwt(Mockito.any()))
+                .then(invocation -> accessJwt);
     }
 
     @Test
@@ -105,7 +104,7 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
         List<HttpCookie> httpCookies = getCookiesByName(responseEntity, "access_token");
         assertEquals(1, httpCookies.size());
         HttpCookie httpCookie = httpCookies.iterator().next();
-        assertEquals(accessTokenDto.getSecondsTillExpiry(), httpCookie.getMaxAge());
+        assertEquals(accessJwt.getSecondsTillExpiry(), httpCookie.getMaxAge());
         assertSecure(httpCookie);
     }
 

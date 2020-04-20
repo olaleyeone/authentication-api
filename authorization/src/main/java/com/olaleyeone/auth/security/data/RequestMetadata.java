@@ -8,7 +8,7 @@ public interface RequestMetadata {
 
     String getAccessToken();
 
-    String getUserId();
+    JsonWebToken getTokenClaims();
 
     boolean isLocalhost();
 }

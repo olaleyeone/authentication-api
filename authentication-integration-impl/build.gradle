@@ -11,12 +11,15 @@ dependencies {
     implementation(project(":${projectName}-repository"))
     api(project(":${projectName}-service"))
     api(project(":${projectName}-integration"))
+    implementation(project(":authorization"))
 
     implementation "javax.servlet:javax.servlet-api:$servletVersion"
 
     implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
 
     implementation "com.googlecode.libphonenumber:libphonenumber:8.10.20"
+    implementation "com.google.code.gson:gson:2.8.6"
+
 
     implementation "at.favre.lib:bcrypt:0.9.0"
 

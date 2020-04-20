@@ -2,14 +2,13 @@ package com.olaleyeone.auth.bootstrap;
 
 import com.olaleyeone.auth.configuration.OpenApiConfiguration;
 import com.olaleyeone.auth.configuration.WebConfiguration;
-import com.olaleyeone.auth.qualifier.JwtEncryptionKey;
-import com.olaleyeone.auth.service.*;
+import com.olaleyeone.auth.service.PhoneNumberService;
+import com.olaleyeone.auth.service.PhoneNumberServiceImpl;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
@@ -28,15 +27,9 @@ public class AuthenticationApplication {
         SpringApplication.run(AuthenticationApplication.class, args);
     }
 
-    @JwtEncryptionKey
     @Bean
     public Key jwtEncryptionKey() {
         return Keys.secretKeyFor(SignatureAlgorithm.HS512);
-    }
-
-    @Bean
-    public JwtService jwtService(ApplicationContext applicationContext) {
-        return applicationContext.getAutowireCapableBeanFactory().createBean(JwtServiceImpl.class);
     }
 
     @Bean

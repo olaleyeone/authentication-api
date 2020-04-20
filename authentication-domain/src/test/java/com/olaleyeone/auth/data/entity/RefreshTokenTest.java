@@ -58,6 +58,6 @@ class RefreshTokenTest extends EntityTest {
         LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(20);
         refreshToken.setExpiresAt(expiresAt);
         long secondsTillExpiry = Instant.now().until(expiresAt.atZone(ZoneId.systemDefault()).toInstant(), ChronoUnit.SECONDS);
-        assertEquals(secondsTillExpiry, refreshToken.getSecondsTillExpiry());
+        assertTrue((secondsTillExpiry - refreshToken.getSecondsTillExpiry()) <= 1);
     }
 }

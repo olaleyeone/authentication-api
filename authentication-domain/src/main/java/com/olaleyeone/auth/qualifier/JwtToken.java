@@ -9,6 +9,9 @@ import java.lang.annotation.Target;
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
-public @interface JwtEncryptionKey {
+public @interface JwtToken {
+
+    JwtTokenType value();
+
 }
 

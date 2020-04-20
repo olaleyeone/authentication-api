@@ -9,5 +9,5 @@ class RequestMetadataImpl implements RequestMetadata {
     private String userAgent;
     private String accessToken;
     private boolean localhost;
-    private String userId;
+    private JsonWebToken tokenClaims;
 }

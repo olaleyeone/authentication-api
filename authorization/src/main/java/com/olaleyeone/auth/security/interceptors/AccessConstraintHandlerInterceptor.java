@@ -47,7 +47,7 @@ public class AccessConstraintHandlerInterceptor extends HandlerInterceptorAdapte
             if (requestMetadata.getAccessToken() == null) {
                 return validateGuestAccess(response, handlerMethod, accessConstraints);
             }
-            if (requestMetadata.getUserId() == null) {
+            if (requestMetadata.getTokenClaims() == null) {
                 return rejectInvalidToken(response);
             }
 
