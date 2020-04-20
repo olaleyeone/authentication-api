@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Delegate;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Entity
 @Data
@@ -47,4 +48,17 @@ public class PortalUserAuthentication {
     @Setter(value = AccessLevel.NONE)
     @Getter(value = AccessLevel.NONE)
     private PersistTimeSetter persistTimeSetter = new PersistTimeSetter();
+
+    @PrePersist
+    public void setPortalUser() {
+        Optional.ofNullable(portalUserIdentifier)
+                .map(PortalUserIdentifier::getPortalUser)
+                .ifPresent(portalUser -> {
+                    if (this.portalUser == null) {
+                        this.portalUser = portalUser;
+                    } else if (!this.portalUser.getId().equals(portalUser.getId())) {
+                        throw new IllegalArgumentException();
+                    }
+                });
+    }
 }

@@ -44,14 +44,12 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
     private PortalUserAuthentication createInvalidCredentialResponse(PortalUserIdentifier userIdentifier, LoginApiRequest requestDto, RequestMetadata requestMetadata) {
         PortalUserAuthentication userAuthentication = makeAuthenticationResponse(requestDto, requestMetadata, AuthenticationResponseType.INCORRECT_CREDENTIAL);
         userAuthentication.setPortalUserIdentifier(userIdentifier);
-        userAuthentication.setPortalUser(userIdentifier.getPortalUser());
         return authenticationResponseRepository.save(userAuthentication);
     }
 
     private PortalUserAuthentication createSuccessfulAuthenticationResponse(PortalUserIdentifier userIdentifier, LoginApiRequest requestDto, RequestMetadata requestMetadata) {
         PortalUserAuthentication userAuthentication = makeAuthenticationResponse(requestDto, requestMetadata, AuthenticationResponseType.SUCCESSFUL);
         userAuthentication.setPortalUserIdentifier(userIdentifier);
-        userAuthentication.setPortalUser(userIdentifier.getPortalUser());
         return authenticationResponseRepository.save(userAuthentication);
     }
 

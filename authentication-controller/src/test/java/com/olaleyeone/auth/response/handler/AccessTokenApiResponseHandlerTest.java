@@ -49,6 +49,7 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
         userAuthentication = new PortalUserAuthentication();
         userAuthentication.setResponseType(AuthenticationResponseType.SUCCESSFUL);
         userAuthentication.setPortalUserIdentifier(userIdentifier);
+        userAuthentication.setPortalUser(userIdentifier.getPortalUser());
 
         refreshToken = new RefreshToken();
         refreshToken.setActualAuthentication(userAuthentication);

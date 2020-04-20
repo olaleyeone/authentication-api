@@ -1,6 +1,5 @@
 package com.olaleyeone.auth.service;
 
-import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.dto.AccessTokenDto;
 import com.olaleyeone.auth.qualifier.JwtEncryptionKey;
@@ -24,20 +23,23 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String getRefreshToken(RefreshToken refreshToken) {
         Instant expiryInstant = refreshToken.getExpiresAt().atZone(ZoneId.systemDefault()).toInstant();
+        Instant now = Instant.now();
         return Jwts.builder().setSubject(refreshToken.getId().toString())
-                .setIssuedAt(Date.from(Instant.now()))
+                .setNotBefore(Date.from(now))
+                .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(expiryInstant))
                 .signWith(key).compact();
     }
 
     @Override
-    public AccessTokenDto getAccessToken(PortalUser portalUser) {
+    public AccessTokenDto getAccessToken(RefreshToken refreshToken) {
         AccessTokenDto tokenDto = new AccessTokenDto();
         tokenDto.setSecondsTillExpiry(settingService.getInteger(ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS, 300));
 
         Instant now = Instant.now();
         Instant expiryInstant = now.plusSeconds(tokenDto.getSecondsTillExpiry());
-        tokenDto.setToken(Jwts.builder().setSubject(portalUser.getId().toString())
+        tokenDto.setToken(Jwts.builder().setSubject(refreshToken.getPortalUser().getId().toString())
+                .setNotBefore(Date.from(now))
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(expiryInstant))
                 .signWith(key).compact());

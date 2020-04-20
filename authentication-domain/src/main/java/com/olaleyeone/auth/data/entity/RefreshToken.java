@@ -9,6 +9,7 @@ import lombok.experimental.Delegate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Entity
 @Data
@@ -21,14 +22,25 @@ public class RefreshToken {
     @ManyToOne(optional = false)
     private PortalUserAuthentication actualAuthentication;
 
+    @ManyToOne(optional = false)
+    @Setter(value = AccessLevel.NONE)
+    private PortalUser portalUser;
+
     @Embedded
     @Delegate
     @Setter(value = AccessLevel.NONE)
     @Getter(value = AccessLevel.NONE)
     private PersistTimeSetter persistTimeSetter = new PersistTimeSetter();
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime expiresAt;
 
     private LocalDateTime timeDeactivated;
+
+    @PrePersist
+    public void setPortalUser() {
+        portalUser = Optional.ofNullable(actualAuthentication)
+                .map(PortalUserAuthentication::getPortalUser)
+                .orElse(null);
+    }
 }

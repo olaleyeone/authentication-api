@@ -8,7 +8,7 @@ public interface JwtService {
 
     String getRefreshToken(RefreshToken refreshToken);
 
-    AccessTokenDto getAccessToken(PortalUser portalUser);
+    AccessTokenDto getAccessToken(RefreshToken refreshToken);
 
     String getSubject(String token);
 }
