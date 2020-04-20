@@ -7,4 +7,5 @@ include "${projectName}-domain",
         "${projectName}-integration-impl",
         "${projectName}-infrastructure",
         "${projectName}-web-infrastructure",
-        "${projectName}-controller"
+        "${projectName}-controller",
+        "authorization"

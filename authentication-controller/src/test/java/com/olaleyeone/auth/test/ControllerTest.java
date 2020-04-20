@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import com.olaleyeone.auth.configuration.AdditionalComponentsConfiguration;
 import com.olaleyeone.auth.configuration.BeanValidationConfiguration;
+import com.olaleyeone.auth.configuration.SecurityConfiguration;
 import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
+import com.olaleyeone.auth.security.access.AccessTokenValidator;
+import com.olaleyeone.auth.security.access.TrustedIpAddressAccessManager;
 import com.olaleyeone.auth.service.LoginAuthenticationService;
 import com.olaleyeone.auth.service.PhoneNumberService;
 import com.olaleyeone.auth.service.UserRegistrationService;
@@ -21,12 +24,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.inject.Inject;
 import java.util.Random;
 
+@ActiveProfiles("test")
 @WebMvcTest
 @ContextConfiguration(classes = {ControllerTest.$Config.class})
 public abstract class ControllerTest {
@@ -53,7 +58,11 @@ public abstract class ControllerTest {
             "com.olaleyeone.auth.controller",
             "com.olaleyeone.auth.advice"
     })
-    @Import({AdditionalComponentsConfiguration.class, BeanValidationConfiguration.class})
+    @Import({
+            AdditionalComponentsConfiguration.class,
+            BeanValidationConfiguration.class,
+            SecurityConfiguration.class
+    })
     static class $Config {
 
         @Bean
@@ -84,6 +93,16 @@ public abstract class ControllerTest {
         @Bean
         public ValidPhoneNumberValidator validPhoneNumberValidator() {
             return Mockito.mock(ValidPhoneNumberValidator.class);
+        }
+
+        @Bean
+        public TrustedIpAddressAccessManager trustedIpAddressAccessManager() {
+            return Mockito.mock(TrustedIpAddressAccessManager.class);
+        }
+
+        @Bean
+        public AccessTokenValidator accessTokenValidator() {
+            return Mockito.mock(AccessTokenValidator.class);
         }
     }
 }

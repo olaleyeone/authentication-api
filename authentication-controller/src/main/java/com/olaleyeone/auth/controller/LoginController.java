@@ -7,6 +7,7 @@ import com.olaleyeone.auth.dto.data.RequestMetadata;
 import com.olaleyeone.auth.exception.ErrorResponse;
 import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
+import com.olaleyeone.auth.security.annotations.Public;
 import com.olaleyeone.auth.service.LoginAuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ public class LoginController {
     private final Provider<RequestMetadata> requestMetadata;
     private final UserApiResponseHandler userApiResponseHandler;
 
+    @Public
     @PostMapping("/login")
     public UserApiResponse login(@Valid @RequestBody LoginApiRequest dto) {
         PortalUserAuthentication portalUserAuthentication = authenticationService.getAuthenticationResponse(dto, requestMetadata.get());

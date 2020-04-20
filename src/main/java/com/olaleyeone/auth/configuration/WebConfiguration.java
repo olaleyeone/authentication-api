@@ -11,6 +11,10 @@ import org.springframework.context.annotation.Import;
         "com.olaleyeone.auth.validator",
         "com.olaleyeone.auth.response.handler"
 })
-@Import({AdditionalComponentsConfiguration.class, BeanValidationConfiguration.class})
+@Import({
+        AdditionalComponentsConfiguration.class,
+        BeanValidationConfiguration.class,
+        SecurityConfiguration.class
+})
 public class WebConfiguration {
 }
