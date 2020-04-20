@@ -8,7 +8,10 @@ import lombok.Setter;
 import lombok.experimental.Delegate;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @Entity
@@ -36,6 +39,18 @@ public class RefreshToken {
     private LocalDateTime expiresAt;
 
     private LocalDateTime timeDeactivated;
+
+    @Transient
+    public Instant getExpiryInstant() {
+        return Optional.ofNullable(expiresAt)
+                .map(it -> it.atZone(ZoneId.systemDefault()).toInstant())
+                .orElse(null);
+    }
+
+    @Transient
+    public Long getSecondsTillExpiry() {
+        return Instant.now().until(getExpiryInstant(), ChronoUnit.SECONDS);
+    }
 
     @PrePersist
     public void setPortalUser() {

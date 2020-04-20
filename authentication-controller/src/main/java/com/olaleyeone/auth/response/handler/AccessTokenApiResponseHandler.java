@@ -7,7 +7,9 @@ import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.JwtService;
 import com.olaleyeone.auth.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 
 import javax.inject.Named;
 
@@ -18,17 +20,25 @@ public class AccessTokenApiResponseHandler {
     private final RefreshTokenService refreshTokenService;
     private final JwtService jwtService;
 
-    public ResponseEntity<AccessTokenApiResponse> getAccessToken(PortalUserAuthentication portalUserAuthentication) {
+    public HttpEntity<AccessTokenApiResponse> getAccessToken(PortalUserAuthentication portalUserAuthentication) {
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(portalUserAuthentication);
 
         AccessTokenApiResponse accessTokenApiResponse = new AccessTokenApiResponse(portalUserAuthentication.getPortalUser());
-        accessTokenApiResponse.setRefreshToken(jwtService.getRefreshToken(refreshToken));
+        String refreshTokenJws = jwtService.getRefreshToken(refreshToken);
         AccessTokenDto accessToken = jwtService.getAccessToken(refreshToken);
-        accessTokenApiResponse.setAccessToken(accessToken.getToken());
+
+//        accessTokenApiResponse.setRefreshToken(refreshTokenJws);
+//        accessTokenApiResponse.setAccessToken(accessToken.getToken());
         accessTokenApiResponse.setSecondsTillExpiry(accessToken.getSecondsTillExpiry());
 
-//        httpServletResponse.setHeader(HttpHeaders.CACHE_CONTROL, "no-store");
-//        httpServletResponse.setHeader(HttpHeaders.PRAGMA, "no-cache");
-        return ResponseEntity.ok(accessTokenApiResponse);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setCacheControl(CacheControl.noStore());
+        httpHeaders.setPragma("no-cache");
+
+        httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("refresh_token=%s; Max-Age=%d; Path=/; Secure; HttpOnly",
+                refreshTokenJws, refreshToken.getSecondsTillExpiry()));
+        httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("access_token=%s; Max-Age=%d; Path=/; Secure; HttpOnly",
+                accessToken.getToken(), accessToken.getSecondsTillExpiry()));
+        return new HttpEntity(accessTokenApiResponse, httpHeaders);
     }
 }

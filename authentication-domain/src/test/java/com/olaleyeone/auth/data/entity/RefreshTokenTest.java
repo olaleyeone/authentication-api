@@ -4,7 +4,10 @@ import com.olaleyeone.auth.test.EntityTest;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.PersistenceException;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,5 +42,22 @@ class RefreshTokenTest extends EntityTest {
         LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(20);
         refreshToken.setExpiresAt(expiresAt);
         assertThrows(PersistenceException.class, () -> saveAndFlush(refreshToken));
+    }
+
+    @Test
+    public void getExpiryInstant() {
+        RefreshToken refreshToken = new RefreshToken();
+        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(20);
+        refreshToken.setExpiresAt(expiresAt);
+        assertEquals(expiresAt.atZone(ZoneId.systemDefault()).toInstant(), refreshToken.getExpiryInstant());
+    }
+
+    @Test
+    public void getSecondsTillExpiry() {
+        RefreshToken refreshToken = new RefreshToken();
+        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(20);
+        refreshToken.setExpiresAt(expiresAt);
+        long secondsTillExpiry = Instant.now().until(expiresAt.atZone(ZoneId.systemDefault()).toInstant(), ChronoUnit.SECONDS);
+        assertEquals(secondsTillExpiry, refreshToken.getSecondsTillExpiry());
     }
 }

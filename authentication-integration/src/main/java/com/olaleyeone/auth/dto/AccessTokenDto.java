@@ -13,5 +13,5 @@ public class AccessTokenDto {
 
     private String token;
 
-    private Integer secondsTillExpiry;
+    private Long secondsTillExpiry;
 }

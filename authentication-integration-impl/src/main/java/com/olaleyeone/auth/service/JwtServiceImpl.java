@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.security.Key;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.Date;
 
 @RequiredArgsConstructor
@@ -22,19 +21,18 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String getRefreshToken(RefreshToken refreshToken) {
-        Instant expiryInstant = refreshToken.getExpiresAt().atZone(ZoneId.systemDefault()).toInstant();
         Instant now = Instant.now();
         return Jwts.builder().setSubject(refreshToken.getId().toString())
                 .setNotBefore(Date.from(now))
                 .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(expiryInstant))
+                .setExpiration(Date.from(refreshToken.getExpiryInstant()))
                 .signWith(key).compact();
     }
 
     @Override
     public AccessTokenDto getAccessToken(RefreshToken refreshToken) {
         AccessTokenDto tokenDto = new AccessTokenDto();
-        tokenDto.setSecondsTillExpiry(settingService.getInteger(ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS, 300));
+        tokenDto.setSecondsTillExpiry(settingService.getLong(ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS, 300));
 
         Instant now = Instant.now();
         Instant expiryInstant = now.plusSeconds(tokenDto.getSecondsTillExpiry());

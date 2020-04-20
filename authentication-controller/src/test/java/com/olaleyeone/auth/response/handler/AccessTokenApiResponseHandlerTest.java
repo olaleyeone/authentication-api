@@ -15,10 +15,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 
+import java.net.HttpCookie;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AccessTokenApiResponseHandlerTest extends ComponentTest {
 
@@ -35,6 +41,9 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
     private PortalUserIdentifier userIdentifier;
     private RefreshToken refreshToken;
     private PortalUserAuthentication userAuthentication;
+
+    private String refreshJws;
+    private AccessTokenDto accessTokenDto;
 
     @BeforeEach
     void setUp() {
@@ -53,24 +62,77 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
 
         refreshToken = new RefreshToken();
         refreshToken.setActualAuthentication(userAuthentication);
-    }
+        refreshToken.setExpiresAt(LocalDateTime.now().plusDays(1));
 
-    @Test
-    public void getUserPojoForAuthentication() {
-        String refreshJws = UUID.randomUUID().toString();
+        refreshJws = UUID.randomUUID().toString();
         String accessJws = UUID.randomUUID().toString();
+        accessTokenDto = AccessTokenDto.builder()
+                .token(accessJws)
+                .secondsTillExpiry(faker.number().randomNumber())
+                .build();
+
 
         Mockito.when(refreshTokenService.createRefreshToken(Mockito.any(PortalUserAuthentication.class)))
                 .then(invocation -> refreshToken);
         Mockito.when(jwtService.getRefreshToken(Mockito.any()))
                 .then(invocation -> refreshJws);
         Mockito.when(jwtService.getAccessToken(Mockito.any()))
-                .then(invocation -> AccessTokenDto.builder().token(accessJws).build());
+                .then(invocation -> accessTokenDto);
+    }
 
-        AccessTokenApiResponse accessTokenApiResponse = handler.getAccessToken(userAuthentication).getBody();
+    @Test
+    public void getUserPojoForAuthentication() {
+        HttpEntity<AccessTokenApiResponse> responseEntity = handler.getAccessToken(userAuthentication);
+        AccessTokenApiResponse accessTokenApiResponse = responseEntity.getBody();
         assertEquals(user.getFirstName(), accessTokenApiResponse.getFirstName());
         assertEquals(user.getLastName(), accessTokenApiResponse.getLastName());
-        assertEquals(refreshJws, accessTokenApiResponse.getRefreshToken());
-        assertEquals(accessJws, accessTokenApiResponse.getAccessToken());
+        assertNull(accessTokenApiResponse.getRefreshToken());
+        assertNull(accessTokenApiResponse.getAccessToken());
+    }
+
+    @Test
+    public void shouldReturnCacheHeaders() {
+        HttpEntity<AccessTokenApiResponse> responseEntity = handler.getAccessToken(userAuthentication);
+        assertEquals("no-store", responseEntity.getHeaders().getCacheControl());
+        assertEquals("no-cache", responseEntity.getHeaders().getPragma());
+    }
+
+    @Test
+    public void shouldReturnAccessTokenCookies() {
+
+        HttpEntity<AccessTokenApiResponse> responseEntity = handler.getAccessToken(userAuthentication);
+
+        List<HttpCookie> httpCookies = getCookiesByName(responseEntity, "access_token");
+        assertEquals(1, httpCookies.size());
+        HttpCookie httpCookie = httpCookies.iterator().next();
+        assertEquals(accessTokenDto.getSecondsTillExpiry(), httpCookie.getMaxAge());
+        assertSecure(httpCookie);
+    }
+
+    @Test
+    public void shouldReturnRefreshTokenCookies() {
+        HttpEntity<AccessTokenApiResponse> responseEntity = handler.getAccessToken(userAuthentication);
+
+        List<HttpCookie> httpCookies = getCookiesByName(responseEntity, "refresh_token");
+        assertEquals(1, httpCookies.size());
+        HttpCookie httpCookie = httpCookies.iterator().next();
+        assertEquals(refreshToken.getSecondsTillExpiry(), httpCookie.getMaxAge());
+        assertSecure(httpCookie);
+    }
+
+    private List<HttpCookie> getCookiesByName(HttpEntity<?> responseEntity, String name) {
+        return HttpCookie.parse(collectCookies(responseEntity))
+                .stream().filter(httpCookie -> httpCookie.getName().equals(name))
+                .collect(Collectors.toList());
+    }
+
+    private String collectCookies(HttpEntity<?> responseEntity) {
+        return responseEntity.getHeaders().get(HttpHeaders.SET_COOKIE)
+                .stream().collect(Collectors.joining(", "));
+    }
+
+    private void assertSecure(HttpCookie httpCookie) {
+        assertTrue(httpCookie.getSecure());
+        assertTrue(httpCookie.isHttpOnly());
     }
 }

@@ -62,8 +62,9 @@ class JwtServiceImplTest extends ComponentTest {
 
     @Test
     void getAccessToken() {
-        int accessTokenDurationInSeconds = 20;
-        Mockito.when(settingService.getInteger(Mockito.any(), Mockito.anyInt()))
+        long accessTokenDurationInSeconds = 20;
+        Mockito.when(settingService.getLong(Mockito.eq(JwtServiceImpl.ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS),
+                Mockito.anyLong()))
                 .thenReturn(accessTokenDurationInSeconds);
 
         String jws = jwtService.getAccessToken(refreshToken).getToken();
@@ -73,8 +74,9 @@ class JwtServiceImplTest extends ComponentTest {
 
     @Test
     void shouldFailForExpiredAccessToken() {
-        int accessTokenDurationInSeconds = -20;
-        Mockito.when(settingService.getInteger(Mockito.any(), Mockito.anyInt()))
+        long accessTokenDurationInSeconds = -20;
+        Mockito.when(settingService.getLong(Mockito.eq(JwtServiceImpl.ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS),
+                Mockito.anyLong()))
                 .thenReturn(accessTokenDurationInSeconds);
         String jws = jwtService.getAccessToken(refreshToken).getToken();
         assertNotNull(jws);

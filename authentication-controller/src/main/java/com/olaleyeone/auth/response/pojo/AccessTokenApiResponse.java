@@ -23,7 +23,7 @@ public class AccessTokenApiResponse {
     @JsonProperty("access_token")
     private String accessToken;
     @JsonProperty("expires_in")
-    private Integer secondsTillExpiry;
+    private Long secondsTillExpiry;
 
     public AccessTokenApiResponse(PortalUser user) {
         this.id = user.getId();
