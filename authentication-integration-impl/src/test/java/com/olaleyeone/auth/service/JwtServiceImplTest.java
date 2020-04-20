@@ -31,10 +31,11 @@ class JwtServiceImplTest extends ComponentTest {
     public void setUp() {
         jwtService = new JwtServiceImpl(Keys.secretKeyFor(SignatureAlgorithm.HS256), settingService);
         portalUser = new PortalUser();
-        portalUser.setId(1L);
+        portalUser.setId(faker.number().randomNumber());
         userAuthentication = new PortalUserAuthentication();
         userAuthentication.setPortalUser(portalUser);
         refreshToken = new RefreshToken();
+        refreshToken.setId(faker.number().randomNumber());
         refreshToken.setActualAuthentication(userAuthentication);
         refreshToken.setPortalUser();
     }

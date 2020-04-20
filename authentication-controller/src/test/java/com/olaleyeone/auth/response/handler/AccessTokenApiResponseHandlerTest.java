@@ -67,7 +67,7 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
         Mockito.when(jwtService.getAccessToken(Mockito.any()))
                 .then(invocation -> AccessTokenDto.builder().token(accessJws).build());
 
-        AccessTokenApiResponse accessTokenApiResponse = handler.getAccessToken(userAuthentication);
+        AccessTokenApiResponse accessTokenApiResponse = handler.getAccessToken(userAuthentication).getBody();
         assertEquals(user.getFirstName(), accessTokenApiResponse.getFirstName());
         assertEquals(user.getLastName(), accessTokenApiResponse.getLastName());
         assertEquals(refreshJws, accessTokenApiResponse.getRefreshToken());

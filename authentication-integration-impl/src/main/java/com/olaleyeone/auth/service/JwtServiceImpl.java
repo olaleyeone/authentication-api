@@ -38,9 +38,15 @@ public class JwtServiceImpl implements JwtService {
 
         Instant now = Instant.now();
         Instant expiryInstant = now.plusSeconds(tokenDto.getSecondsTillExpiry());
-        tokenDto.setToken(Jwts.builder().setSubject(refreshToken.getPortalUser().getId().toString())
-                .setNotBefore(Date.from(now))
+
+//        jti, iss, sub, aud, iat, nbf, exp
+        tokenDto.setToken(Jwts.builder()
+                .setId(refreshToken.getId().toString())
+                .setIssuer("doorbell")
+                .setSubject(refreshToken.getPortalUser().getId().toString())
+//                .setAudience("all")
                 .setIssuedAt(Date.from(now))
+                .setNotBefore(Date.from(now))
                 .setExpiration(Date.from(expiryInstant))
                 .signWith(key).compact());
         return tokenDto;
