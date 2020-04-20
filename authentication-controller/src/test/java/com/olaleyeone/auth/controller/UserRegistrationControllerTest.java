@@ -2,8 +2,8 @@ package com.olaleyeone.auth.controller;
 
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.dto.data.UserRegistrationApiRequest;
-import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
-import com.olaleyeone.auth.response.pojo.UserApiResponse;
+import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
+import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.UserRegistrationService;
 import com.olaleyeone.auth.test.ControllerTest;
 import com.olaleyeone.auth.validator.UniqueIdentifierValidator;
@@ -24,7 +24,7 @@ class UserRegistrationControllerTest extends ControllerTest {
     private UserRegistrationService userRegistrationService;
 
     @Autowired
-    private UserApiResponseHandler userApiResponseHandler;
+    private AccessTokenApiResponseHandler accessTokenApiResponseHandler;
 
     @Autowired
     private UniqueIdentifierValidator uniqueIdentifierValidator;
@@ -51,21 +51,21 @@ class UserRegistrationControllerTest extends ControllerTest {
     @Test
     void registerUser() throws Exception {
 
-        UserApiResponse userApiResponse = new UserApiResponse();
+        AccessTokenApiResponse accessTokenApiResponse = new AccessTokenApiResponse();
         PortalUserAuthentication userAuthentication = new PortalUserAuthentication();
 
         Mockito.when(userRegistrationService.registerUser(Mockito.any(), Mockito.any()))
                 .then(invocation -> userAuthentication);
-        Mockito.when(userApiResponseHandler.getUserApiResponse(Mockito.any()))
-                .then(invocation -> userApiResponse);
+        Mockito.when(accessTokenApiResponseHandler.getUserApiResponse(Mockito.any()))
+                .then(invocation -> accessTokenApiResponse);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userRegistrationApiRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(result -> {
-                    UserApiResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), UserApiResponse.class);
-                    assertEquals(userApiResponse, response);
+                    AccessTokenApiResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), AccessTokenApiResponse.class);
+                    assertEquals(accessTokenApiResponse, response);
                 });
         Mockito.verify(userRegistrationService, Mockito.times(1))
                 .registerUser(Mockito.eq(userRegistrationApiRequest), Mockito.any());

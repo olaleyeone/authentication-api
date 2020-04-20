@@ -3,8 +3,8 @@ package com.olaleyeone.auth.controller;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.dto.data.LoginApiRequest;
-import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
-import com.olaleyeone.auth.response.pojo.UserApiResponse;
+import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
+import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.LoginAuthenticationService;
 import com.olaleyeone.auth.test.ControllerTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +24,7 @@ class LoginControllerTest extends ControllerTest {
     private LoginAuthenticationService authenticationService;
 
     @Autowired
-    private UserApiResponseHandler userApiResponseHandler;
+    private AccessTokenApiResponseHandler accessTokenApiResponseHandler;
 
     private LoginApiRequest loginApiRequest;
 
@@ -52,7 +52,7 @@ class LoginControllerTest extends ControllerTest {
     @Test
     void loginWithCorrectCredentials() throws Exception {
 
-        UserApiResponse userApiResponse = new UserApiResponse();
+        AccessTokenApiResponse accessTokenApiResponse = new AccessTokenApiResponse();
 
         Mockito.when(authenticationService.getAuthenticationResponse(Mockito.any(), Mockito.any()))
                 .then(invocation -> {
@@ -60,17 +60,17 @@ class LoginControllerTest extends ControllerTest {
                     userAuthentication.setResponseType(AuthenticationResponseType.SUCCESSFUL);
                     return userAuthentication;
                 });
-        Mockito.when(userApiResponseHandler.getUserApiResponse(Mockito.any(PortalUserAuthentication.class)))
-                .then(invocation -> userApiResponse);
+        Mockito.when(accessTokenApiResponseHandler.getUserApiResponse(Mockito.any(PortalUserAuthentication.class)))
+                .then(invocation -> accessTokenApiResponse);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginApiRequest)))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
-                    UserApiResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), UserApiResponse.class);
+                    AccessTokenApiResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), AccessTokenApiResponse.class);
                     assertNotNull(response);
-                    assertEquals(userApiResponse, response);
+                    assertEquals(accessTokenApiResponse, response);
                 });
     }
 }

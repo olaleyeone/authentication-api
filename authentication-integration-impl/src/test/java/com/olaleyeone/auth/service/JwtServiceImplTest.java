@@ -54,7 +54,7 @@ class JwtServiceImplTest extends ComponentTest {
                 .thenReturn(accessTokenDurationInSeconds);
         PortalUser portalUser = new PortalUser();
         portalUser.setId(1L);
-        String jws = jwtService.getAccessToken(portalUser);
+        String jws = jwtService.getAccessToken(portalUser).getToken();
         assertNotNull(jws);
         assertEquals(portalUser.getId().toString(), jwtService.getSubject(jws));
     }
@@ -66,7 +66,7 @@ class JwtServiceImplTest extends ComponentTest {
                 .thenReturn(accessTokenDurationInSeconds);
         PortalUser portalUser = new PortalUser();
         portalUser.setId(1L);
-        String jws = jwtService.getAccessToken(portalUser);
+        String jws = jwtService.getAccessToken(portalUser).getToken();
         assertNotNull(jws);
         assertThrows(ExpiredJwtException.class, () -> jwtService.getSubject(jws));
     }

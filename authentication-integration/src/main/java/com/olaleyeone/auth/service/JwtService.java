@@ -2,12 +2,13 @@ package com.olaleyeone.auth.service;
 
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.RefreshToken;
+import com.olaleyeone.auth.dto.AccessTokenDto;
 
 public interface JwtService {
 
     String getRefreshToken(RefreshToken refreshToken);
 
-    String getAccessToken(PortalUser portalUser);
+    AccessTokenDto getAccessToken(PortalUser portalUser);
 
     String getSubject(String token);
 }

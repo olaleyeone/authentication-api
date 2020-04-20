@@ -5,8 +5,8 @@ import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.dto.data.LoginApiRequest;
 import com.olaleyeone.auth.dto.data.RequestMetadata;
 import com.olaleyeone.auth.exception.ErrorResponse;
-import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
-import com.olaleyeone.auth.response.pojo.UserApiResponse;
+import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
+import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.security.annotations.Public;
 import com.olaleyeone.auth.service.LoginAuthenticationService;
 import lombok.RequiredArgsConstructor;
@@ -24,15 +24,15 @@ public class LoginController {
 
     private final LoginAuthenticationService authenticationService;
     private final Provider<RequestMetadata> requestMetadata;
-    private final UserApiResponseHandler userApiResponseHandler;
+    private final AccessTokenApiResponseHandler accessTokenApiResponseHandler;
 
     @Public
     @PostMapping("/login")
-    public UserApiResponse login(@Valid @RequestBody LoginApiRequest dto) {
+    public AccessTokenApiResponse login(@Valid @RequestBody LoginApiRequest dto) {
         PortalUserAuthentication portalUserAuthentication = authenticationService.getAuthenticationResponse(dto, requestMetadata.get());
         if (portalUserAuthentication.getResponseType() != AuthenticationResponseType.SUCCESSFUL) {
             throw new ErrorResponse(HttpStatus.UNAUTHORIZED);
         }
-        return userApiResponseHandler.getUserApiResponse(portalUserAuthentication);
+        return accessTokenApiResponseHandler.getUserApiResponse(portalUserAuthentication);
     }
 }

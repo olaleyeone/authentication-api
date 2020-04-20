@@ -5,7 +5,8 @@ import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
-import com.olaleyeone.auth.response.pojo.UserApiResponse;
+import com.olaleyeone.auth.dto.AccessTokenDto;
+import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.JwtService;
 import com.olaleyeone.auth.service.RefreshTokenService;
 import com.olaleyeone.auth.test.ComponentTest;
@@ -19,7 +20,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class UserApiResponseHandlerTest extends ComponentTest {
+class AccessTokenApiResponseHandlerTest extends ComponentTest {
 
     @Mock
     private RefreshTokenService refreshTokenService;
@@ -28,7 +29,7 @@ class UserApiResponseHandlerTest extends ComponentTest {
     private JwtService jwtService;
 
     @InjectMocks
-    private UserApiResponseHandler handler;
+    private AccessTokenApiResponseHandler handler;
 
     private PortalUser user;
     private PortalUserIdentifier userIdentifier;
@@ -63,12 +64,12 @@ class UserApiResponseHandlerTest extends ComponentTest {
         Mockito.when(jwtService.getRefreshToken(Mockito.any()))
                 .then(invocation -> refreshJws);
         Mockito.when(jwtService.getAccessToken(Mockito.any()))
-                .then(invocation -> accessJws);
+                .then(invocation -> AccessTokenDto.builder().token(accessJws).build());
 
-        UserApiResponse userApiResponse = handler.getUserApiResponse(userAuthentication);
-        assertEquals(user.getFirstName(), userApiResponse.getFirstName());
-        assertEquals(user.getLastName(), userApiResponse.getLastName());
-        assertEquals(refreshJws, userApiResponse.getRefreshToken());
-        assertEquals(accessJws, userApiResponse.getAccessToken());
+        AccessTokenApiResponse accessTokenApiResponse = handler.getUserApiResponse(userAuthentication);
+        assertEquals(user.getFirstName(), accessTokenApiResponse.getFirstName());
+        assertEquals(user.getLastName(), accessTokenApiResponse.getLastName());
+        assertEquals(refreshJws, accessTokenApiResponse.getRefreshToken());
+        assertEquals(accessJws, accessTokenApiResponse.getAccessToken());
     }
 }
