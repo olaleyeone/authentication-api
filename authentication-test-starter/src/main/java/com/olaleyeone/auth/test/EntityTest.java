@@ -9,6 +9,7 @@ import org.hibernate.engine.spi.Status;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,9 @@ public abstract class EntityTest {
 
     @Autowired
     protected Faker faker;
+
+    @Autowired
+    protected ApplicationContext applicationContext;
 
     @AfterEach
     public void flushAfterEach() {

@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.data.shared;
+package com.olaleyeone.auth.data.embeddable;
 
 import lombok.Getter;
 

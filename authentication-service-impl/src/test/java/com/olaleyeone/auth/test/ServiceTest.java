@@ -16,9 +16,6 @@ import javax.inject.Inject;
 @Import(ServiceTest.$Config.class)
 public class ServiceTest extends EntityTest {
 
-    @Inject
-    private ApplicationContext applicationContext;
-
     @BeforeEach
     public void resetMocks() {
         applicationContext.getBeansOfType(MockAccess.class)

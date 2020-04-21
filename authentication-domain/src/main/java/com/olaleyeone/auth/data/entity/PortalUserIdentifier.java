@@ -1,7 +1,7 @@
 package com.olaleyeone.auth.data.entity;
 
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
-import com.olaleyeone.auth.data.shared.PersistTimeSetter;
+import com.olaleyeone.auth.data.embeddable.PersistTimeSetter;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
