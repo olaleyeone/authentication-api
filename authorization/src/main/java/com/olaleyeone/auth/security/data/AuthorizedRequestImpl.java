@@ -3,7 +3,7 @@ package com.olaleyeone.auth.security.data;
 import lombok.Data;
 
 @Data
-class RequestMetadataImpl implements RequestMetadata {
+class AuthorizedRequestImpl implements AuthorizedRequest {
 
     private String ipAddress;
     private String userAgent;

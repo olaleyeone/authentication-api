@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.security.data;
 
-public interface RequestMetadata {
+public interface AuthorizedRequest {
 
     String getIpAddress();
 

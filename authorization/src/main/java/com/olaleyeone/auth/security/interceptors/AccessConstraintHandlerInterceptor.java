@@ -4,7 +4,7 @@ import com.olaleyeone.auth.security.access.AccessStatus;
 import com.olaleyeone.auth.security.access.Authorizer;
 import com.olaleyeone.auth.security.annotations.AccessConstraint;
 import com.olaleyeone.auth.security.annotations.Public;
-import com.olaleyeone.auth.security.data.RequestMetadata;
+import com.olaleyeone.auth.security.data.AuthorizedRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class AccessConstraintHandlerInterceptor extends HandlerInterceptorAdapte
     private final ApplicationContext applicationContext;
 
     @Autowired
-    private Provider<RequestMetadata> requestMetadataProvider;
+    private Provider<AuthorizedRequest> authorizedRequestProvider;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -43,11 +43,11 @@ public class AccessConstraintHandlerInterceptor extends HandlerInterceptorAdapte
             List<Annotation> accessConstraints = collectAccessConstraints(handlerMethod.getMethod().getDeclaringClass().getAnnotations());
             accessConstraints.addAll(collectAccessConstraints(handlerMethod.getMethod().getDeclaredAnnotations()));
 
-            RequestMetadata requestMetadata = requestMetadataProvider.get();
-            if (requestMetadata.getAccessToken() == null) {
+            AuthorizedRequest authorizedRequest = authorizedRequestProvider.get();
+            if (authorizedRequest.getAccessToken() == null) {
                 return validateGuestAccess(response, handlerMethod, accessConstraints);
             }
-            if (requestMetadata.getAccessClaims() == null) {
+            if (authorizedRequest.getAccessClaims() == null) {
                 return rejectInvalidToken(response);
             }
 
@@ -101,6 +101,6 @@ public class AccessConstraintHandlerInterceptor extends HandlerInterceptorAdapte
     private <A extends Annotation> AccessStatus getAccessStatus(A annotation) {
         Class<? extends Authorizer<A>> aClass = (Class<Authorizer<A>>) annotation.annotationType().getAnnotation(AccessConstraint.class).value();
         Authorizer<A> authorizer = applicationContext.getBean(aClass);
-        return authorizer.getStatus(annotation, requestMetadataProvider.get().getAccessClaims());
+        return authorizer.getStatus(annotation, authorizedRequestProvider.get().getAccessClaims());
     }
 }

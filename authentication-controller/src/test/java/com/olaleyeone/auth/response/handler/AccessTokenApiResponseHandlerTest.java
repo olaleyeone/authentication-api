@@ -115,7 +115,7 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
         List<HttpCookie> httpCookies = getCookiesByName(responseEntity, "refresh_token");
         assertEquals(1, httpCookies.size());
         HttpCookie httpCookie = httpCookies.iterator().next();
-        assertEquals(refreshToken.getSecondsTillExpiry(), httpCookie.getMaxAge());
+        assertTrue((refreshToken.getSecondsTillExpiry() - httpCookie.getMaxAge()) <= 1);
         assertSecure(httpCookie);
     }
 

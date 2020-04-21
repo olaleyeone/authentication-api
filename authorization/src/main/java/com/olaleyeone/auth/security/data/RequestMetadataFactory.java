@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class RequestMetadataFactory implements FactoryBean<RequestMetadata> {
+public class RequestMetadataFactory implements FactoryBean<AuthorizedRequest> {
 
     private final HttpServletRequest httpServletRequest;
     private final AccessClaimsExtractor accessClaimsExtractor;
@@ -23,7 +23,7 @@ public class RequestMetadataFactory implements FactoryBean<RequestMetadata> {
     private String tokenPrefix = "Bearer ";
 
     @Override
-    public RequestMetadata getObject() {
+    public AuthorizedRequest getObject() {
 //        if (RequestContextHolder.getRequestAttributes() == null) {
 //            return null;
 //        }
@@ -32,7 +32,7 @@ public class RequestMetadataFactory implements FactoryBean<RequestMetadata> {
 
     @Override
     public Class<?> getObjectType() {
-        return RequestMetadata.class;
+        return AuthorizedRequest.class;
     }
 
     @Override
@@ -40,10 +40,10 @@ public class RequestMetadataFactory implements FactoryBean<RequestMetadata> {
         return false;
     }
 
-    private RequestMetadataImpl getRequestMetadata() {
-        return Optional.ofNullable((RequestMetadataImpl) httpServletRequest.getAttribute(RequestMetadataImpl.class.getName()))
+    private AuthorizedRequestImpl getRequestMetadata() {
+        return Optional.ofNullable((AuthorizedRequestImpl) httpServletRequest.getAttribute(AuthorizedRequestImpl.class.getName()))
                 .orElseGet(() -> {
-                    RequestMetadataImpl requestMetadata = new RequestMetadataImpl();
+                    AuthorizedRequestImpl requestMetadata = new AuthorizedRequestImpl();
                     requestMetadata.setIpAddress(getActualIpAddress(httpServletRequest));
                     requestMetadata.setLocalhost(isLocalhost(requestMetadata.getIpAddress()));
                     requestMetadata.setUserAgent(httpServletRequest.getHeader(HttpHeaders.USER_AGENT));
@@ -52,7 +52,7 @@ public class RequestMetadataFactory implements FactoryBean<RequestMetadata> {
                         requestMetadata.setAccessToken(authorizationHeader.substring(tokenPrefix.length()));
                         requestMetadata.setAccessClaims(accessClaimsExtractor.getClaims(requestMetadata.getAccessToken()));
                     }
-                    httpServletRequest.setAttribute(RequestMetadataImpl.class.getName(), requestMetadata);
+                    httpServletRequest.setAttribute(AuthorizedRequestImpl.class.getName(), requestMetadata);
                     return requestMetadata;
                 });
     }

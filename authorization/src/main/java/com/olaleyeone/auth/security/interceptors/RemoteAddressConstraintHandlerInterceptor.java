@@ -4,7 +4,7 @@ import com.olaleyeone.auth.security.access.TrustedIpAddressAuthorizer;
 import com.olaleyeone.auth.security.access.AccessStatus;
 import com.olaleyeone.auth.security.annotations.Localhost;
 import com.olaleyeone.auth.security.annotations.TrustedIpAddress;
-import com.olaleyeone.auth.security.data.RequestMetadata;
+import com.olaleyeone.auth.security.data.AuthorizedRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.tuple.Pair;
@@ -28,7 +28,7 @@ public class RemoteAddressConstraintHandlerInterceptor extends HandlerIntercepto
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final TrustedIpAddressAuthorizer trustedIpAddressAccessManager;
-    private final Provider<RequestMetadata> requestMetadataProvider;
+    private final Provider<AuthorizedRequest> authorizedRequestProvider;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -36,19 +36,19 @@ public class RemoteAddressConstraintHandlerInterceptor extends HandlerIntercepto
             return true;
         }
         HandlerMethod handlerMethod = (HandlerMethod) handler;
-        RequestMetadata requestMetadata = requestMetadataProvider.get();
+        AuthorizedRequest authorizedRequest = authorizedRequestProvider.get();
 
         try {
             if (expectsOnlyLocalhost(handlerMethod)) {
-                if (!requestMetadata.isLocalhost()) {
-                    logger.warn("Non local IP \"{}\" denied access to {}", requestMetadata, request.getServletPath());
+                if (!authorizedRequest.isLocalhost()) {
+                    logger.warn("Non local IP \"{}\" denied access to {}", authorizedRequest.getIpAddress(), request.getServletPath());
                     sendForbiddenResponse(AccessStatus.denied(), response);
                     return false;
                 }
             } else {
-                Map.Entry<TrustedIpAddress, AccessStatus> failedTrustedIpAddressCheck = getFailedTrustedIpAddressCheck(handlerMethod, requestMetadata.getIpAddress());
+                Map.Entry<TrustedIpAddress, AccessStatus> failedTrustedIpAddressCheck = getFailedTrustedIpAddressCheck(handlerMethod, authorizedRequest.getIpAddress());
                 if (failedTrustedIpAddressCheck != null) {
-                    logRequestFromUntrustedIpAddress(failedTrustedIpAddressCheck.getKey(), request, requestMetadata.getIpAddress());
+                    logRequestFromUntrustedIpAddress(failedTrustedIpAddressCheck.getKey(), request, authorizedRequest.getIpAddress());
                     sendForbiddenResponse(failedTrustedIpAddressCheck.getValue(), response);
                     return false;
                 }

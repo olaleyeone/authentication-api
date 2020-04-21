@@ -1,8 +1,8 @@
 package com.olaleyeone.auth.controller;
 
+import com.olaleyeone.auth.dto.data.RequestMetadata;
 import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
-import com.olaleyeone.auth.security.data.RequestMetadata;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +21,6 @@ public class AuthenticatedUserController {
 
     @GetMapping("/me")
     public UserApiResponse getUserDetails() {
-        return userApiResponseHandler.getUserApiResponse(Long.valueOf(requestMetadataProvider.get().getAccessClaims().getSubject()));
+        return userApiResponseHandler.getUserApiResponse(Long.valueOf(requestMetadataProvider.get().getPortalUserId()));
     }
 }
