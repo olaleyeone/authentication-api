@@ -21,6 +21,6 @@ public class AuthenticatedUserController {
 
     @GetMapping("/me")
     public UserApiResponse getUserDetails() {
-        return userApiResponseHandler.getUserApiResponse(Long.valueOf(requestMetadataProvider.get().getTokenClaims().getSubject()));
+        return userApiResponseHandler.getUserApiResponse(Long.valueOf(requestMetadataProvider.get().getAccessClaims().getSubject()));
     }
 }

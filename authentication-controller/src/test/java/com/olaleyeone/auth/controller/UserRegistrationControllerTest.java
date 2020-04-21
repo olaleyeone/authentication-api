@@ -63,8 +63,7 @@ class UserRegistrationControllerTest extends ControllerTest {
                 .then(invocation -> userAuthentication);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userRegistrationApiRequest)))
+                .with(body(userRegistrationApiRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(result -> {
                     AccessTokenApiResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), AccessTokenApiResponse.class);
@@ -78,8 +77,7 @@ class UserRegistrationControllerTest extends ControllerTest {
     void shouldValidateRequest() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userRegistrationApiRequest)));
+                .with(body(userRegistrationApiRequest)));
 
         Mockito.verify(validPhoneNumberValidator, Mockito.times(1))
                 .isValid(Mockito.eq(userRegistrationApiRequest.getPhoneNumber()), Mockito.any());

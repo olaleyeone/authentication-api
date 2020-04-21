@@ -1,7 +1,7 @@
 package com.olaleyeone.auth.security.interceptors;
 
 import com.olaleyeone.auth.security.access.AccessStatus;
-import com.olaleyeone.auth.security.access.AccessStatusSource;
+import com.olaleyeone.auth.security.access.Authorizer;
 import com.olaleyeone.auth.security.annotations.AccessConstraint;
 import com.olaleyeone.auth.security.annotations.Public;
 import com.olaleyeone.auth.security.data.RequestMetadata;
@@ -47,7 +47,7 @@ public class AccessConstraintHandlerInterceptor extends HandlerInterceptorAdapte
             if (requestMetadata.getAccessToken() == null) {
                 return validateGuestAccess(response, handlerMethod, accessConstraints);
             }
-            if (requestMetadata.getTokenClaims() == null) {
+            if (requestMetadata.getAccessClaims() == null) {
                 return rejectInvalidToken(response);
             }
 
@@ -99,8 +99,8 @@ public class AccessConstraintHandlerInterceptor extends HandlerInterceptorAdapte
     }
 
     private <A extends Annotation> AccessStatus getAccessStatus(A annotation) {
-        Class<? extends AccessStatusSource<A>> aClass = (Class<AccessStatusSource<A>>) annotation.annotationType().getAnnotation(AccessConstraint.class).value();
-        AccessStatusSource<A> accessStatusSource = applicationContext.getBean(aClass);
-        return accessStatusSource.getStatus(annotation);
+        Class<? extends Authorizer<A>> aClass = (Class<Authorizer<A>>) annotation.annotationType().getAnnotation(AccessConstraint.class).value();
+        Authorizer<A> authorizer = applicationContext.getBean(aClass);
+        return authorizer.getStatus(annotation, requestMetadataProvider.get().getAccessClaims());
     }
 }

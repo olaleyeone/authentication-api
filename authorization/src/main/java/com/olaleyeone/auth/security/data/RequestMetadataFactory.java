@@ -1,6 +1,5 @@
 package com.olaleyeone.auth.security.data;
 
-import com.olaleyeone.auth.security.access.AccessTokenValidator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -15,7 +14,7 @@ import java.util.Optional;
 public class RequestMetadataFactory implements FactoryBean<RequestMetadata> {
 
     private final HttpServletRequest httpServletRequest;
-    private final AccessTokenValidator accessTokenValidator;
+    private final AccessClaimsExtractor accessClaimsExtractor;
 
     @Getter
     @Setter
@@ -46,12 +45,12 @@ public class RequestMetadataFactory implements FactoryBean<RequestMetadata> {
                 .orElseGet(() -> {
                     RequestMetadataImpl requestMetadata = new RequestMetadataImpl();
                     requestMetadata.setIpAddress(getActualIpAddress(httpServletRequest));
-                    requestMetadata.setUserAgent(httpServletRequest.getHeader(HttpHeaders.USER_AGENT));
                     requestMetadata.setLocalhost(isLocalhost(requestMetadata.getIpAddress()));
+                    requestMetadata.setUserAgent(httpServletRequest.getHeader(HttpHeaders.USER_AGENT));
                     String authorizationHeader = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
                     if (StringUtils.isNotBlank(authorizationHeader) && authorizationHeader.startsWith(tokenPrefix)) {
                         requestMetadata.setAccessToken(authorizationHeader.substring(tokenPrefix.length()));
-                        requestMetadata.setTokenClaims(accessTokenValidator.parseToken(requestMetadata.getAccessToken()));
+                        requestMetadata.setAccessClaims(accessClaimsExtractor.getClaims(requestMetadata.getAccessToken()));
                     }
                     httpServletRequest.setAttribute(RequestMetadataImpl.class.getName(), requestMetadata);
                     return requestMetadata;
@@ -60,10 +59,14 @@ public class RequestMetadataFactory implements FactoryBean<RequestMetadata> {
 
     public String getActualIpAddress(HttpServletRequest request) {
         String ipAddress = request.getRemoteAddr();
-        if (isLocalhost(ipAddress) && StringUtils.isNotBlank(request.getHeader(proxyIpHeader))) {
+        if (isWebServer(ipAddress) && StringUtils.isNotBlank(request.getHeader(proxyIpHeader))) {
             ipAddress = request.getHeader(proxyIpHeader);
         }
         return ipAddress;
+    }
+
+    public boolean isWebServer(String ipAddress) {
+        return isLocalhost(ipAddress);
     }
 
     public boolean isLocalhost(String ipAddress) {

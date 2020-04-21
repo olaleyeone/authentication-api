@@ -9,7 +9,8 @@ import org.springframework.context.annotation.Import;
         "com.olaleyeone.auth.controller",
         "com.olaleyeone.auth.advice",
         "com.olaleyeone.auth.validator",
-        "com.olaleyeone.auth.response.handler"
+        "com.olaleyeone.auth.response.handler",
+        "com.olaleyeone.auth.security.authorizer"
 })
 @Import({
         AdditionalComponentsConfiguration.class,

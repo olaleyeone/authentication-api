@@ -6,12 +6,14 @@ import com.olaleyeone.auth.service.PhoneNumberService;
 import com.olaleyeone.auth.service.PhoneNumberServiceImpl;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.security.Key;
@@ -28,6 +30,7 @@ public class AuthenticationApplication {
     }
 
     @Bean
+    @Scope(DefaultListableBeanFactory.SCOPE_PROTOTYPE)
     public Key jwtEncryptionKey() {
         return Keys.secretKeyFor(SignatureAlgorithm.HS512);
     }

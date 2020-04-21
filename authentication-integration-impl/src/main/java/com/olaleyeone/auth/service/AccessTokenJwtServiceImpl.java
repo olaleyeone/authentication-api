@@ -1,12 +1,12 @@
 package com.olaleyeone.auth.service;
 
 import com.google.gson.Gson;
-import com.olaleyeone.auth.data.SimpleJsonWebToken;
+import com.olaleyeone.auth.data.SimpleAccessClaims;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.dto.JwtDto;
 import com.olaleyeone.auth.qualifier.JwtToken;
 import com.olaleyeone.auth.qualifier.JwtTokenType;
-import com.olaleyeone.auth.security.data.JsonWebToken;
+import com.olaleyeone.auth.security.data.AccessClaims;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
@@ -49,9 +49,9 @@ public class AccessTokenJwtServiceImpl implements JwtService {
     }
 
     @Override
-    public JsonWebToken parseAccessToken(String jws) {
+    public AccessClaims parseAccessToken(String jws) {
         Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jws).getBody();
-        return new SimpleJsonWebToken(claims, gson);
+        return new SimpleAccessClaims(claims, gson);
     }
 
 }

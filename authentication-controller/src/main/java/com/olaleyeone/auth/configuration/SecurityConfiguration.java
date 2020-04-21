@@ -3,10 +3,10 @@ package com.olaleyeone.auth.configuration;
 import com.olaleyeone.auth.qualifier.JwtToken;
 import com.olaleyeone.auth.qualifier.JwtTokenType;
 import com.olaleyeone.auth.security.access.AccessStatus;
-import com.olaleyeone.auth.security.access.AccessTokenValidator;
-import com.olaleyeone.auth.security.access.TrustedIpAddressAccessManager;
+import com.olaleyeone.auth.security.data.AccessClaimsExtractor;
+import com.olaleyeone.auth.security.access.TrustedIpAddressAuthorizer;
 import com.olaleyeone.auth.security.annotations.TrustedIpAddress;
-import com.olaleyeone.auth.security.data.JsonWebToken;
+import com.olaleyeone.auth.security.data.AccessClaims;
 import com.olaleyeone.auth.security.data.RequestMetadataFactory;
 import com.olaleyeone.auth.security.interceptors.AccessConstraintHandlerInterceptor;
 import com.olaleyeone.auth.security.interceptors.RemoteAddressConstraintHandlerInterceptor;
@@ -43,8 +43,8 @@ public class SecurityConfiguration implements WebMvcConfigurer {
 
     @Profile("!test")
     @Bean
-    public TrustedIpAddressAccessManager trustedIpAddressAccessManager(SettingService settingService) {
-        return new TrustedIpAddressAccessManager() {
+    public TrustedIpAddressAuthorizer trustedIpAddressAccessManager(SettingService settingService) {
+        return new TrustedIpAddressAuthorizer() {
             @Override
             public AccessStatus getStatus(TrustedIpAddress accessConstraint, String ipAddress) {
                 Optional<String> value = settingService.getString(StringUtils.defaultIfBlank(accessConstraint.value(), "TRUSTED_IP"));
@@ -65,10 +65,10 @@ public class SecurityConfiguration implements WebMvcConfigurer {
 
     @Profile("!test")
     @Bean
-    public AccessTokenValidator accessTokenValidator(@JwtToken(JwtTokenType.ACCESS) JwtService jwtService) {
-        return new AccessTokenValidator() {
+    public AccessClaimsExtractor accessTokenValidator(@JwtToken(JwtTokenType.ACCESS) JwtService jwtService) {
+        return new AccessClaimsExtractor() {
             @Override
-            public JsonWebToken parseToken(String token) {
+            public AccessClaims getClaims(String token) {
                 try {
                     return jwtService.parseAccessToken(token);
                 } catch (Exception e) {

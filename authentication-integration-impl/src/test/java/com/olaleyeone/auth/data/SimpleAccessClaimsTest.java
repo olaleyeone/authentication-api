@@ -15,10 +15,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class SimpleJsonWebTokenTest extends ComponentTest {
+class SimpleAccessClaimsTest extends ComponentTest {
 
     private Gson gson;
-    private SimpleJsonWebToken simpleJsonWebToken;
+    private SimpleAccessClaims simpleJsonWebToken;
 
     @Mock
     private Claims claims;
@@ -26,7 +26,7 @@ class SimpleJsonWebTokenTest extends ComponentTest {
     @BeforeEach
     void setUp() {
         gson = new Gson();
-        simpleJsonWebToken = new SimpleJsonWebToken(claims, gson);
+        simpleJsonWebToken = new SimpleAccessClaims(claims, gson);
     }
 
     @Test

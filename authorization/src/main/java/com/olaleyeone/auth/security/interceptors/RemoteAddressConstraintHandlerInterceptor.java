@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.security.interceptors;
 
-import com.olaleyeone.auth.security.access.TrustedIpAddressAccessManager;
+import com.olaleyeone.auth.security.access.TrustedIpAddressAuthorizer;
 import com.olaleyeone.auth.security.access.AccessStatus;
 import com.olaleyeone.auth.security.annotations.Localhost;
 import com.olaleyeone.auth.security.annotations.TrustedIpAddress;
@@ -27,7 +27,7 @@ public class RemoteAddressConstraintHandlerInterceptor extends HandlerIntercepto
 
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final TrustedIpAddressAccessManager trustedIpAddressAccessManager;
+    private final TrustedIpAddressAuthorizer trustedIpAddressAccessManager;
     private final Provider<RequestMetadata> requestMetadataProvider;
 
     @Override

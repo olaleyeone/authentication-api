@@ -2,8 +2,6 @@ package com.olaleyeone.auth.controller;
 
 import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
-import com.olaleyeone.auth.security.access.AccessTokenValidator;
-import com.olaleyeone.auth.security.data.JsonWebToken;
 import com.olaleyeone.auth.test.ControllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,21 +19,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AuthenticatedUserControllerTest extends ControllerTest {
 
     @Autowired
-    private AccessTokenValidator accessTokenValidator;
-
-    @Autowired
     private UserApiResponseHandler userApiResponseHandler;
 
     private String token;
-    private JsonWebToken jwt;
 
     @BeforeEach
     public void setUp() {
         token = UUID.randomUUID().toString();
-        jwt = Mockito.mock(JsonWebToken.class);
         Mockito.doReturn(String.valueOf(faker.number().randomNumber())).when(jwt)
                 .getSubject();
-        Mockito.doReturn(jwt).when(accessTokenValidator).parseToken(Mockito.any());
     }
 
     @Test
@@ -44,7 +36,7 @@ class AuthenticatedUserControllerTest extends ControllerTest {
         userApiResponse.setId(faker.number().randomNumber());
         Mockito.doReturn(userApiResponse).when(userApiResponseHandler).getUserApiResponse(Mockito.any());
         mockMvc.perform(MockMvcRequestBuilders.get("/me")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .with(loggedInUser))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
                     UserApiResponse response = objectMapper.readValue(result.getResponse().getContentAsByteArray(), UserApiResponse.class);
@@ -56,21 +48,21 @@ class AuthenticatedUserControllerTest extends ControllerTest {
     }
 
     @Test
-    void shouldValidateToke() throws Exception {
+    void shouldValidateToken() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/me")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isOk());
-        Mockito.verify(accessTokenValidator, Mockito.times(1))
-                .parseToken(token);
+        Mockito.verify(accessClaimsExtractor, Mockito.times(1))
+                .getClaims(token);
     }
 
     @Test
     void shouldRejectInvalidToken() throws Exception {
-        Mockito.doReturn(null).when(accessTokenValidator).parseToken(Mockito.any());
+        Mockito.doReturn(null).when(accessClaimsExtractor).getClaims(Mockito.any());
         mockMvc.perform(MockMvcRequestBuilders.get("/me")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isUnauthorized());
-        Mockito.verify(accessTokenValidator, Mockito.times(1))
-                .parseToken(token);
+        Mockito.verify(accessClaimsExtractor, Mockito.times(1))
+                .getClaims(token);
     }
 }

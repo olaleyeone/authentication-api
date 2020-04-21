@@ -2,7 +2,7 @@ package com.olaleyeone.auth.data;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.olaleyeone.auth.security.data.JsonWebToken;
+import com.olaleyeone.auth.security.data.AccessClaims;
 import io.jsonwebtoken.Claims;
 
 import java.lang.reflect.Type;
@@ -11,14 +11,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class SimpleJsonWebToken implements JsonWebToken {
+public class SimpleAccessClaims implements AccessClaims {
 
     private final Claims claims;
     private final Gson gson;
     private static final Type type = new TypeToken<List<String>>() {
     }.getType();
 
-    public SimpleJsonWebToken(Claims claims, Gson gson) {
+    public SimpleAccessClaims(Claims claims, Gson gson) {
         this.claims = claims;
         this.gson = gson;
     }

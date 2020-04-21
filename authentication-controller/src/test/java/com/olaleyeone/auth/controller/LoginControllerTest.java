@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -45,8 +44,7 @@ class LoginControllerTest extends ControllerTest {
                     return userAuthentication;
                 });
         mockMvc.perform(MockMvcRequestBuilders.post("/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginApiRequest)))
+                .with(body(loginApiRequest)))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -65,8 +63,7 @@ class LoginControllerTest extends ControllerTest {
                 .then(invocation -> ResponseEntity.ok(accessTokenApiResponse));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginApiRequest)))
+                .with(body(loginApiRequest)))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
                     AccessTokenApiResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), AccessTokenApiResponse.class);

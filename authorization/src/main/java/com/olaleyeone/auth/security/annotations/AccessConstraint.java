@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.security.annotations;
 
-import com.olaleyeone.auth.security.access.AccessStatusSource;
+import com.olaleyeone.auth.security.access.Authorizer;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -14,5 +14,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface AccessConstraint {
 
-    Class<? extends AccessStatusSource<?>> value();
+    Class<? extends Authorizer<?>> value();
 }

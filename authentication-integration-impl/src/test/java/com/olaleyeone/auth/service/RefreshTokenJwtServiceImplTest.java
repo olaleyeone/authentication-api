@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.RefreshToken;
-import com.olaleyeone.auth.security.data.JsonWebToken;
+import com.olaleyeone.auth.security.data.AccessClaims;
 import com.olaleyeone.auth.test.ComponentTest;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -43,9 +43,9 @@ class RefreshTokenJwtServiceImplTest extends ComponentTest {
         refreshToken.setExpiresAt(LocalDateTime.now().plusMinutes(1));
         String jws = jwtService.generateJwt(refreshToken).getToken();
         assertNotNull(jws);
-        JsonWebToken jsonWebToken = jwtService.parseAccessToken(jws);
-        assertEquals(refreshToken.getId().toString(), jsonWebToken.getId());
-        assertEquals(portalUser.getId().toString(), jsonWebToken.getSubject());
+        AccessClaims accessClaims = jwtService.parseAccessToken(jws);
+        assertEquals(refreshToken.getId().toString(), accessClaims.getId());
+        assertEquals(portalUser.getId().toString(), accessClaims.getSubject());
     }
 
     @Test
