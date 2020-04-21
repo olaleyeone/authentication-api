@@ -2,7 +2,7 @@ package com.olaleyeone.auth.controller;
 
 import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
-import com.olaleyeone.auth.test.ControllerTest;
+import com.olaleyeone.auth.controllertest.ControllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

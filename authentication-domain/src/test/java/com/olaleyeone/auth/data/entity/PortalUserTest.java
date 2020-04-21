@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.data.entity;
 
-import com.olaleyeone.auth.test.EntityTest;
+import com.olaleyeone.auth.entitytest.EntityTest;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.PersistenceException;

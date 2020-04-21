@@ -4,7 +4,7 @@ import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
 import com.olaleyeone.auth.dto.data.RequestMetadata;
-import com.olaleyeone.auth.test.ServiceTest;
+import com.olaleyeone.auth.servicetest.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

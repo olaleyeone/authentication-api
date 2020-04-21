@@ -6,7 +6,7 @@ import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
 import com.olaleyeone.auth.dto.data.LoginApiRequest;
 import com.olaleyeone.auth.dto.data.RequestMetadata;
-import com.olaleyeone.auth.repository.AuthenticationResponseRepository;
+import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +19,7 @@ import java.util.Optional;
 public class LoginAuthenticationServiceImpl implements LoginAuthenticationService {
 
     private final PortalUserIdentifierRepository portalUserIdentifierRepository;
-    private final AuthenticationResponseRepository authenticationResponseRepository;
+    private final PortalUserAuthenticationRepository portalUserAuthenticationRepository;
     private final PasswordService passwordService;
 
     @Transactional
@@ -38,19 +38,19 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
 
     private PortalUserAuthentication createUnknownAccountResponse(LoginApiRequest requestDto, RequestMetadata requestMetadata) {
         PortalUserAuthentication userAuthentication = makeAuthenticationResponse(requestDto, requestMetadata, AuthenticationResponseType.UNKNOWN_ACCOUNT);
-        return authenticationResponseRepository.save(userAuthentication);
+        return portalUserAuthenticationRepository.save(userAuthentication);
     }
 
     private PortalUserAuthentication createInvalidCredentialResponse(PortalUserIdentifier userIdentifier, LoginApiRequest requestDto, RequestMetadata requestMetadata) {
         PortalUserAuthentication userAuthentication = makeAuthenticationResponse(requestDto, requestMetadata, AuthenticationResponseType.INCORRECT_CREDENTIAL);
         userAuthentication.setPortalUserIdentifier(userIdentifier);
-        return authenticationResponseRepository.save(userAuthentication);
+        return portalUserAuthenticationRepository.save(userAuthentication);
     }
 
     private PortalUserAuthentication createSuccessfulAuthenticationResponse(PortalUserIdentifier userIdentifier, LoginApiRequest requestDto, RequestMetadata requestMetadata) {
         PortalUserAuthentication userAuthentication = makeAuthenticationResponse(requestDto, requestMetadata, AuthenticationResponseType.SUCCESSFUL);
         userAuthentication.setPortalUserIdentifier(userIdentifier);
-        return authenticationResponseRepository.save(userAuthentication);
+        return portalUserAuthenticationRepository.save(userAuthentication);
     }
 
     private PortalUserAuthentication makeAuthenticationResponse(LoginApiRequest requestDto, RequestMetadata requestMetadata, AuthenticationResponseType authenticationResponseType) {

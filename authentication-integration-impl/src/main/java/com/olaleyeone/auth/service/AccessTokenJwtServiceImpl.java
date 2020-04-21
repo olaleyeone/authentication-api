@@ -21,8 +21,6 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class AccessTokenJwtServiceImpl implements JwtService {
 
-    public static String ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS = "ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS";
-
     private final Key key;
     private final SettingService settingService;
     private final Gson gson;
@@ -30,7 +28,7 @@ public class AccessTokenJwtServiceImpl implements JwtService {
     @Override
     public JwtDto generateJwt(RefreshToken refreshToken) {
         JwtDto jwtDto = new JwtDto();
-        jwtDto.setSecondsTillExpiry(settingService.getLong(ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS, 300));
+        jwtDto.setSecondsTillExpiry(refreshToken.getSecondsTillAccessExpiry());
 
         Instant now = Instant.now();
         Instant expiryInstant = now.plusSeconds(jwtDto.getSecondsTillExpiry());

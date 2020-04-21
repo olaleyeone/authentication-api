@@ -5,7 +5,7 @@ import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
 import com.olaleyeone.auth.dto.data.RequestMetadata;
-import com.olaleyeone.auth.repository.AuthenticationResponseRepository;
+import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Named;
@@ -15,7 +15,7 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class ImplicitAuthenticationServiceImpl implements ImplicitAuthenticationService {
 
-    private final AuthenticationResponseRepository authenticationResponseRepository;
+    private final PortalUserAuthenticationRepository portalUserAuthenticationRepository;
 
     @Transactional
     @Override
@@ -26,7 +26,7 @@ public class ImplicitAuthenticationServiceImpl implements ImplicitAuthentication
         userAuthentication.setResponseType(AuthenticationResponseType.SUCCESSFUL);
         userAuthentication.setIpAddress(requestMetadata.getIpAddress());
         userAuthentication.setUserAgent(requestMetadata.getUserAgent());
-        return authenticationResponseRepository.save(userAuthentication);
+        return portalUserAuthenticationRepository.save(userAuthentication);
     }
 
 }

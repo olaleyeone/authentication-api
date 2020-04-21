@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.test;
+package com.olaleyeone.auth.controllertest;
 
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.response.handler.UserApiResponseHandler;

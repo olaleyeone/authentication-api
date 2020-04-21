@@ -36,8 +36,12 @@ public class RefreshToken {
     private PersistTimeSetter persistTimeSetter = new PersistTimeSetter();
 
     @Column(nullable = false, updatable = false)
+    private LocalDateTime accessExpiresAt;
+
+    @Column(nullable = false, updatable = false)
     private LocalDateTime expiresAt;
 
+    private LocalDateTime lastUsedAt;
     private LocalDateTime timeDeactivated;
 
     @Transient
@@ -48,8 +52,20 @@ public class RefreshToken {
     }
 
     @Transient
+    public Instant getAccessExpiryInstant() {
+        return Optional.ofNullable(accessExpiresAt)
+                .map(it -> it.atZone(ZoneId.systemDefault()).toInstant())
+                .orElse(null);
+    }
+
+    @Transient
     public Long getSecondsTillExpiry() {
         return Instant.now().until(getExpiryInstant(), ChronoUnit.SECONDS);
+    }
+
+    @Transient
+    public Long getSecondsTillAccessExpiry() {
+        return Instant.now().until(getAccessExpiryInstant(), ChronoUnit.SECONDS);
     }
 
     @PrePersist

@@ -10,7 +10,8 @@ import org.springframework.context.annotation.Import;
         "com.olaleyeone.auth.advice",
         "com.olaleyeone.auth.validator",
         "com.olaleyeone.auth.response.handler",
-        "com.olaleyeone.auth.security.authorizer"
+        "com.olaleyeone.auth.security.authorizer",
+        "com.olaleyeone.auth.search"
 })
 @Import({
         AdditionalComponentsConfiguration.class,

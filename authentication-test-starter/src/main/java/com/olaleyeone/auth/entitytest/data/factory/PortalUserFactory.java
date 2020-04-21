@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.test.data.factory;
+package com.olaleyeone.auth.entitytest.data.factory;
 
 import com.github.heywhy.springentityfactory.contracts.FactoryHelper;
 import com.github.heywhy.springentityfactory.contracts.ModelFactory;

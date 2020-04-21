@@ -1,8 +1,8 @@
-package com.olaleyeone.auth.test;
+package com.olaleyeone.auth.entitytest;
 
 import com.github.heywhy.springentityfactory.contracts.ModelFactory;
 import com.github.javafaker.Faker;
-import com.olaleyeone.auth.test.data.TestDataFactoryConfiguration;
+import com.olaleyeone.auth.entitytest.data.TestDataFactoryConfiguration;
 import org.hibernate.engine.spi.EntityEntry;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.engine.spi.Status;

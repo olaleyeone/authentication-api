@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.test;
+package com.olaleyeone.auth.controllertest;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -7,14 +7,17 @@ import com.github.javafaker.Faker;
 import com.olaleyeone.auth.configuration.AdditionalComponentsConfiguration;
 import com.olaleyeone.auth.configuration.BeanValidationConfiguration;
 import com.olaleyeone.auth.configuration.SecurityConfiguration;
-import com.olaleyeone.auth.security.data.AccessClaimsExtractor;
+import com.olaleyeone.auth.search.util.PredicateExtractor;
+import com.olaleyeone.auth.search.util.SearchFilterPredicateExtractor;
 import com.olaleyeone.auth.security.data.AccessClaims;
+import com.olaleyeone.auth.security.data.AccessClaimsExtractor;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.mockito.internal.creation.bytebuddy.MockAccess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -87,10 +90,20 @@ public abstract class ControllerTest {
             ValidatorMockConfig.class,
             ServiceMockConfig.class,
             RepositoryMockConfig.class,
-            ResponseHandlerMockConfig.class
+            ResponseHandlerMockConfig.class,
+            SearchHandlerMockConfig.class
     })
     static class $Config {
 
+        @Bean
+        public PredicateExtractor predicateExtractor(ApplicationContext applicationContext) {
+            return applicationContext.getAutowireCapableBeanFactory().createBean(PredicateExtractor.class);
+        }
+
+        @Bean
+        public SearchFilterPredicateExtractor searchFilterPredicateExtractor(ApplicationContext applicationContext) {
+            return applicationContext.getAutowireCapableBeanFactory().createBean(SearchFilterPredicateExtractor.class);
+        }
     }
 
 }

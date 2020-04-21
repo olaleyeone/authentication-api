@@ -6,7 +6,7 @@ import com.olaleyeone.auth.dto.data.LoginApiRequest;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.LoginAuthenticationService;
-import com.olaleyeone.auth.test.ControllerTest;
+import com.olaleyeone.auth.controllertest.ControllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.data.entity;
 
-import com.olaleyeone.auth.test.EntityTest;
+import com.olaleyeone.auth.entitytest.EntityTest;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.PersistenceException;
@@ -20,11 +20,14 @@ class RefreshTokenTest extends EntityTest {
         refreshToken.setActualAuthentication(userAuthentication);
         LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(20);
         refreshToken.setExpiresAt(expiresAt);
+        LocalDateTime accessExpiresAt = LocalDateTime.now().plusMinutes(2);
+        refreshToken.setAccessExpiresAt(accessExpiresAt);
         saveAndFlush(refreshToken);
         entityManager.refresh(refreshToken);
         assertNotNull(refreshToken.getDateCreated());
         assertNotNull(refreshToken.getPortalUser());
         assertEquals(expiresAt, refreshToken.getExpiresAt());
+        assertEquals(accessExpiresAt, refreshToken.getAccessExpiresAt());
         assertEquals(userAuthentication.getId(), refreshToken.getActualAuthentication().getId());
     }
 
@@ -59,5 +62,22 @@ class RefreshTokenTest extends EntityTest {
         refreshToken.setExpiresAt(expiresAt);
         long secondsTillExpiry = Instant.now().until(expiresAt.atZone(ZoneId.systemDefault()).toInstant(), ChronoUnit.SECONDS);
         assertTrue((secondsTillExpiry - refreshToken.getSecondsTillExpiry()) <= 1);
+    }
+
+    @Test
+    public void getAccessExpiryInstant() {
+        RefreshToken refreshToken = new RefreshToken();
+        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(20);
+        refreshToken.setAccessExpiresAt(expiresAt);
+        assertEquals(expiresAt.atZone(ZoneId.systemDefault()).toInstant(), refreshToken.getAccessExpiryInstant());
+    }
+
+    @Test
+    public void getAccessSecondsTillExpiry() {
+        RefreshToken refreshToken = new RefreshToken();
+        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(20);
+        refreshToken.setAccessExpiresAt(expiresAt);
+        long secondsTillExpiry = Instant.now().until(expiresAt.atZone(ZoneId.systemDefault()).toInstant(), ChronoUnit.SECONDS);
+        assertTrue((secondsTillExpiry - refreshToken.getSecondsTillAccessExpiry()) <= 1);
     }
 }

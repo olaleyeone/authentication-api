@@ -1,8 +1,6 @@
-package com.olaleyeone.auth.test;
+package com.olaleyeone.auth.controllertest;
 
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
-import com.olaleyeone.auth.validator.UniqueIdentifierValidator;
-import com.olaleyeone.auth.validator.ValidPhoneNumberValidator;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

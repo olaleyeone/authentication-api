@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.test;
+package com.olaleyeone.auth.controllertest;
 
 import com.olaleyeone.auth.security.data.AccessClaimsExtractor;
 import com.olaleyeone.auth.security.access.TrustedIpAddressAuthorizer;

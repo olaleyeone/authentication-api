@@ -3,8 +3,8 @@ package com.olaleyeone.auth.service;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.dto.data.PasswordUpdateApiRequest;
+import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import com.olaleyeone.auth.repository.PortalUserRepository;
-import com.olaleyeone.auth.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
 
@@ -17,7 +17,7 @@ public class PasswordUpdateServiceImpl implements PasswordUpdateService {
 
     private final PasswordService passwordService;
     private final PortalUserRepository portalUserRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final PortalUserAuthenticationRepository portalUserAuthenticationRepository;
 
     @Transactional
     @Override
@@ -26,7 +26,7 @@ public class PasswordUpdateServiceImpl implements PasswordUpdateService {
         portalUser.setPassword(passwordService.hashPassword(passwordUpdateApiRequest.getPassword()));
         portalUserRepository.save(portalUser);
         if (BooleanUtils.isTrue(passwordUpdateApiRequest.getInvalidateOtherSessions())) {
-            refreshTokenRepository.deactivateOtherSessions(refreshToken);
+            portalUserAuthenticationRepository.deactivateOtherSessions(refreshToken.getActualAuthentication());
         }
     }
 }

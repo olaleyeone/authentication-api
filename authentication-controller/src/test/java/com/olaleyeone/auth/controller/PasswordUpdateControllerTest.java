@@ -6,7 +6,7 @@ import com.olaleyeone.auth.repository.RefreshTokenRepository;
 import com.olaleyeone.auth.security.access.AccessStatus;
 import com.olaleyeone.auth.security.authorizer.NotClientTokenAuthorizer;
 import com.olaleyeone.auth.service.PasswordUpdateService;
-import com.olaleyeone.auth.test.ControllerTest;
+import com.olaleyeone.auth.controllertest.ControllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

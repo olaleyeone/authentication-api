@@ -1,7 +1,7 @@
 package com.olaleyeone.auth.service;
 
 import com.olaleyeone.auth.repository.SettingRepository;
-import com.olaleyeone.auth.test.ServiceTest;
+import com.olaleyeone.auth.servicetest.ServiceTest;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;

@@ -1,17 +1,15 @@
-package com.olaleyeone.auth.test;
+package com.olaleyeone.auth.servicetest;
 
+import com.olaleyeone.auth.entitytest.EntityTest;
 import com.olaleyeone.auth.service.PasswordService;
 import com.olaleyeone.auth.service.PhoneNumberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.mockito.internal.creation.bytebuddy.MockAccess;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-
-import javax.inject.Inject;
 
 @Import(ServiceTest.$Config.class)
 public class ServiceTest extends EntityTest {

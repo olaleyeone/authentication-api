@@ -2,14 +2,10 @@ package com.olaleyeone.auth.data.entity;
 
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
-import com.olaleyeone.auth.data.embeddable.PersistTimeSetter;
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Delegate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Entity
@@ -43,14 +39,18 @@ public class PortalUserAuthentication {
     @ManyToOne
     private PortalUser portalUser;
 
-    @Embedded
-    @Delegate
-    @Setter(value = AccessLevel.NONE)
-    @Getter(value = AccessLevel.NONE)
-    private PersistTimeSetter persistTimeSetter = new PersistTimeSetter();
+    private LocalDateTime lastActiveAt;
+    private LocalDateTime becomesInactiveAt;
+    private LocalDateTime autoLogoutAt;
+    private LocalDateTime loggedOutAt;
+    private LocalDateTime deactivatedAt;
+
+    @Column(updatable = false, nullable = false)
+    private LocalDateTime dateCreated;
 
     @PrePersist
     public void setPortalUser() {
+        dateCreated = LocalDateTime.now();
         Optional.ofNullable(portalUserIdentifier)
                 .map(PortalUserIdentifier::getPortalUser)
                 .ifPresent(portalUser -> {

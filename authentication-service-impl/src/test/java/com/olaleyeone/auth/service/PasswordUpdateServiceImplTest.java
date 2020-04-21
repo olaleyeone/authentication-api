@@ -1,9 +1,9 @@
 package com.olaleyeone.auth.service;
 
+import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.RefreshToken;
-import com.olaleyeone.auth.dto.data.LoginApiRequest;
 import com.olaleyeone.auth.dto.data.PasswordUpdateApiRequest;
-import com.olaleyeone.auth.test.ServiceTest;
+import com.olaleyeone.auth.servicetest.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class PasswordUpdateServiceImplTest extends ServiceTest {
 
@@ -33,9 +34,10 @@ class PasswordUpdateServiceImplTest extends ServiceTest {
     @Test
     void shouldDeactivateOtherSessions() {
         RefreshToken refreshToken = modelFactory.create(RefreshToken.class);
-        List<RefreshToken> otherSessions = modelFactory.pipe(RefreshToken.class)
+        List<PortalUserAuthentication> otherSessions = modelFactory.pipe(PortalUserAuthentication.class)
                 .then(it -> {
-                    it.getActualAuthentication().setPortalUser(refreshToken.getPortalUser());
+                    it.setPortalUserIdentifier(null);
+                    it.setPortalUser(refreshToken.getPortalUser());
                     return it;
                 })
                 .create(2);
@@ -44,16 +46,17 @@ class PasswordUpdateServiceImplTest extends ServiceTest {
         assertNull(refreshToken.getTimeDeactivated());
         otherSessions.forEach(it -> {
             entityManager.refresh(it);
-            assertNotNull(it.getTimeDeactivated());
+            assertNotNull(it.getDeactivatedAt());
         });
     }
 
     @Test
     void shouldNotDeactivateOtherSessions() {
         RefreshToken refreshToken = modelFactory.create(RefreshToken.class);
-        List<RefreshToken> otherSessions = modelFactory.pipe(RefreshToken.class)
+        List<PortalUserAuthentication> otherSessions = modelFactory.pipe(PortalUserAuthentication.class)
                 .then(it -> {
-                    it.getActualAuthentication().setPortalUser(refreshToken.getPortalUser());
+                    it.setPortalUserIdentifier(null);
+                    it.setPortalUser(refreshToken.getPortalUser());
                     return it;
                 })
                 .create(2);
@@ -63,35 +66,36 @@ class PasswordUpdateServiceImplTest extends ServiceTest {
         assertNull(refreshToken.getTimeDeactivated());
         otherSessions.forEach(it -> {
             entityManager.refresh(it);
-            assertNull(it.getTimeDeactivated());
+            assertNull(it.getDeactivatedAt());
         });
     }
 
     @Test
     void shouldNotDeactivateExpiredSessions() {
         RefreshToken refreshToken = modelFactory.create(RefreshToken.class);
-        List<RefreshToken> otherSessions = modelFactory.pipe(RefreshToken.class)
+        List<PortalUserAuthentication> otherSessions = modelFactory.pipe(PortalUserAuthentication.class)
                 .then(it -> {
-                    it.setExpiresAt(LocalDateTime.now());
-                    it.getActualAuthentication().setPortalUser(refreshToken.getPortalUser());
+                    it.setPortalUserIdentifier(null);
+                    it.setAutoLogoutAt(LocalDateTime.now());
+                    it.setPortalUser(refreshToken.getPortalUser());
                     return it;
                 })
                 .create(2);
         passwordUpdateService.updatePassword(refreshToken, apiRequest);
         otherSessions.forEach(it -> {
             entityManager.refresh(it);
-            assertNull(it.getTimeDeactivated());
+            assertNull(it.getDeactivatedAt());
         });
     }
 
     @Test
     void shouldNotDeactivatedSessionsOfOtherUsers() {
         RefreshToken refreshToken = modelFactory.create(RefreshToken.class);
-        List<RefreshToken> otherSessions = modelFactory.create(RefreshToken.class, 2);
+        List<PortalUserAuthentication> otherSessions = modelFactory.create(PortalUserAuthentication.class, 2);
         passwordUpdateService.updatePassword(refreshToken, apiRequest);
         otherSessions.forEach(it -> {
             entityManager.refresh(it);
-            assertNull(it.getTimeDeactivated());
+            assertNull(it.getDeactivatedAt());
         });
     }
 }

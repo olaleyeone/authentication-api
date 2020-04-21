@@ -11,8 +11,8 @@ import java.util.List;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
 
-    @Query("SELECT t FROM RefreshToken t WHERE t.timeDeactivated IS NULL AND t.actualAuthentication=?1 AND t.expiresAt>?2")
-    List<RefreshToken> findActiveTokens(PortalUserAuthentication authenticationResponse, LocalDateTime now);
+    @Query("SELECT t FROM RefreshToken t WHERE t.timeDeactivated IS NULL AND t.actualAuthentication=?1 AND t.expiresAt>CURRENT_TIMESTAMP")
+    List<RefreshToken> findActiveTokens(PortalUserAuthentication authenticationResponse);
 
     @Modifying
     @Query("UPDATE RefreshToken r SET r.timeDeactivated=CURRENT_TIMESTAMP" +

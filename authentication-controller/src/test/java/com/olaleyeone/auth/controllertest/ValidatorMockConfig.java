@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.test;
+package com.olaleyeone.auth.controllertest;
 
 import com.olaleyeone.auth.validator.UniqueIdentifierValidator;
 import com.olaleyeone.auth.validator.ValidPhoneNumberValidator;
