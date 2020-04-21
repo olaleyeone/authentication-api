@@ -1,6 +1,7 @@
 package com.olaleyeone.auth.test;
 
 import com.olaleyeone.auth.service.LoginAuthenticationService;
+import com.olaleyeone.auth.service.PasswordUpdateService;
 import com.olaleyeone.auth.service.PhoneNumberService;
 import com.olaleyeone.auth.service.UserRegistrationService;
 import org.mockito.Mockito;
@@ -23,5 +24,10 @@ class ServiceMockConfig {
     @Bean
     public UserRegistrationService userRegistrationService() {
         return Mockito.mock(UserRegistrationService.class);
+    }
+
+    @Bean
+    public PasswordUpdateService passwordUpdateService() {
+        return Mockito.mock(PasswordUpdateService.class);
     }
 }

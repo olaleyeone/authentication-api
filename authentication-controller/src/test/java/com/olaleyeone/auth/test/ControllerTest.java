@@ -44,7 +44,7 @@ public abstract class ControllerTest {
     @Autowired
     protected AccessClaimsExtractor accessClaimsExtractor;
 
-    protected AccessClaims jwt;
+    protected AccessClaims accessClaims;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -70,8 +70,8 @@ public abstract class ControllerTest {
     public void resetMocks() {
         applicationContext.getBeansOfType(MockAccess.class)
                 .values().forEach(Mockito::reset);
-        jwt = Mockito.mock(AccessClaims.class);
-        Mockito.doReturn(jwt).when(accessClaimsExtractor).getClaims(Mockito.any());
+        accessClaims = Mockito.mock(AccessClaims.class);
+        Mockito.doReturn(accessClaims).when(accessClaimsExtractor).getClaims(Mockito.any());
     }
 
     @Configuration
@@ -86,6 +86,7 @@ public abstract class ControllerTest {
             SecurityMockConfig.class,
             ValidatorMockConfig.class,
             ServiceMockConfig.class,
+            RepositoryMockConfig.class,
             ResponseHandlerMockConfig.class
     })
     static class $Config {

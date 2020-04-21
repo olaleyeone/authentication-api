@@ -26,7 +26,7 @@ class AuthenticatedUserControllerTest extends ControllerTest {
     @BeforeEach
     public void setUp() {
         token = UUID.randomUUID().toString();
-        Mockito.doReturn(String.valueOf(faker.number().randomNumber())).when(jwt)
+        Mockito.doReturn(String.valueOf(faker.number().randomNumber())).when(accessClaims)
                 .getSubject();
     }
 
@@ -44,7 +44,7 @@ class AuthenticatedUserControllerTest extends ControllerTest {
                     assertEquals(userApiResponse.getId(), response.getId());
                 });
         Mockito.verify(userApiResponseHandler, Mockito.times(1))
-                .getUserApiResponse(Long.valueOf(jwt.getSubject()));
+                .getUserApiResponse(Long.valueOf(accessClaims.getSubject()));
     }
 
     @Test
