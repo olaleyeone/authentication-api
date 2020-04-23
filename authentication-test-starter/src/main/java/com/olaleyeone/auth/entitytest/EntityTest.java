@@ -11,10 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.transaction.TestTransaction;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Map;
 
 @Transactional
@@ -22,7 +22,7 @@ import java.util.Map;
 @Import({TestDataFactoryConfiguration.class})
 public abstract class EntityTest {
 
-    @PersistenceContext
+    @Autowired
     protected EntityManager entityManager;
 
     @Autowired
@@ -36,6 +36,9 @@ public abstract class EntityTest {
 
     @AfterEach
     public void flushAfterEach() {
+        if(!TestTransaction.isActive()){
+            return;
+        }
         SessionImplementor session = entityManager.unwrap(SessionImplementor.class);
         org.hibernate.engine.spi.PersistenceContext persistenceContext = session.getPersistenceContext();
         for (Map.Entry<Object, EntityEntry> entityEntry : persistenceContext.reentrantSafeEntityEntries()) {

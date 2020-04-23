@@ -1,8 +1,28 @@
+apply plugin: 'jacoco'
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                minimum = 0.95
+            }
+            excludes = [
+
+            ]
+        }
+    }
+}
+check.dependsOn jacocoTestCoverageVerification
+
 dependencies {
     api(project(":${projectName}-domain"))
     api "org.springframework.data:spring-data-jpa:$springDataVersion"
-    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-    implementation "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:$hibernateJpaVersion"
 
     testImplementation(project(":${projectName}-test-starter"))
 }

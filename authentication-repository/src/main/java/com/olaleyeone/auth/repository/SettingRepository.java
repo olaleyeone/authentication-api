@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.repository;
 
-import com.olaleyeone.auth.data.entity.Setting;
+import com.olaleyeone.data.entity.Setting;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
