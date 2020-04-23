@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.search;
+package com.olaleyeone.entitysearch;
 
 import lombok.*;
 

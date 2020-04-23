@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.search;
+package com.olaleyeone.entitysearch;
 
 import com.querydsl.core.types.EntityPath;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;

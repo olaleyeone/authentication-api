@@ -1,0 +1,38 @@
+apply plugin: 'jacoco'
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                minimum = 0.95
+            }
+            excludes = [
+
+            ]
+        }
+    }
+}
+check.dependsOn jacocoTestCoverageVerification
+
+dependencies {
+    api "org.springframework.data:spring-data-jpa:$springDataVersion"
+    api "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    implementation "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:$hibernateJpaVersion"
+
+    testCompileOnly "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    testAnnotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
+    testAnnotationProcessor("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion") {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+
+    testImplementation "org.hibernate:hibernate-core:$hibernateVersion"
+    testRuntimeOnly "com.h2database:h2:$h2Version"
+}
