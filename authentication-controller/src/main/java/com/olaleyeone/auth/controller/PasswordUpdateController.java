@@ -2,7 +2,7 @@ package com.olaleyeone.auth.controller;
 
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.dto.data.PasswordUpdateApiRequest;
-import com.olaleyeone.auth.dto.data.RequestMetadata;
+import com.olaleyeone.data.RequestMetadata;
 import com.olaleyeone.auth.exception.NotFoundException;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
 import com.olaleyeone.auth.security.constraint.NotClientToken;

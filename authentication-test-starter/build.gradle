@@ -7,6 +7,8 @@ dependencies {
     api "com.github.javafaker:javafaker:$javaFakerVersion"
     implementation "com.google.guava:guava:$guavaVersion"
 
+    implementation(project(":entity-search"))
+
     api("org.springframework.boot:spring-boot-starter-test:$springBootVersion") {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }

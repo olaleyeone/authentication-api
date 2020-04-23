@@ -1,7 +1,7 @@
 package com.olaleyeone.auth.controller;
 
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
-import com.olaleyeone.auth.dto.data.RequestMetadata;
+import com.olaleyeone.data.RequestMetadata;
 import com.olaleyeone.auth.dto.data.UserRegistrationApiRequest;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;

@@ -4,7 +4,7 @@ import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.dto.data.LoginApiRequest;
-import com.olaleyeone.auth.dto.data.RequestMetadata;
+import com.olaleyeone.data.RequestMetadata;
 import com.olaleyeone.auth.servicetest.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

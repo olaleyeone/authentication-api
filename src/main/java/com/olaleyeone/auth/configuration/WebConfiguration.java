@@ -1,8 +1,12 @@
 package com.olaleyeone.auth.configuration;
 
+import com.olaleyeone.entitysearch.JpaQuerySource;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+
+import javax.persistence.EntityManager;
 
 @Configuration
 @ComponentScan({
@@ -19,4 +23,9 @@ import org.springframework.context.annotation.Import;
         SecurityConfiguration.class
 })
 public class WebConfiguration {
+
+    @Bean
+    public JpaQuerySource jpaQuerySource(EntityManager entityManager) {
+        return new JpaQuerySource(entityManager);
+    }
 }

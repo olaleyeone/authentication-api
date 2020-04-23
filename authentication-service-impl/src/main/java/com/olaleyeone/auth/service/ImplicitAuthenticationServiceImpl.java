@@ -4,7 +4,7 @@ import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
-import com.olaleyeone.auth.dto.data.RequestMetadata;
+import com.olaleyeone.data.RequestMetadata;
 import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import lombok.RequiredArgsConstructor;
 

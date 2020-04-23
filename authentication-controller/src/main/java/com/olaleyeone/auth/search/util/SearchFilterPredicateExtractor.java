@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.search.util;
 
-import com.olaleyeone.auth.search.SearchFilter;
+import com.olaleyeone.entitysearch.SearchFilter;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;

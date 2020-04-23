@@ -1,12 +1,15 @@
 package com.olaleyeone.auth.entitytest;
 
 import com.olaleyeone.data.RequestMetadata;
+import com.olaleyeone.entitysearch.JpaQuerySource;
 import org.mockito.Mockito;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import javax.persistence.EntityManager;
 
 @SpringBootApplication
 @EnableJpaRepositories({"com.olaleyeone.auth.repository"})
@@ -20,6 +23,11 @@ public class TestApplication {
     @Bean
     public RequestMetadata requestMetadata() {
         return Mockito.mock(RequestMetadata.class);
+    }
+
+    @Bean
+    public JpaQuerySource jpaQuerySource(EntityManager entityManager) {
+        return new JpaQuerySource(entityManager);
     }
 
 }

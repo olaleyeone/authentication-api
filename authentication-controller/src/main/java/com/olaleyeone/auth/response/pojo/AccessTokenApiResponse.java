@@ -2,8 +2,6 @@ package com.olaleyeone.auth.response.pojo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.olaleyeone.auth.data.entity.PortalUser;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

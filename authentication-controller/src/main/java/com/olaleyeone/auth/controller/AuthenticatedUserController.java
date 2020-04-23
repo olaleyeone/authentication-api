@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.controller;
 
-import com.olaleyeone.auth.dto.data.RequestMetadata;
+import com.olaleyeone.data.RequestMetadata;
 import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
 import lombok.RequiredArgsConstructor;

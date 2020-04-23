@@ -44,6 +44,8 @@ dependencies {
     implementation project(path: ":${projectName}-service-impl", configuration: 'default')
     implementation project(path: ":${projectName}-integration-impl", configuration: 'default')
     implementation project(path: ":${projectName}-controller", configuration: 'default')
+
+    implementation(project(":audit-trail-spring-data-jpa"))
 }
 
 test {

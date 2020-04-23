@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.service;
 
-import com.olaleyeone.auth.data.entity.Setting;
+import com.olaleyeone.data.entity.Setting;
 import com.olaleyeone.auth.repository.SettingRepository;
 import lombok.RequiredArgsConstructor;
 

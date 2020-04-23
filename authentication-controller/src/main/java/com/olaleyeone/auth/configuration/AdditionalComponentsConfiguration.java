@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.configuration;
 
-import com.olaleyeone.auth.dto.data.RequestMetadata;
+import com.olaleyeone.data.RequestMetadata;
 import com.olaleyeone.auth.security.data.AuthorizedRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

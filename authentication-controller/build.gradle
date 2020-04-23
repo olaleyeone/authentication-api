@@ -26,6 +26,8 @@ dependencies {
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "org.springdoc:springdoc-openapi-ui:$springdocOpenapiVersion"
 
+    implementation(project(":entity-search"))
+
     testImplementation(project(":${projectName}-test-starter"))
     testImplementation "javax.servlet:javax.servlet-api:$servletVersion"
     testRuntimeOnly "org.hibernate.validator:hibernate-validator:$hibernateValidator"

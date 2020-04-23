@@ -11,10 +11,10 @@ class SearchHandlerMockConfig {
 
     @Bean
     public FactoryBean<PortalUserAuthenticationSearchHandler> portalUserAuthenticationSearchHandler() {
-        return preventAutowire(Mockito.mock(PortalUserAuthenticationSearchHandler.class));
+        return noAutowire(Mockito.mock(PortalUserAuthenticationSearchHandler.class));
     }
 
-    public static <T> FactoryBean<T> preventAutowire(T bean) {
+    public static <T> FactoryBean<T> noAutowire(T bean) {
         return new FactoryBean<T>() {
             public T getObject() throws Exception {
                 return bean;
