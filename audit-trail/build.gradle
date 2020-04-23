@@ -1,0 +1,24 @@
+apply plugin: 'jacoco'
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                minimum = 0.95
+            }
+            excludes = [
+
+            ]
+        }
+    }
+}
+check.dependsOn jacocoTestCoverageVerification
+
+dependencies {
+}

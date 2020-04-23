@@ -8,4 +8,6 @@ include "${projectName}-domain",
         "${projectName}-infrastructure",
         "${projectName}-web-infrastructure",
         "${projectName}-controller",
-        "authorization"
+        "authorization",
+        "audit-trail",
+        "audit-trail-spring-data-jpa"

@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.data.entity;
+package com.olaleyeone.data;
 
 import com.olaleyeone.auth.data.embeddable.PersistTimeSetter;
 import lombok.AccessLevel;

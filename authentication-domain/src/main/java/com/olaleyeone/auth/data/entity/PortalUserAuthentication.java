@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.data.entity;
+package com.olaleyeone.auth.data.entity.domain;
 
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.enums.AuthenticationType;

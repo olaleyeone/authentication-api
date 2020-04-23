@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.data.entity;
+package com.olaleyeone.auth.data.entity.domain;
 
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.data.embeddable.PersistTimeSetter;
