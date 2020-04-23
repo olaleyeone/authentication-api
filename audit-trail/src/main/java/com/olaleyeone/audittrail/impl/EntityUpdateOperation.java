@@ -12,8 +12,10 @@ public class EntityUpdateOperation extends EntityOperation {
         Map<String, EntityAttributeData> dataUpdateMap = new HashMap<>();
 
         to.entrySet().forEach(entry -> {
-            EntityAttributeData entityAttributeData = new EntityAttributeData(entry.getValue());
-            entityAttributeData.setPreviousValue(from.get(entry.getKey()));
+            EntityAttributeData entityAttributeData = EntityAttributeData.builder()
+                    .value(entry.getValue())
+                    .previousValue(from.get(entry.getKey()))
+                    .build();
             dataUpdateMap.put(entry.getKey(), entityAttributeData);
         });
 

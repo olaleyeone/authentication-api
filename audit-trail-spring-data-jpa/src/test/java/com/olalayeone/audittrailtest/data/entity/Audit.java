@@ -1,4 +1,4 @@
-package com.olaleyeone.audittrail.entity;
+package com.olalayeone.audittrailtest.data.entity;
 
 import lombok.Data;
 

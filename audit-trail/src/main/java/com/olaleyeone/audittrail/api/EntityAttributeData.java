@@ -1,13 +1,18 @@
 package com.olaleyeone.audittrail.api;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+@Builder
 @Data
 public class EntityAttributeData {
 
-    private AuditData previousValue;
+    @NonNull
+    private final AuditData previousValue;
+    @NonNull
     private final AuditData value;
 
     public boolean isModified() {

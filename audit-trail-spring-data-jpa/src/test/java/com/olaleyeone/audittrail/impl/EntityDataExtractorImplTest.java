@@ -1,12 +1,9 @@
 package com.olaleyeone.audittrail.impl;
 
 import com.olalayeone.audittrailtest.EntityTest;
-import com.olalayeone.audittrailtest.data.entity.Item;
-import com.olalayeone.audittrailtest.data.entity.Student;
-import com.olalayeone.audittrailtest.data.entity.User;
+import com.olalayeone.audittrailtest.data.entity.*;
 import com.olaleyeone.audittrail.api.AuditData;
 import com.olaleyeone.audittrail.api.EntityIdentifier;
-import com.olaleyeone.audittrail.entity.Audit;
 import org.hibernate.proxy.HibernateProxy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -81,6 +78,26 @@ class EntityDataExtractorImplTest extends EntityTest {
         User user = new User();
         user.setId(faker.number().randomDigit());
         assertEquals(user.getId(), entityDataExtractor.getPrimaryKey(user));
+    }
+
+    @Test
+    void shouldHonorIgnoreDataAnnotationOnField() {
+        User user = new User();
+        user.setId(faker.number().randomDigit());
+        user.setPassword(faker.internet().password());
+        Map<String, AuditData> entityData = entityDataExtractor.extractAttributes(user);
+        assertEquals(user.getPassword(), entityData.get("password").getData().get());
+        assertFalse(entityData.get("password").getTextValue().isPresent());
+    }
+
+    @Test
+    void shouldHonorIgnoreDataAnnotationOnProperty() {
+        Store store = new Store();
+        store.setId(Long.valueOf(faker.number().randomDigit()));
+        store.setPin(faker.internet().password());
+        Map<String, AuditData> entityData = entityDataExtractor.extractAttributes(store);
+        assertEquals(store.getPin(), entityData.get("pin").getData().get());
+        assertFalse(entityData.get("pin").getTextValue().isPresent());
     }
 
     @Test

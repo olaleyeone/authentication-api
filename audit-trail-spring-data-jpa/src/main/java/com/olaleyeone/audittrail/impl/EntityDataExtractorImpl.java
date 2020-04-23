@@ -3,6 +3,7 @@ package com.olaleyeone.audittrail.impl;
 import com.olaleyeone.audittrail.api.AuditData;
 import com.olaleyeone.audittrail.api.EntityDataExtractor;
 import com.olaleyeone.audittrail.api.EntityIdentifier;
+import com.olaleyeone.audittrail.api.IgnoreData;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -62,7 +63,7 @@ public abstract class EntityDataExtractorImpl implements EntityDataExtractor {
         for (Attribute<?, ?> attribute : attributes) {
             Object value = getMemberValue(entity, attribute.getJavaMember());
             if (attribute.getPersistentAttributeType() == Attribute.PersistentAttributeType.BASIC) {
-                dataMap.put(attribute.getName(), new AuditDataImpl(value));
+                dataMap.put(attribute.getName(), new AuditDataImpl(value, ignoreData(attribute.getJavaMember())));
             } else if (attribute.getPersistentAttributeType() == Attribute.PersistentAttributeType.EMBEDDED) {
                 if (value == null) {
                     dataMap.put(attribute.getName(), new AuditDataImpl(null));
@@ -95,6 +96,15 @@ public abstract class EntityDataExtractorImpl implements EntityDataExtractor {
             return field.get(object);
         } else {
             return ((Method) member).invoke(object);
+        }
+    }
+
+    boolean ignoreData(Member member) {
+        if (member instanceof Field) {
+            Field field = (Field) member;
+            return field.getAnnotation(IgnoreData.class) != null;
+        } else {
+            return ((Method) member).getAnnotation(IgnoreData.class) != null;
         }
     }
 }

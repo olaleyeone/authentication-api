@@ -90,7 +90,7 @@ class UnitOfWorkLoggerTest extends EntityTest {
         UnitOfWork auditTrail = units.iterator().next();
         entityOperations.forEach(entityHistoryLog -> {
             EntityIdentifier entityIdentifier = entityHistoryLog.getEntityIdentifier();
-            Optional<EntityState> optionalEntityHistory = entityStateRepository.getByUnitOfWork(auditTrail, entityIdentifier.getEntityType().getName(),
+            Optional<EntityState> optionalEntityHistory = entityStateRepository.getByUnitOfWork(auditTrail, entityIdentifier.getEntityName(),
                     entityIdentifier.getPrimaryKey().toString());
             assertTrue(optionalEntityHistory.isPresent());
             EntityState entityState = optionalEntityHistory.get();
@@ -118,7 +118,7 @@ class UnitOfWorkLoggerTest extends EntityTest {
         assertEquals(auditTrail, entityState.getUnitOfWork());
         assertEquals(operationType, entityState.getOperationType());
 
-        assertEquals(entityType.getJavaType().getName(), entityState.getEntityName());
+        assertEquals(entityType.getName(), entityState.getEntityName());
         assertEquals(entityIdentifier.getPrimaryKey().toString(), entityState.getEntityId());
     }
 
@@ -126,8 +126,10 @@ class UnitOfWorkLoggerTest extends EntityTest {
     void saveEntityHistoryAttribute() {
         EntityState entityState = createEntityHistory();
 
-        EntityAttributeData data = new EntityAttributeData(new AuditDataImpl(faker.lordOfTheRings().character()));
-        data.setPreviousValue(new AuditDataImpl(faker.lordOfTheRings().character()));
+        EntityAttributeData data = EntityAttributeData.builder()
+                .value(new AuditDataImpl(faker.lordOfTheRings().character()))
+                .previousValue(new AuditDataImpl(faker.lordOfTheRings().character()))
+                .build();
 
         EntityStateAttribute attribute = unitOfWorkLogger.createEntityHistoryAttribute(entityState, Pair.of(faker.funnyName().name(), data));
         assertNotNull(attribute);
@@ -145,8 +147,10 @@ class UnitOfWorkLoggerTest extends EntityTest {
             EntityOperation historyLog = new EntityOperation(new EntityIdentifierImpl(entityType, i), OperationType.CREATE);
             Map<String, EntityAttributeData> dataMap = new HashMap<>();
             for (int j = 0; j < i; j++) {
-                EntityAttributeData data = new EntityAttributeData(new AuditDataImpl(faker.lordOfTheRings().character()));
-                data.setPreviousValue(new AuditDataImpl(faker.lordOfTheRings().character()));
+                EntityAttributeData data = EntityAttributeData.builder()
+                        .value(new AuditDataImpl(faker.lordOfTheRings().character()))
+                        .previousValue(new AuditDataImpl(faker.lordOfTheRings().character()))
+                        .build();
                 dataMap.put(faker.funnyName().name(), data);
             }
             historyLog.setAttributes(dataMap);

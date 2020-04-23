@@ -20,10 +20,10 @@ public class UnitOfWork {
     private Long estimatedTimeTakenInNanos;
 
     @Column(updatable = false, nullable = false)
-    private LocalDateTime dateCreated;
+    private LocalDateTime completedOn;
 
     @PrePersist
-    public void setDateCreated() {
-        dateCreated = LocalDateTime.now();
+    public void setCompletedOn() {
+        completedOn = LocalDateTime.now();
     }
 }

@@ -11,7 +11,10 @@ public class NewEntityOperation extends EntityOperation {
         super(entityIdentifier, OperationType.CREATE);
         Map<String, EntityAttributeData> dataUpdateMap = new HashMap<>();
 
-        data.entrySet().forEach(entry -> dataUpdateMap.put(entry.getKey(), new EntityAttributeData(entry.getValue())));
+        data.entrySet().forEach(entry -> dataUpdateMap.put(entry.getKey(), EntityAttributeData.builder()
+                .value(entry.getValue())
+                .previousValue(new AuditDataImpl(null))
+                .build()));
 
         setAttributes(dataUpdateMap);
     }

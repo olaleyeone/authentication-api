@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.data.entity;
 
+import com.olaleyeone.audittrail.api.IgnoreData;
 import com.olaleyeone.auth.data.embeddable.PersistTimeSetter;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -17,6 +18,7 @@ public class PortalUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @IgnoreData
     private String password;
 
     @Column(nullable = false)

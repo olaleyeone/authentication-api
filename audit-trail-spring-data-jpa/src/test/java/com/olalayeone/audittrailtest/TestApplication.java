@@ -10,6 +10,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import javax.persistence.EntityManager;
+
 @SpringBootApplication
 @EnableJpaRepositories({"com.olaleyeone.audittrail.repository"})
 @EntityScan({"com.olaleyeone.audittrail.entity", "com.olalayeone.audittrailtest.data.entity"})
@@ -28,7 +30,7 @@ public class TestApplication {
     public UnitOfWorkLoggerFactory auditTrailLoggerFactory() {
         return new UnitOfWorkLoggerFactory() {
             @Override
-            public UnitOfWorkLogger createLogger() {
+            public UnitOfWorkLogger createLogger(EntityManager entityManager) {
                 return Mockito.mock(UnitOfWorkLogger.class);
             }
         };

@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Scope;
 
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
 @Configuration
@@ -44,12 +43,8 @@ public class AuditTrailConfiguration {
     @Bean
     public UnitOfWorkLoggerFactory auditTrailLoggerFactory(ApplicationContext applicationContext) {
         return new UnitOfWorkLoggerFactory() {
-
-            @PersistenceContext
-            private EntityManager entityManager;
-
             @Override
-            public UnitOfWorkLogger createLogger() {
+            public UnitOfWorkLogger createLogger(EntityManager entityManager) {
                 return new UnitOfWorkLogger(new EntityStateLoggerImpl(), entityManager) {
                     @Override
                     public Optional<RequestLog> getRequest() {

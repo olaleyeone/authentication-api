@@ -54,7 +54,7 @@ public abstract class UnitOfWorkLogger implements TransactionSynchronization {
         EntityState entityState = new EntityState();
         entityState.setUnitOfWork(unitOfWork);
         entityState.setOperationType(entityOperation.getOperationType());
-        entityState.setEntityName(entityOperation.getEntityIdentifier().getEntityType().getName());
+        entityState.setEntityName(entityOperation.getEntityIdentifier().getEntityName());
         entityState.setEntityId(entityOperation.getEntityIdentifier().getPrimaryKey().toString());
         entityManager.persist(entityState);
 

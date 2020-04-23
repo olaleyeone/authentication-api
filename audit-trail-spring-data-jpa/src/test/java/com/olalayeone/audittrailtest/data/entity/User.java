@@ -1,5 +1,6 @@
 package com.olalayeone.audittrailtest.data.entity;
 
+import com.olaleyeone.audittrail.api.IgnoreData;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -20,6 +21,9 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
     private Integer status;
+
+    @IgnoreData
+    private String password;
 
     @OneToMany
     private List<Possession> possessionList;
