@@ -125,7 +125,7 @@ class UnitOfWorkLoggerDelegateTest extends EntityTest {
                 .getEntityStateLogger();
         Mockito.verify(unitOfWorkLogger, Mockito.atLeast(1))
                 .getActivityLogs();
-        Mockito.verify(unitOfWorkLogger, Mockito.times(1))
+        Mockito.verify(unitOfWorkLogger, Mockito.atLeast(1))
                 .getStartTime();
     }
 
@@ -193,6 +193,7 @@ class UnitOfWorkLoggerDelegateTest extends EntityTest {
 
     private UnitOfWork createUnitOfWork() {
         UnitOfWork unitOfWork = new UnitOfWork();
+        unitOfWork.setStartedOn(unitOfWorkLogger.getStartTime());
         unitOfWork.setStatus(UnitOfWork.Status.SUCCESSFUL);
         unitOfWork.setName(faker.funnyName().name());
         unitOfWork.setEstimatedTimeTakenInNanos(faker.number().randomNumber());

@@ -43,6 +43,7 @@ public class UnitOfWorkLoggerDelegate {
         if (!activityLogs.isEmpty()) {
             unitOfWork.setName(activityLogs.iterator().next().getName());
         }
+        unitOfWork.setStartedOn(unitOfWorkLogger.getStartTime());
         unitOfWork.setEstimatedTimeTakenInNanos(unitOfWorkLogger.getStartTime().until(LocalDateTime.now(), ChronoUnit.NANOS));
         unitOfWorkLogger.getRequest().ifPresent(unitOfWork::setRequest);
         entityManager.persist(unitOfWork);

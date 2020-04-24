@@ -25,16 +25,11 @@ public class UnitOfWork {
     private Long estimatedTimeTakenInNanos;
 
     @Column(nullable = false)
-    private LocalDateTime completedOn;
+    private LocalDateTime startedOn;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
-
-    @PrePersist
-    public void setCompletedOn() {
-        completedOn = LocalDateTime.now();
-    }
 
     public static enum Status {
         SUCCESSFUL, ROLLED_BACK, UNKNOWN
