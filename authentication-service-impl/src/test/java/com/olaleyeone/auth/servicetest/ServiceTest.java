@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-@Import(ServiceTest.$Config.class)
+@Import({ServiceTest.$Config.class, TestAuditTrailConfiguration.class})
 public class ServiceTest extends EntityTest {
 
     @BeforeEach

@@ -26,7 +26,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Transactional
     @Override
     public RefreshToken createRefreshToken(PortalUserAuthentication userAuthentication) {
-        activityLoggerProvider.get().log("REFRESH TOKEN CREATION FOR USER");
+        activityLoggerProvider.get().log("REFRESH TOKEN CREATION FOR USER",
+                String.format("Creating refresh token for logged in user %s", userAuthentication.getPortalUser().getId()));
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setActualAuthentication(userAuthentication);
         refreshToken.setExpiresAt(getExpiresAt());
@@ -52,6 +53,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Transactional
     @Override
     public void deactivateRefreshToken(RefreshToken refreshToken) {
+        activityLoggerProvider.get().log("TOKEN DEACTIVATION",
+                String.format("deactivating token with id %d", refreshToken.getId()));
         refreshToken.setTimeDeactivated(LocalDateTime.now());
         refreshTokenRepository.save(refreshToken);
     }

@@ -9,13 +9,17 @@ import lombok.SneakyThrows;
 import org.springframework.context.annotation.Configuration;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @Configuration
 public class TestDataFactoryConfiguration extends FactoryConfiguration {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Override
     public ModelFactory entityFactory(Faker faker, EntityManager entityManager) {
-        ModelFactory modelFactory = super.entityFactory(faker, entityManager);
+        ModelFactory modelFactory = super.entityFactory(faker, this.entityManager);
         register(modelFactory);
         return modelFactory;
     }

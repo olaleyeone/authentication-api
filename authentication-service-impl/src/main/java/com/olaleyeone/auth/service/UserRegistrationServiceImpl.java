@@ -33,7 +33,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     @Transactional
     @Override
     public PortalUserAuthentication registerUser(UserRegistrationApiRequest dto, RequestMetadata requestMetadata) {
-        activityLoggerProvider.get().log("USER REGISTRATION");
+        activityLoggerProvider.get().log("USER REGISTRATION", String.format("Registering user with email %s", dto.getEmail()));
         PortalUser portalUser = new PortalUser();
         portalUser.setFirstName(StringUtils.normalizeSpace(dto.getFirstName()));
         portalUser.setLastName(getNonEmptyString(dto.getLastName()));
