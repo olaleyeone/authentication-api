@@ -20,7 +20,7 @@ class ActivityLoggerImplTest extends ComponentTest {
 
     @Test
     void log() {
-        activityLogger.log(faker.funnyName().name());
+        activityLogger.log(faker.funnyName().name(), faker.backToTheFuture().quote());
         ActivityLog activityLog = activityLogger.getActivityLogs().iterator().next();
         assertEquals(getClass().getName(), activityLog.getClassName());
     }

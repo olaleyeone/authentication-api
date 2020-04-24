@@ -41,7 +41,7 @@ class UnitOfWorkLoggerTest extends EntityTest {
                 return Optional.of(requestLog);
             }
         };
-        unitOfWorkLogger.getActivityLogger().log("Test");
+        unitOfWorkLogger.getActivityLogger().log(faker.funnyName().name(), faker.backToTheFuture().quote());
     }
 
     @Test

@@ -103,8 +103,8 @@ class UnitOfWorkLoggerDelegateTest extends EntityTest {
     @Test
     void shouldSaveActivityLogs() {
         ActivityLoggerImpl activityLogger = new ActivityLoggerImpl(new ArrayList<>());
-        activityLogger.log(faker.funnyName().name());
-        activityLogger.log(faker.funnyName().name());
+        activityLogger.log(faker.funnyName().name(), faker.backToTheFuture().quote());
+        activityLogger.log(faker.funnyName().name(), faker.backToTheFuture().quote());
         Mockito.doReturn(activityLogger.getActivityLogs()).when(unitOfWorkLogger).getActivityLogs();
         UnitOfWork unitOfWork = unitOfWorkLoggerDelegate.saveUnitOfWork(unitOfWorkLogger, UnitOfWork.Status.SUCCESSFUL);
         assertEquals(UnitOfWork.Status.SUCCESSFUL, unitOfWork.getStatus());

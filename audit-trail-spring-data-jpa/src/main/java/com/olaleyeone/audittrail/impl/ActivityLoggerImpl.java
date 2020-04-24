@@ -11,11 +11,11 @@ public final class ActivityLoggerImpl implements ActivityLogger {
 
     private final List<ActivityLog> activityLogs;
 
-    @Override
-    public void log(String name) {
-        StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[2];
-        log(name, null, stackTraceElement);
-    }
+//    @Override
+//    public void log(String name) {
+//        StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[2];
+//        log(name, null, stackTraceElement);
+//    }
 
     @Override
     public void log(String name, String description) {
