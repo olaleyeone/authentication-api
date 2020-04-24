@@ -13,17 +13,30 @@ public class UnitOfWork {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
+    private String name;
+
+    private String description;
+
     @ManyToOne
     private RequestLog request;
 
-    @Column(updatable = false, nullable = false)
+    @Column(nullable = false)
     private Long estimatedTimeTakenInNanos;
 
-    @Column(updatable = false, nullable = false)
+    @Column(nullable = false)
     private LocalDateTime completedOn;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
 
     @PrePersist
     public void setCompletedOn() {
         completedOn = LocalDateTime.now();
+    }
+
+    public static enum Status {
+        SUCCESSFUL, ROLLED_BACK, UNKNOWN
     }
 }

@@ -1,17 +1,21 @@
 package com.olaleyeone.audittrail.impl;
 
 import com.olalayeone.audittrailtest.EntityTest;
+import com.olaleyeone.audittrail.entity.RequestLog;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.inject.Provider;
+import javax.persistence.EntityManager;
 
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class UnitOfWorkLoggerFactoryTest extends EntityTest {
 
@@ -43,5 +47,18 @@ class UnitOfWorkLoggerFactoryTest extends EntityTest {
         UnitOfWorkLogger unitOfWorkLogger1 = auditTrailLoggerProvider.get();
         UnitOfWorkLogger unitOfWorkLogger2 = transactionTemplate.execute(status -> auditTrailLoggerProvider.get());
         assertSame(unitOfWorkLogger1, unitOfWorkLogger2);
+    }
+
+    @Test
+    void testCreateLogger2() {
+        RequestLog requestLog = Mockito.mock(RequestLog.class);
+        UnitOfWorkLoggerFactory unitOfWorkLoggerFactory = new UnitOfWorkLoggerFactory() {
+            @Override
+            public Optional<RequestLog> getRequest() {
+                return Optional.of(requestLog);
+            }
+        };
+        UnitOfWorkLogger unitOfWorkLogger = unitOfWorkLoggerFactory.createLogger(null, null);
+        assertEquals(requestLog, unitOfWorkLogger.getRequest().get());
     }
 }
