@@ -7,12 +7,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.inject.Provider;
-import javax.persistence.EntityManager;
-
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,7 +55,7 @@ class UnitOfWorkLoggerFactoryTest extends EntityTest {
                 return Optional.of(requestLog);
             }
         };
-        UnitOfWorkLogger unitOfWorkLogger = unitOfWorkLoggerFactory.createLogger(null, null);
+        UnitOfWorkLogger unitOfWorkLogger = unitOfWorkLoggerFactory.createLogger(null);
         assertEquals(requestLog, unitOfWorkLogger.getRequest().get());
     }
 }

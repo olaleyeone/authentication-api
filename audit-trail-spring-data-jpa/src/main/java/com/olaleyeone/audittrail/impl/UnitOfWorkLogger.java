@@ -6,6 +6,7 @@ import com.olaleyeone.audittrail.api.EntityStateLogger;
 import com.olaleyeone.audittrail.entity.ActivityLog;
 import com.olaleyeone.audittrail.entity.RequestLog;
 import com.olaleyeone.audittrail.entity.UnitOfWork;
+import com.olaleyeone.audittrail.error.NoActivityLogException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -81,7 +82,7 @@ public abstract class UnitOfWorkLogger implements TransactionSynchronization {
             return;
         }
         if (!canCommitWithoutActivityLog()) {
-            throw new IllegalArgumentException();
+            throw new NoActivityLogException();
         }
         logger.warn("No activity log");
     }

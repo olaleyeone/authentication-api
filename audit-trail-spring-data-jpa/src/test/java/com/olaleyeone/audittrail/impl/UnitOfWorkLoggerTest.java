@@ -5,6 +5,7 @@ import com.olaleyeone.audittrail.api.EntityOperation;
 import com.olaleyeone.audittrail.api.EntityStateLogger;
 import com.olaleyeone.audittrail.entity.RequestLog;
 import com.olaleyeone.audittrail.entity.UnitOfWork;
+import com.olaleyeone.audittrail.error.NoActivityLogException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -98,13 +99,13 @@ class UnitOfWorkLoggerTest extends EntityTest {
     @Test
     void shouldRequireActivityLogBeforeCommit() {
         UnitOfWorkLogger unitOfWorkLogger = getUnitOfWorkLogger(false);
-        assertThrows(IllegalArgumentException.class, () -> unitOfWorkLogger.beforeCommit(false));
+        assertThrows(NoActivityLogException.class, () -> unitOfWorkLogger.beforeCommit(false));
     }
 
     @Test
     void shouldRequireActivityLogBeforeStateUpdate() {
         UnitOfWorkLogger unitOfWorkLogger = getUnitOfWorkLogger(false);
-        assertThrows(IllegalArgumentException.class, () -> unitOfWorkLogger.getEntityStateLogger());
+        assertThrows(NoActivityLogException.class, () -> unitOfWorkLogger.getEntityStateLogger());
     }
 
     @Test

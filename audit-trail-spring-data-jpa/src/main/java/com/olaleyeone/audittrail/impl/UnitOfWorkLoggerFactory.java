@@ -35,13 +35,13 @@ public class UnitOfWorkLoggerFactory implements FactoryBean<UnitOfWorkLogger> {
                 .filter(it -> it instanceof UnitOfWorkLogger)
                 .findFirst()
                 .orElseGet(() -> {
-                    UnitOfWorkLogger unitOfWorkLogger = createLogger(entityManager, transactionTemplate);
+                    UnitOfWorkLogger unitOfWorkLogger = createLogger(unitOfWorkLoggerDelegate);
                     TransactionSynchronizationManager.registerSynchronization(unitOfWorkLogger);
                     return unitOfWorkLogger;
                 });
     }
 
-    public UnitOfWorkLogger createLogger(EntityManager entityManager, TransactionTemplate transactionTemplate) {
+    public UnitOfWorkLogger createLogger(UnitOfWorkLoggerDelegate unitOfWorkLoggerDelegate) {
         return new UnitOfWorkLogger(unitOfWorkLoggerDelegate) {
             @Override
             public Optional<RequestLog> getRequest() {

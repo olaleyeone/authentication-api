@@ -2,6 +2,7 @@ package com.olalayeone.audittrailtest;
 
 import com.olaleyeone.audittrail.advice.AuditTrailAdvice;
 import com.olaleyeone.audittrail.impl.UnitOfWorkLogger;
+import com.olaleyeone.audittrail.impl.UnitOfWorkLoggerDelegate;
 import com.olaleyeone.audittrail.impl.UnitOfWorkLoggerFactory;
 import org.mockito.Mockito;
 import org.springframework.boot.SpringApplication;
@@ -9,9 +10,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.transaction.support.TransactionTemplate;
-
-import javax.persistence.EntityManager;
 
 @SpringBootApplication
 @EnableJpaRepositories({"com.olaleyeone.audittrail.repository"})
@@ -32,7 +30,7 @@ public class TestApplication {
         return new UnitOfWorkLoggerFactory() {
 
             @Override
-            public UnitOfWorkLogger createLogger(EntityManager entityManager, TransactionTemplate transactionTemplate) {
+            public UnitOfWorkLogger createLogger(UnitOfWorkLoggerDelegate unitOfWorkLoggerDelegate) {
                 return Mockito.mock(UnitOfWorkLogger.class);
             }
         };
