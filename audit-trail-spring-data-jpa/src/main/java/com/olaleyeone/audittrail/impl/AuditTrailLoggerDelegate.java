@@ -2,10 +2,10 @@ package com.olaleyeone.audittrail.impl;
 
 import com.olaleyeone.audittrail.api.EntityAttributeData;
 import com.olaleyeone.audittrail.api.EntityOperation;
-import com.olaleyeone.audittrail.entity.ActivityLog;
+import com.olaleyeone.audittrail.entity.AuditTrailActivity;
+import com.olaleyeone.audittrail.entity.AuditTrail;
 import com.olaleyeone.audittrail.entity.EntityState;
 import com.olaleyeone.audittrail.entity.EntityStateAttribute;
-import com.olaleyeone.audittrail.entity.UnitOfWork;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,41 +18,41 @@ import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class UnitOfWorkLoggerDelegate {
+public class AuditTrailLoggerDelegate {
 
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final EntityManager entityManager;
     private final TransactionTemplate transactionTemplate;
 
-    public UnitOfWork saveUnitOfWork(UnitOfWorkLogger unitOfWorkLogger, UnitOfWork.Status status) {
-        UnitOfWork unitOfWork = createUnitOfWork(unitOfWorkLogger, status);
-        unitOfWorkLogger.getEntityStateLogger().getOperations().forEach(entityHistoryLog -> createEntityHistory(unitOfWork, entityHistoryLog));
-        unitOfWorkLogger.getActivityLogs().forEach(activityLog -> {
+    public AuditTrail saveUnitOfWork(AuditTrailLogger auditTrailLogger, AuditTrail.Status status) {
+        AuditTrail auditTrail = createUnitOfWork(auditTrailLogger, status);
+        auditTrailLogger.getEntityStateLogger().getOperations().forEach(entityHistoryLog -> createEntityHistory(auditTrail, entityHistoryLog));
+        auditTrailLogger.getAuditTrailActivities().forEach(activityLog -> {
             activityLog.setId(null);
-            activityLog.setUnitOfWork(unitOfWork);
+            activityLog.setAuditTrail(auditTrail);
             entityManager.persist(activityLog);
         });
-        return unitOfWork;
+        return auditTrail;
     }
 
-    UnitOfWork createUnitOfWork(UnitOfWorkLogger unitOfWorkLogger, UnitOfWork.Status status) {
-        UnitOfWork unitOfWork = new UnitOfWork();
-        unitOfWork.setStatus(status);
-        List<ActivityLog> activityLogs = unitOfWorkLogger.getActivityLogs();
-        if (!activityLogs.isEmpty()) {
-            unitOfWork.setName(activityLogs.iterator().next().getName());
+    AuditTrail createUnitOfWork(AuditTrailLogger auditTrailLogger, AuditTrail.Status status) {
+        AuditTrail auditTrail = new AuditTrail();
+        auditTrail.setStatus(status);
+        List<AuditTrailActivity> auditTrailActivities = auditTrailLogger.getAuditTrailActivities();
+        if (!auditTrailActivities.isEmpty()) {
+            auditTrail.setName(auditTrailActivities.iterator().next().getName());
         }
-        unitOfWork.setStartedOn(unitOfWorkLogger.getStartTime());
-        unitOfWork.setEstimatedTimeTakenInNanos(unitOfWorkLogger.getStartTime().until(LocalDateTime.now(), ChronoUnit.NANOS));
-        unitOfWorkLogger.getRequest().ifPresent(unitOfWork::setRequest);
-        entityManager.persist(unitOfWork);
-        return unitOfWork;
+        auditTrail.setStartedOn(auditTrailLogger.getStartTime());
+        auditTrail.setEstimatedTimeTakenInNanos(auditTrailLogger.getStartTime().until(LocalDateTime.now(), ChronoUnit.NANOS));
+        auditTrailLogger.getRequest().ifPresent(auditTrail::setRequest);
+        entityManager.persist(auditTrail);
+        return auditTrail;
     }
 
-    EntityState createEntityHistory(UnitOfWork unitOfWork, EntityOperation entityOperation) {
+    EntityState createEntityHistory(AuditTrail auditTrail, EntityOperation entityOperation) {
         EntityState entityState = new EntityState();
-        entityState.setUnitOfWork(unitOfWork);
+        entityState.setAuditTrail(auditTrail);
         entityState.setOperationType(entityOperation.getOperationType());
         entityState.setEntityName(entityOperation.getEntityIdentifier().getEntityName());
         entityState.setEntityId(entityOperation.getEntityIdentifier().getPrimaryKey().toString());
@@ -78,10 +78,10 @@ public class UnitOfWorkLoggerDelegate {
         return entityStateAttribute;
     }
 
-    public void saveFailure(UnitOfWorkLogger unitOfWorkLogger, UnitOfWork.Status status) {
+    public void saveFailure(AuditTrailLogger auditTrailLogger, AuditTrail.Status status) {
         try {
             transactionTemplate.execute(txStatus -> {
-                saveUnitOfWork(unitOfWorkLogger, status);
+                saveUnitOfWork(auditTrailLogger, status);
                 return null;
             });
         } catch (Exception e) {

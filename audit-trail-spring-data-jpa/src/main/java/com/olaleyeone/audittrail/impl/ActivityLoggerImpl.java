@@ -1,7 +1,7 @@
 package com.olaleyeone.audittrail.impl;
 
 import com.olaleyeone.audittrail.api.ActivityLogger;
-import com.olaleyeone.audittrail.entity.ActivityLog;
+import com.olaleyeone.audittrail.entity.AuditTrailActivity;
 import lombok.Data;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public final class ActivityLoggerImpl implements ActivityLogger {
 
-    private final List<ActivityLog> activityLogs;
+    private final List<AuditTrailActivity> auditTrailActivities;
 
 //    @Override
 //    public void log(String name) {
@@ -24,13 +24,13 @@ public final class ActivityLoggerImpl implements ActivityLogger {
     }
 
     private void log(String name, String description, StackTraceElement stackTraceElement) {
-        ActivityLog activityLog = new ActivityLog();
-        activityLog.setName(name);
-        activityLog.setDescription(description);
-        activityLog.setClassName(stackTraceElement.getClassName());
-        activityLog.setMethodName(stackTraceElement.getMethodName());
-        activityLog.setLineNumber(stackTraceElement.getLineNumber());
-        activityLog.setPrecedence(activityLogs.size() + 1);
-        activityLogs.add(activityLog);
+        AuditTrailActivity auditTrailActivity = new AuditTrailActivity();
+        auditTrailActivity.setName(name);
+        auditTrailActivity.setDescription(description);
+        auditTrailActivity.setClassName(stackTraceElement.getClassName());
+        auditTrailActivity.setMethodName(stackTraceElement.getMethodName());
+        auditTrailActivity.setLineNumber(stackTraceElement.getLineNumber());
+        auditTrailActivity.setPrecedence(auditTrailActivities.size() + 1);
+        auditTrailActivities.add(auditTrailActivity);
     }
 }

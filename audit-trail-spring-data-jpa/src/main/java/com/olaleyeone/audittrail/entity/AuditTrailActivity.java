@@ -3,35 +3,30 @@ package com.olaleyeone.audittrail.entity;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Data
-public class UnitOfWork {
+public class AuditTrailActivity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @ManyToOne(optional = false)
+    private AuditTrail auditTrail;
+
+    @Column(nullable = false)
     private String name;
 
     private String description;
 
-    @ManyToOne
-    private RequestLog request;
+    @Column(nullable = false)
+    private String className;
+    @Column(nullable = false)
+    private String methodName;
+    @Column(nullable = false)
+    private Integer lineNumber;
 
     @Column(nullable = false)
-    private Long estimatedTimeTakenInNanos;
-
-    @Column(nullable = false)
-    private LocalDateTime startedOn;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Status status;
-
-    public static enum Status {
-        SUCCESSFUL, ROLLED_BACK, UNKNOWN
-    }
+    private Integer precedence;
 }

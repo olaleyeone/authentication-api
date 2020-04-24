@@ -5,11 +5,9 @@ import com.olaleyeone.audittrail.api.ActivityLogger;
 import com.olaleyeone.audittrail.api.EntityDataExtractor;
 import com.olaleyeone.audittrail.api.EntityStateLogger;
 import com.olaleyeone.audittrail.entity.RequestLog;
-import com.olaleyeone.audittrail.impl.EntityDataExtractorImpl;
-import com.olaleyeone.audittrail.impl.UnitOfWorkLogger;
-import com.olaleyeone.audittrail.impl.UnitOfWorkLoggerDelegate;
-import com.olaleyeone.audittrail.impl.UnitOfWorkLoggerFactory;
-import org.hibernate.proxy.HibernateProxy;
+import com.olaleyeone.audittrail.impl.AuditTrailLogger;
+import com.olaleyeone.audittrail.impl.AuditTrailLoggerDelegate;
+import com.olaleyeone.audittrail.impl.AuditTrailLoggerFactory;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -35,11 +33,11 @@ public class TestAuditTrailConfiguration {
     }
 
     @Bean
-    public UnitOfWorkLoggerFactory auditTrailLoggerFactory(ApplicationContext applicationContext) {
-        return new UnitOfWorkLoggerFactory() {
+    public AuditTrailLoggerFactory auditTrailLoggerFactory(ApplicationContext applicationContext) {
+        return new AuditTrailLoggerFactory() {
             @Override
-            public UnitOfWorkLogger createLogger(UnitOfWorkLoggerDelegate unitOfWorkLoggerDelegate) {
-                return new UnitOfWorkLogger(unitOfWorkLoggerDelegate, Mockito.mock(EntityStateLogger.class)) {
+            public AuditTrailLogger createLogger(AuditTrailLoggerDelegate auditTrailLoggerDelegate) {
+                return new AuditTrailLogger(auditTrailLoggerDelegate, Mockito.mock(EntityStateLogger.class)) {
                     @Override
                     public Optional<RequestLog> getRequest() {
                         return Optional.empty();
@@ -51,13 +49,13 @@ public class TestAuditTrailConfiguration {
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public EntityStateLogger entityHistoryLogger(UnitOfWorkLogger unitOfWorkLogger) {
-        return unitOfWorkLogger.getEntityStateLogger();
+    public EntityStateLogger entityHistoryLogger(AuditTrailLogger auditTrailLogger) {
+        return auditTrailLogger.getEntityStateLogger();
     }
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public ActivityLogger activityLogger(UnitOfWorkLogger unitOfWorkLogger) {
-        return unitOfWorkLogger.getActivityLogger();
+    public ActivityLogger activityLogger(AuditTrailLogger auditTrailLogger) {
+        return auditTrailLogger.getActivityLogger();
     }
 }

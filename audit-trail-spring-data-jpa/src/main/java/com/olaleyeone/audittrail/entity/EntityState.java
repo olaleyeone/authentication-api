@@ -14,7 +14,7 @@ public class EntityState {
     private Long id;
 
     @ManyToOne(optional = false)
-    private UnitOfWork unitOfWork;
+    private AuditTrail auditTrail;
 
     @Column(nullable = false)
     private String entityName;

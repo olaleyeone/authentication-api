@@ -14,10 +14,10 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UnitOfWorkLoggerFactoryTest extends EntityTest {
+class AuditTrailLoggerFactoryTest extends EntityTest {
 
     @Autowired
-    private Provider<UnitOfWorkLogger> auditTrailLoggerProvider;
+    private Provider<AuditTrailLogger> auditTrailLoggerProvider;
 
     @Autowired
     private TransactionTemplate transactionTemplate;
@@ -25,37 +25,37 @@ class UnitOfWorkLoggerFactoryTest extends EntityTest {
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     @Test
     void beforeCommit() {
-        UnitOfWorkLogger unitOfWorkLogger = transactionTemplate.execute(status -> auditTrailLoggerProvider.get());
-        Mockito.verify(unitOfWorkLogger, Mockito.times(1))
+        AuditTrailLogger auditTrailLogger = transactionTemplate.execute(status -> auditTrailLoggerProvider.get());
+        Mockito.verify(auditTrailLogger, Mockito.times(1))
                 .beforeCommit(Mockito.anyBoolean());
     }
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     @Test
     void shouldCreateNewInstanceForEachTransaction() {
-        UnitOfWorkLogger unitOfWorkLogger1 = transactionTemplate.execute(status -> auditTrailLoggerProvider.get());
-        UnitOfWorkLogger unitOfWorkLogger2 = transactionTemplate.execute(status -> auditTrailLoggerProvider.get());
-        assertNotSame(unitOfWorkLogger1, unitOfWorkLogger2);
+        AuditTrailLogger auditTrailLogger1 = transactionTemplate.execute(status -> auditTrailLoggerProvider.get());
+        AuditTrailLogger auditTrailLogger2 = transactionTemplate.execute(status -> auditTrailLoggerProvider.get());
+        assertNotSame(auditTrailLogger1, auditTrailLogger2);
     }
 
     @Transactional
     @Test
     void shouldUseOneInstancePerTransaction() {
-        UnitOfWorkLogger unitOfWorkLogger1 = auditTrailLoggerProvider.get();
-        UnitOfWorkLogger unitOfWorkLogger2 = transactionTemplate.execute(status -> auditTrailLoggerProvider.get());
-        assertSame(unitOfWorkLogger1, unitOfWorkLogger2);
+        AuditTrailLogger auditTrailLogger1 = auditTrailLoggerProvider.get();
+        AuditTrailLogger auditTrailLogger2 = transactionTemplate.execute(status -> auditTrailLoggerProvider.get());
+        assertSame(auditTrailLogger1, auditTrailLogger2);
     }
 
     @Test
     void testCreateLogger2() {
         RequestLog requestLog = Mockito.mock(RequestLog.class);
-        UnitOfWorkLoggerFactory unitOfWorkLoggerFactory = new UnitOfWorkLoggerFactory() {
+        AuditTrailLoggerFactory auditTrailLoggerFactory = new AuditTrailLoggerFactory() {
             @Override
             public Optional<RequestLog> getRequest() {
                 return Optional.of(requestLog);
             }
         };
-        UnitOfWorkLogger unitOfWorkLogger = unitOfWorkLoggerFactory.createLogger(null);
-        assertEquals(requestLog, unitOfWorkLogger.getRequest().get());
+        AuditTrailLogger auditTrailLogger = auditTrailLoggerFactory.createLogger(null);
+        assertEquals(requestLog, auditTrailLogger.getRequest().get());
     }
 }

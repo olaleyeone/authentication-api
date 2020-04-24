@@ -1,9 +1,9 @@
 package com.olalayeone.audittrailtest;
 
 import com.olaleyeone.audittrail.advice.AuditTrailAdvice;
-import com.olaleyeone.audittrail.impl.UnitOfWorkLogger;
-import com.olaleyeone.audittrail.impl.UnitOfWorkLoggerDelegate;
-import com.olaleyeone.audittrail.impl.UnitOfWorkLoggerFactory;
+import com.olaleyeone.audittrail.impl.AuditTrailLogger;
+import com.olaleyeone.audittrail.impl.AuditTrailLoggerDelegate;
+import com.olaleyeone.audittrail.impl.AuditTrailLoggerFactory;
 import org.mockito.Mockito;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,12 +26,12 @@ public class TestApplication {
     }
 
     @Bean
-    public UnitOfWorkLoggerFactory auditTrailLoggerFactory() {
-        return new UnitOfWorkLoggerFactory() {
+    public AuditTrailLoggerFactory auditTrailLoggerFactory() {
+        return new AuditTrailLoggerFactory() {
 
             @Override
-            public UnitOfWorkLogger createLogger(UnitOfWorkLoggerDelegate unitOfWorkLoggerDelegate) {
-                return Mockito.mock(UnitOfWorkLogger.class);
+            public AuditTrailLogger createLogger(AuditTrailLoggerDelegate auditTrailLoggerDelegate) {
+                return Mockito.mock(AuditTrailLogger.class);
             }
         };
     }

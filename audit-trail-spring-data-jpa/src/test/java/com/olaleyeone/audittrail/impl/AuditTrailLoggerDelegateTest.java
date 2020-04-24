@@ -6,10 +6,10 @@ import com.olaleyeone.audittrail.api.*;
 import com.olaleyeone.audittrail.entity.EntityState;
 import com.olaleyeone.audittrail.entity.EntityStateAttribute;
 import com.olaleyeone.audittrail.entity.RequestLog;
-import com.olaleyeone.audittrail.entity.UnitOfWork;
+import com.olaleyeone.audittrail.entity.AuditTrail;
 import com.olaleyeone.audittrail.repository.EntityStateAttributeRepository;
 import com.olaleyeone.audittrail.repository.EntityStateRepository;
-import com.olaleyeone.audittrail.repository.UnitOfWorkRepository;
+import com.olaleyeone.audittrail.repository.AuditTrailRepository;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,13 +28,13 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
-class UnitOfWorkLoggerDelegateTest extends EntityTest {
+class AuditTrailLoggerDelegateTest extends EntityTest {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
-    private UnitOfWorkRepository unitOfWorkRepository;
+    private AuditTrailRepository auditTrailRepository;
 
     @Autowired
     private EntityStateRepository entityStateRepository;
@@ -45,30 +45,30 @@ class UnitOfWorkLoggerDelegateTest extends EntityTest {
     @Autowired
     private AuditTrailAdvice auditTrailAdvice;
 
-    private UnitOfWorkLoggerDelegate unitOfWorkLoggerDelegate;
+    private AuditTrailLoggerDelegate auditTrailLoggerDelegate;
 
-    private UnitOfWorkLogger unitOfWorkLogger;
+    private AuditTrailLogger auditTrailLogger;
     private TransactionTemplate transactionTemplate;
 
     @BeforeEach
     void setUp() {
         transactionTemplate = Mockito.spy(applicationContext.getBean(TransactionTemplate.class));
-        unitOfWorkLoggerDelegate = new UnitOfWorkLoggerDelegate(entityManager, transactionTemplate);
+        auditTrailLoggerDelegate = new AuditTrailLoggerDelegate(entityManager, transactionTemplate);
 
 
         EntityStateLogger entityStateLogger = Mockito.mock(EntityStateLogger.class);
         List<EntityOperation> entityOperations = getEntityHistoryLogs();
         Mockito.doReturn(entityOperations).when(entityStateLogger).getOperations();
 
-        unitOfWorkLogger = Mockito.mock(UnitOfWorkLogger.class);
-        Mockito.doReturn(LocalDateTime.now()).when(unitOfWorkLogger).getStartTime();
-        Mockito.doReturn(Collections.EMPTY_LIST).when(unitOfWorkLogger).getActivityLogs();
-        Mockito.doReturn(entityStateLogger).when(unitOfWorkLogger).getEntityStateLogger();
+        auditTrailLogger = Mockito.mock(AuditTrailLogger.class);
+        Mockito.doReturn(LocalDateTime.now()).when(auditTrailLogger).getStartTime();
+        Mockito.doReturn(Collections.EMPTY_LIST).when(auditTrailLogger).getAuditTrailActivities();
+        Mockito.doReturn(entityStateLogger).when(auditTrailLogger).getEntityStateLogger();
 
         RequestLog requestLog = new RequestLog();
         requestLog.setSessionId(faker.number().digit());
         entityManager.persist(requestLog);
-        Mockito.doReturn(Optional.of(requestLog)).when(unitOfWorkLogger).getRequest();
+        Mockito.doReturn(Optional.of(requestLog)).when(auditTrailLogger).getRequest();
     }
 
     @AfterEach
@@ -79,17 +79,17 @@ class UnitOfWorkLoggerDelegateTest extends EntityTest {
     @Test
     void saveUnitOfWork() {
 
-        unitOfWorkLoggerDelegate.saveUnitOfWork(unitOfWorkLogger, UnitOfWork.Status.SUCCESSFUL);
+        auditTrailLoggerDelegate.saveUnitOfWork(auditTrailLogger, AuditTrail.Status.SUCCESSFUL);
 
-        assertEquals(1, unitOfWorkRepository.count());
+        assertEquals(1, auditTrailRepository.count());
         assertEquals(3, entityStateRepository.count());
         assertEquals(3, entityStateAttributeRepository.count());
 
-        List<UnitOfWork> units = unitOfWorkRepository.getAllByRequest(unitOfWorkLogger.getRequest().get());
+        List<AuditTrail> units = auditTrailRepository.getAllByRequest(auditTrailLogger.getRequest().get());
 
         assertEquals(1, units.size());
-        UnitOfWork auditTrail = units.iterator().next();
-        unitOfWorkLogger.getEntityStateLogger().getOperations().forEach(entityHistoryLog -> {
+        AuditTrail auditTrail = units.iterator().next();
+        auditTrailLogger.getEntityStateLogger().getOperations().forEach(entityHistoryLog -> {
             EntityIdentifier entityIdentifier = entityHistoryLog.getEntityIdentifier();
             Optional<EntityState> optionalEntityHistory = entityStateRepository.getByUnitOfWork(auditTrail, entityIdentifier.getEntityName(),
                     entityIdentifier.getPrimaryKey().toString());
@@ -105,49 +105,49 @@ class UnitOfWorkLoggerDelegateTest extends EntityTest {
         ActivityLoggerImpl activityLogger = new ActivityLoggerImpl(new ArrayList<>());
         activityLogger.log(faker.funnyName().name(), faker.backToTheFuture().quote());
         activityLogger.log(faker.funnyName().name(), faker.backToTheFuture().quote());
-        Mockito.doReturn(activityLogger.getActivityLogs()).when(unitOfWorkLogger).getActivityLogs();
-        UnitOfWork unitOfWork = unitOfWorkLoggerDelegate.saveUnitOfWork(unitOfWorkLogger, UnitOfWork.Status.SUCCESSFUL);
-        assertEquals(UnitOfWork.Status.SUCCESSFUL, unitOfWork.getStatus());
-        activityLogger.getActivityLogs()
+        Mockito.doReturn(activityLogger.getAuditTrailActivities()).when(auditTrailLogger).getAuditTrailActivities();
+        AuditTrail auditTrail = auditTrailLoggerDelegate.saveUnitOfWork(auditTrailLogger, AuditTrail.Status.SUCCESSFUL);
+        assertEquals(AuditTrail.Status.SUCCESSFUL, auditTrail.getStatus());
+        activityLogger.getAuditTrailActivities()
                 .forEach(activityLog -> {
                     assertNotNull(activityLog.getId());
-                    assertEquals(unitOfWork, activityLog.getUnitOfWork());
+                    assertEquals(auditTrail, activityLog.getAuditTrail());
                 });
     }
 
     @Test
     void saveErrorInNewTransaction() {
         Mockito.doCallRealMethod().when(transactionTemplate).execute(Mockito.any());
-        unitOfWorkLoggerDelegate.saveFailure(unitOfWorkLogger, UnitOfWork.Status.SUCCESSFUL);
+        auditTrailLoggerDelegate.saveFailure(auditTrailLogger, AuditTrail.Status.SUCCESSFUL);
         Mockito.verify(transactionTemplate, Mockito.times(1))
                 .execute(Mockito.any());
-        Mockito.verify(unitOfWorkLogger, Mockito.times(1))
+        Mockito.verify(auditTrailLogger, Mockito.times(1))
                 .getEntityStateLogger();
-        Mockito.verify(unitOfWorkLogger, Mockito.atLeast(1))
-                .getActivityLogs();
-        Mockito.verify(unitOfWorkLogger, Mockito.atLeast(1))
+        Mockito.verify(auditTrailLogger, Mockito.atLeast(1))
+                .getAuditTrailActivities();
+        Mockito.verify(auditTrailLogger, Mockito.atLeast(1))
                 .getStartTime();
     }
 
     @Test
     void shouldNotPropagateExceptionWhenSavingError() {
         Mockito.doThrow(IllegalArgumentException.class).when(transactionTemplate).execute(Mockito.any());
-        unitOfWorkLoggerDelegate.saveFailure(null, UnitOfWork.Status.SUCCESSFUL);
+        auditTrailLoggerDelegate.saveFailure(null, AuditTrail.Status.SUCCESSFUL);
         Mockito.verify(transactionTemplate, Mockito.times(1))
                 .execute(Mockito.any());
     }
 
     @Test
     void saveEntityHistory() {
-        UnitOfWork auditTrail = createUnitOfWork();
+        AuditTrail auditTrail = createUnitOfWork();
         OperationType operationType = OperationType.CREATE;
         EntityType<?> entityType = entityManager.getEntityManagerFactory().getMetamodel().entity(RequestLog.class);
         EntityIdentifier entityIdentifier = new EntityIdentifierImpl(entityType, faker.number().randomDigit());
         EntityOperation historyLog = new EntityOperation(entityIdentifier, operationType);
-        EntityState entityState = unitOfWorkLoggerDelegate.createEntityHistory(auditTrail, historyLog);
+        EntityState entityState = auditTrailLoggerDelegate.createEntityHistory(auditTrail, historyLog);
         assertNotNull(entityState);
         assertNotNull(entityState.getId());
-        assertEquals(auditTrail, entityState.getUnitOfWork());
+        assertEquals(auditTrail, entityState.getAuditTrail());
         assertEquals(operationType, entityState.getOperationType());
 
         assertEquals(entityType.getName(), entityState.getEntityName());
@@ -163,7 +163,7 @@ class UnitOfWorkLoggerDelegateTest extends EntityTest {
                 .previousValue(new AuditDataImpl(faker.lordOfTheRings().character()))
                 .build();
 
-        EntityStateAttribute attribute = unitOfWorkLoggerDelegate.createEntityHistoryAttribute(entityState, Pair.of(faker.funnyName().name(), data));
+        EntityStateAttribute attribute = auditTrailLoggerDelegate.createEntityHistoryAttribute(entityState, Pair.of(faker.funnyName().name(), data));
         assertNotNull(attribute);
         assertNotNull(attribute.getId());
         assertEquals(entityState, attribute.getEntityState());
@@ -191,19 +191,19 @@ class UnitOfWorkLoggerDelegateTest extends EntityTest {
         return entityOperations;
     }
 
-    private UnitOfWork createUnitOfWork() {
-        UnitOfWork unitOfWork = new UnitOfWork();
-        unitOfWork.setStartedOn(unitOfWorkLogger.getStartTime());
-        unitOfWork.setStatus(UnitOfWork.Status.SUCCESSFUL);
-        unitOfWork.setName(faker.funnyName().name());
-        unitOfWork.setEstimatedTimeTakenInNanos(faker.number().randomNumber());
-        entityManager.persist(unitOfWork);
-        return unitOfWork;
+    private AuditTrail createUnitOfWork() {
+        AuditTrail auditTrail = new AuditTrail();
+        auditTrail.setStartedOn(auditTrailLogger.getStartTime());
+        auditTrail.setStatus(AuditTrail.Status.SUCCESSFUL);
+        auditTrail.setName(faker.funnyName().name());
+        auditTrail.setEstimatedTimeTakenInNanos(faker.number().randomNumber());
+        entityManager.persist(auditTrail);
+        return auditTrail;
     }
 
     private EntityState createEntityHistory() {
         EntityState entityState = new EntityState();
-        entityState.setUnitOfWork(createUnitOfWork());
+        entityState.setAuditTrail(createUnitOfWork());
         entityState.setOperationType(OperationType.CREATE);
         entityState.setEntityName(faker.funnyName().name());
         entityState.setEntityId(faker.number().digit());

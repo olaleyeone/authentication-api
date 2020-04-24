@@ -3,9 +3,9 @@ package com.olaleyeone.audittrail.impl;
 import com.olaleyeone.audittrail.api.ActivityLogger;
 import com.olaleyeone.audittrail.api.EntityOperation;
 import com.olaleyeone.audittrail.api.EntityStateLogger;
-import com.olaleyeone.audittrail.entity.ActivityLog;
+import com.olaleyeone.audittrail.entity.AuditTrailActivity;
 import com.olaleyeone.audittrail.entity.RequestLog;
-import com.olaleyeone.audittrail.entity.UnitOfWork;
+import com.olaleyeone.audittrail.entity.AuditTrail;
 import com.olaleyeone.audittrail.error.NoActivityLogException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,26 +19,26 @@ import java.util.List;
 import java.util.Optional;
 
 @Getter
-public abstract class UnitOfWorkLogger implements TransactionSynchronization {
+public abstract class AuditTrailLogger implements TransactionSynchronization {
 
     @Getter(AccessLevel.NONE)
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final UnitOfWorkLoggerDelegate unitOfWorkLoggerDelegate;
+    private final AuditTrailLoggerDelegate auditTrailLoggerDelegate;
     private final EntityStateLogger entityStateLogger;
     private final ActivityLogger activityLogger;
 
-    private final List<ActivityLog> activityLogs = new ArrayList<>();
+    private final List<AuditTrailActivity> auditTrailActivities = new ArrayList<>();
     private final LocalDateTime startTime = LocalDateTime.now();
 
-    public UnitOfWorkLogger(UnitOfWorkLoggerDelegate unitOfWorkLoggerDelegate) {
-        this(unitOfWorkLoggerDelegate, new EntityStateLoggerImpl());
+    public AuditTrailLogger(AuditTrailLoggerDelegate auditTrailLoggerDelegate) {
+        this(auditTrailLoggerDelegate, new EntityStateLoggerImpl());
     }
 
-    public UnitOfWorkLogger(UnitOfWorkLoggerDelegate unitOfWorkLoggerDelegate, EntityStateLogger entityStateLogger) {
-        this.unitOfWorkLoggerDelegate = unitOfWorkLoggerDelegate;
+    public AuditTrailLogger(AuditTrailLoggerDelegate auditTrailLoggerDelegate, EntityStateLogger entityStateLogger) {
+        this.auditTrailLoggerDelegate = auditTrailLoggerDelegate;
         this.entityStateLogger = entityStateLogger;
-        this.activityLogger = createActivityLogger(activityLogs);
+        this.activityLogger = createActivityLogger(auditTrailActivities);
     }
 
     @Override
@@ -49,13 +49,13 @@ public abstract class UnitOfWorkLogger implements TransactionSynchronization {
             logger.warn("No work done");
             return;
         }
-        unitOfWorkLoggerDelegate.saveUnitOfWork(this, UnitOfWork.Status.SUCCESSFUL);
+        auditTrailLoggerDelegate.saveUnitOfWork(this, AuditTrail.Status.SUCCESSFUL);
     }
 
     public abstract Optional<RequestLog> getRequest();
 
-    public ActivityLogger createActivityLogger(List<ActivityLog> activityLogs) {
-        return new ActivityLoggerImpl(activityLogs);
+    public ActivityLogger createActivityLogger(List<AuditTrailActivity> auditTrailActivities) {
+        return new ActivityLoggerImpl(auditTrailActivities);
     }
 
     public boolean canCommitWithoutActivityLog() {
@@ -69,16 +69,16 @@ public abstract class UnitOfWorkLogger implements TransactionSynchronization {
 
     @Override
     public void afterCompletion(int status) {
-        if (status == TransactionSynchronization.STATUS_COMMITTED || activityLogs.isEmpty()) {
+        if (status == TransactionSynchronization.STATUS_COMMITTED || auditTrailActivities.isEmpty()) {
             return;
         }
-        unitOfWorkLoggerDelegate.saveFailure(this, status == TransactionSynchronization.STATUS_ROLLED_BACK
-                ? UnitOfWork.Status.ROLLED_BACK
-                : UnitOfWork.Status.UNKNOWN);
+        auditTrailLoggerDelegate.saveFailure(this, status == TransactionSynchronization.STATUS_ROLLED_BACK
+                ? AuditTrail.Status.ROLLED_BACK
+                : AuditTrail.Status.UNKNOWN);
     }
 
     private void checkHasActivityLog() {
-        if (!activityLogs.isEmpty()) {
+        if (!auditTrailActivities.isEmpty()) {
             return;
         }
         if (!canCommitWithoutActivityLog()) {

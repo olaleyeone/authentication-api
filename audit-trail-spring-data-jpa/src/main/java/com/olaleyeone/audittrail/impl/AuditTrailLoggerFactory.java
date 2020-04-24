@@ -13,7 +13,7 @@ import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class UnitOfWorkLoggerFactory implements FactoryBean<UnitOfWorkLogger> {
+public class AuditTrailLoggerFactory implements FactoryBean<AuditTrailLogger> {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -21,31 +21,31 @@ public class UnitOfWorkLoggerFactory implements FactoryBean<UnitOfWorkLogger> {
     @Autowired
     private TransactionTemplate transactionTemplate;
 
-    private UnitOfWorkLoggerDelegate unitOfWorkLoggerDelegate;
+    private AuditTrailLoggerDelegate auditTrailLoggerDelegate;
 
     @PostConstruct
     public void init() {
-        unitOfWorkLoggerDelegate = new UnitOfWorkLoggerDelegate(entityManager, transactionTemplate);
+        auditTrailLoggerDelegate = new AuditTrailLoggerDelegate(entityManager, transactionTemplate);
     }
 
     @Override
-    public UnitOfWorkLogger getObject() {
-        return (UnitOfWorkLogger) TransactionSynchronizationManager.getSynchronizations()
+    public AuditTrailLogger getObject() {
+        return (AuditTrailLogger) TransactionSynchronizationManager.getSynchronizations()
                 .stream()
-                .filter(it -> it instanceof UnitOfWorkLogger)
+                .filter(it -> it instanceof AuditTrailLogger)
                 .findFirst()
                 .orElseGet(() -> {
-                    UnitOfWorkLogger unitOfWorkLogger = createLogger(unitOfWorkLoggerDelegate);
-                    TransactionSynchronizationManager.registerSynchronization(unitOfWorkLogger);
-                    return unitOfWorkLogger;
+                    AuditTrailLogger auditTrailLogger = createLogger(auditTrailLoggerDelegate);
+                    TransactionSynchronizationManager.registerSynchronization(auditTrailLogger);
+                    return auditTrailLogger;
                 });
     }
 
-    public UnitOfWorkLogger createLogger(UnitOfWorkLoggerDelegate unitOfWorkLoggerDelegate) {
-        return new UnitOfWorkLogger(unitOfWorkLoggerDelegate) {
+    public AuditTrailLogger createLogger(AuditTrailLoggerDelegate auditTrailLoggerDelegate) {
+        return new AuditTrailLogger(auditTrailLoggerDelegate) {
             @Override
             public Optional<RequestLog> getRequest() {
-                return UnitOfWorkLoggerFactory.this.getRequest();
+                return AuditTrailLoggerFactory.this.getRequest();
             }
         };
     }
@@ -56,7 +56,7 @@ public class UnitOfWorkLoggerFactory implements FactoryBean<UnitOfWorkLogger> {
 
     @Override
     public Class<?> getObjectType() {
-        return UnitOfWorkLogger.class;
+        return AuditTrailLogger.class;
     }
 
     @Override
