@@ -1,12 +1,13 @@
 package com.olaleyeone.auth.service;
 
+import com.olaleyeone.audittrail.api.ActivityLogger;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.RefreshToken;
-import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
@@ -20,11 +21,12 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     private final SettingService settingService;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final PortalUserAuthenticationRepository portalUserAuthenticationRepository;
+    private final Provider<ActivityLogger> activityLoggerProvider;
 
     @Transactional
     @Override
     public RefreshToken createRefreshToken(PortalUserAuthentication userAuthentication) {
+        activityLoggerProvider.get().log("REFRESH TOKEN CREATION FOR USER");
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setActualAuthentication(userAuthentication);
         refreshToken.setExpiresAt(getExpiresAt());

@@ -21,7 +21,10 @@ dependencies {
 
     implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
 
+    implementation(project(":audit-trail"))
+
     testImplementation(project(":${projectName}-test-starter"))
+    testImplementation(project(":audit-trail-spring-data-jpa"))
 }
 
 jacocoTestCoverageVerification {

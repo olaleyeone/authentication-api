@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.service;
 
+import com.olaleyeone.audittrail.api.ActivityLogger;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
@@ -11,6 +12,7 @@ import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
@@ -21,6 +23,7 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
     private final PortalUserIdentifierRepository portalUserIdentifierRepository;
     private final PortalUserAuthenticationRepository portalUserAuthenticationRepository;
     private final PasswordService passwordService;
+    private final Provider<ActivityLogger> activityLoggerProvider;
 
     @Transactional
     @Override
@@ -37,17 +40,20 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
     }
 
     private PortalUserAuthentication createUnknownAccountResponse(LoginApiRequest requestDto, RequestMetadata requestMetadata) {
+        activityLoggerProvider.get().log("FAILED LOGIN", "Unknown account " + requestDto.getIdentifier());
         PortalUserAuthentication userAuthentication = makeAuthenticationResponse(requestDto, requestMetadata, AuthenticationResponseType.UNKNOWN_ACCOUNT);
         return portalUserAuthenticationRepository.save(userAuthentication);
     }
 
     private PortalUserAuthentication createInvalidCredentialResponse(PortalUserIdentifier userIdentifier, LoginApiRequest requestDto, RequestMetadata requestMetadata) {
+        activityLoggerProvider.get().log("FAILED LOGIN", "Invalid credentials for account " + requestDto.getIdentifier());
         PortalUserAuthentication userAuthentication = makeAuthenticationResponse(requestDto, requestMetadata, AuthenticationResponseType.INCORRECT_CREDENTIAL);
         userAuthentication.setPortalUserIdentifier(userIdentifier);
         return portalUserAuthenticationRepository.save(userAuthentication);
     }
 
     private PortalUserAuthentication createSuccessfulAuthenticationResponse(PortalUserIdentifier userIdentifier, LoginApiRequest requestDto, RequestMetadata requestMetadata) {
+        activityLoggerProvider.get().log("SUCCESSFUL LOGIN", requestDto.getIdentifier() + " logged in");
         PortalUserAuthentication userAuthentication = makeAuthenticationResponse(requestDto, requestMetadata, AuthenticationResponseType.SUCCESSFUL);
         userAuthentication.setPortalUserIdentifier(userIdentifier);
         return portalUserAuthenticationRepository.save(userAuthentication);

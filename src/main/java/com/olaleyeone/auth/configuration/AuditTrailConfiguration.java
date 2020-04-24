@@ -1,11 +1,11 @@
 package com.olaleyeone.auth.configuration;
 
 import com.olaleyeone.audittrail.advice.AuditTrailAdvice;
+import com.olaleyeone.audittrail.api.ActivityLogger;
 import com.olaleyeone.audittrail.api.EntityDataExtractor;
 import com.olaleyeone.audittrail.api.EntityStateLogger;
 import com.olaleyeone.audittrail.entity.RequestLog;
 import com.olaleyeone.audittrail.impl.EntityDataExtractorImpl;
-import com.olaleyeone.audittrail.impl.EntityStateLoggerImpl;
 import com.olaleyeone.audittrail.impl.UnitOfWorkLogger;
 import com.olaleyeone.audittrail.impl.UnitOfWorkLoggerFactory;
 import org.hibernate.proxy.HibernateProxy;
@@ -44,13 +44,8 @@ public class AuditTrailConfiguration {
     public UnitOfWorkLoggerFactory auditTrailLoggerFactory(ApplicationContext applicationContext) {
         return new UnitOfWorkLoggerFactory() {
             @Override
-            public UnitOfWorkLogger createLogger(EntityManager entityManager) {
-                return new UnitOfWorkLogger(new EntityStateLoggerImpl(), entityManager) {
-                    @Override
-                    public Optional<RequestLog> getRequest() {
-                        return Optional.empty();
-                    }
-                };
+            public Optional<RequestLog> getRequest() {
+                return Optional.empty();
             }
         };
     }
@@ -59,5 +54,11 @@ public class AuditTrailConfiguration {
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public EntityStateLogger entityHistoryLogger(UnitOfWorkLogger unitOfWorkLogger) {
         return unitOfWorkLogger.getEntityStateLogger();
+    }
+
+    @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public ActivityLogger activityLogger(UnitOfWorkLogger unitOfWorkLogger) {
+        return unitOfWorkLogger.getActivityLogger();
     }
 }
