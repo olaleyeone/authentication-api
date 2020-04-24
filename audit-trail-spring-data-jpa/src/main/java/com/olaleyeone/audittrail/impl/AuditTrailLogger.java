@@ -4,7 +4,7 @@ import com.olaleyeone.audittrail.api.ActivityLogger;
 import com.olaleyeone.audittrail.api.EntityOperation;
 import com.olaleyeone.audittrail.api.EntityStateLogger;
 import com.olaleyeone.audittrail.entity.AuditTrailActivity;
-import com.olaleyeone.audittrail.entity.RequestLog;
+import com.olaleyeone.audittrail.entity.Task;
 import com.olaleyeone.audittrail.entity.AuditTrail;
 import com.olaleyeone.audittrail.error.NoActivityLogException;
 import lombok.AccessLevel;
@@ -52,7 +52,7 @@ public abstract class AuditTrailLogger implements TransactionSynchronization {
         auditTrailLoggerDelegate.saveUnitOfWork(this, AuditTrail.Status.SUCCESSFUL);
     }
 
-    public abstract Optional<RequestLog> getRequest();
+    public abstract Optional<Task> getTask();
 
     public ActivityLogger createActivityLogger(List<AuditTrailActivity> auditTrailActivities) {
         return new ActivityLoggerImpl(auditTrailActivities);

@@ -1,7 +1,7 @@
 package com.olaleyeone.audittrail.impl;
 
 import com.olalayeone.audittrailtest.EntityTest;
-import com.olaleyeone.audittrail.entity.RequestLog;
+import com.olaleyeone.audittrail.entity.Task;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,14 +48,14 @@ class AuditTrailLoggerFactoryTest extends EntityTest {
 
     @Test
     void testCreateLogger2() {
-        RequestLog requestLog = Mockito.mock(RequestLog.class);
+        Task task = Mockito.mock(Task.class);
         AuditTrailLoggerFactory auditTrailLoggerFactory = new AuditTrailLoggerFactory() {
             @Override
-            public Optional<RequestLog> getRequest() {
-                return Optional.of(requestLog);
+            public Optional<Task> getTask() {
+                return Optional.of(task);
             }
         };
         AuditTrailLogger auditTrailLogger = auditTrailLoggerFactory.createLogger(null);
-        assertEquals(requestLog, auditTrailLogger.getRequest().get());
+        assertEquals(task, auditTrailLogger.getTask().get());
     }
 }

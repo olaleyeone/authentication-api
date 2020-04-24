@@ -3,7 +3,7 @@ package com.olaleyeone.audittrail.impl;
 import com.olalayeone.audittrailtest.EntityTest;
 import com.olaleyeone.audittrail.api.EntityOperation;
 import com.olaleyeone.audittrail.api.EntityStateLogger;
-import com.olaleyeone.audittrail.entity.RequestLog;
+import com.olaleyeone.audittrail.entity.Task;
 import com.olaleyeone.audittrail.entity.AuditTrail;
 import com.olaleyeone.audittrail.error.NoActivityLogException;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,19 +26,19 @@ class AuditTrailLoggerTest extends EntityTest {
     private AuditTrailLoggerDelegate auditTrailLoggerDelegate;
     private EntityStateLogger entityStateLogger;
 
-    private RequestLog requestLog;
+    private Task task;
 
     @BeforeEach
     void setUp() {
         auditTrailLoggerDelegate = Mockito.mock(AuditTrailLoggerDelegate.class);
         entityStateLogger = Mockito.mock(EntityStateLogger.class);
-        requestLog = new RequestLog();
+        task = new Task();
 
         auditTrailLogger = new AuditTrailLogger(auditTrailLoggerDelegate, entityStateLogger) {
 
             @Override
-            public Optional<RequestLog> getRequest() {
-                return Optional.of(requestLog);
+            public Optional<Task> getTask() {
+                return Optional.of(task);
             }
         };
         auditTrailLogger.getActivityLogger().log(faker.funnyName().name(), faker.backToTheFuture().quote());
@@ -89,7 +89,7 @@ class AuditTrailLoggerTest extends EntityTest {
     void shouldRequireActivityLogBeforeCommitByDefault() {
         AuditTrailLogger auditTrailLogger = new AuditTrailLogger(null) {
             @Override
-            public Optional<RequestLog> getRequest() {
+            public Optional<Task> getTask() {
                 return Optional.empty();
             }
         };
@@ -124,8 +124,8 @@ class AuditTrailLoggerTest extends EntityTest {
         return new AuditTrailLogger(auditTrailLoggerDelegate) {
 
             @Override
-            public Optional<RequestLog> getRequest() {
-                return Optional.of(requestLog);
+            public Optional<Task> getTask() {
+                return Optional.of(task);
             }
 
             @Override

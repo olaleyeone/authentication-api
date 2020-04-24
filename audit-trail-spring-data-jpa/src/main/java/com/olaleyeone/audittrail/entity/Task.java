@@ -7,31 +7,26 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
-public class AuditTrail {
+public class Task {
+
+    public static final String BACKGROUND_JOB = "BACKGROUND_JOB";
+    public static final String WEB_REQUEST = "WEB_REQUEST";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
-
+    @Column(nullable = false)
+    private String type;
     private String description;
 
-    @ManyToOne
-    private Task request;
-
-    @Column(nullable = false)
-    private Long estimatedTimeTakenInNanos;
+    @Embedded
+    private WebRequest webRequest;
 
     @Column(nullable = false)
     private LocalDateTime startedOn;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Status status;
-
-    public static enum Status {
-        SUCCESSFUL, ROLLED_BACK, UNKNOWN
-    }
+    private Long estimatedTimeTakenInNanos;
 }

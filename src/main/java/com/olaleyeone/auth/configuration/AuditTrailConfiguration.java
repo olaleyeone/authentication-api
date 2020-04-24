@@ -4,7 +4,7 @@ import com.olaleyeone.audittrail.advice.AuditTrailAdvice;
 import com.olaleyeone.audittrail.api.ActivityLogger;
 import com.olaleyeone.audittrail.api.EntityDataExtractor;
 import com.olaleyeone.audittrail.api.EntityStateLogger;
-import com.olaleyeone.audittrail.entity.RequestLog;
+import com.olaleyeone.audittrail.entity.Task;
 import com.olaleyeone.audittrail.impl.EntityDataExtractorImpl;
 import com.olaleyeone.audittrail.impl.AuditTrailLogger;
 import com.olaleyeone.audittrail.impl.AuditTrailLoggerFactory;
@@ -44,7 +44,7 @@ public class AuditTrailConfiguration {
     public AuditTrailLoggerFactory auditTrailLoggerFactory(ApplicationContext applicationContext) {
         return new AuditTrailLoggerFactory() {
             @Override
-            public Optional<RequestLog> getRequest() {
+            public Optional<Task> getTask() {
                 return Optional.empty();
             }
         };

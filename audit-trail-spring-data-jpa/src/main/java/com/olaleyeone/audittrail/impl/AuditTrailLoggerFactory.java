@@ -1,6 +1,6 @@
 package com.olaleyeone.audittrail.impl;
 
-import com.olaleyeone.audittrail.entity.RequestLog;
+import com.olaleyeone.audittrail.entity.Task;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,13 +44,13 @@ public class AuditTrailLoggerFactory implements FactoryBean<AuditTrailLogger> {
     public AuditTrailLogger createLogger(AuditTrailLoggerDelegate auditTrailLoggerDelegate) {
         return new AuditTrailLogger(auditTrailLoggerDelegate) {
             @Override
-            public Optional<RequestLog> getRequest() {
-                return AuditTrailLoggerFactory.this.getRequest();
+            public Optional<Task> getTask() {
+                return AuditTrailLoggerFactory.this.getTask();
             }
         };
     }
 
-    public Optional<RequestLog> getRequest() {
+    public Optional<Task> getTask() {
         return Optional.empty();
     }
 

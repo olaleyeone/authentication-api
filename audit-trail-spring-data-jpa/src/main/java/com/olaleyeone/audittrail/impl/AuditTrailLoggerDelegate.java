@@ -45,7 +45,11 @@ public class AuditTrailLoggerDelegate {
         }
         auditTrail.setStartedOn(auditTrailLogger.getStartTime());
         auditTrail.setEstimatedTimeTakenInNanos(auditTrailLogger.getStartTime().until(LocalDateTime.now(), ChronoUnit.NANOS));
-        auditTrailLogger.getRequest().ifPresent(auditTrail::setRequest);
+        auditTrailLogger.getTask().ifPresent(task -> {
+            auditTrail.setRequest(task);
+            task.setEstimatedTimeTakenInNanos(task.getStartedOn().until(LocalDateTime.now(), ChronoUnit.NANOS));
+            entityManager.merge(task);
+        });
         entityManager.persist(auditTrail);
         return auditTrail;
     }

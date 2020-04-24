@@ -3,13 +3,13 @@ package com.olaleyeone.audittrail.impl;
 import com.olalayeone.audittrailtest.EntityTest;
 import com.olaleyeone.audittrail.advice.AuditTrailAdvice;
 import com.olaleyeone.audittrail.api.*;
+import com.olaleyeone.audittrail.entity.AuditTrail;
 import com.olaleyeone.audittrail.entity.EntityState;
 import com.olaleyeone.audittrail.entity.EntityStateAttribute;
-import com.olaleyeone.audittrail.entity.RequestLog;
-import com.olaleyeone.audittrail.entity.AuditTrail;
+import com.olaleyeone.audittrail.entity.Task;
+import com.olaleyeone.audittrail.repository.AuditTrailRepository;
 import com.olaleyeone.audittrail.repository.EntityStateAttributeRepository;
 import com.olaleyeone.audittrail.repository.EntityStateRepository;
-import com.olaleyeone.audittrail.repository.AuditTrailRepository;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,10 +65,12 @@ class AuditTrailLoggerDelegateTest extends EntityTest {
         Mockito.doReturn(Collections.EMPTY_LIST).when(auditTrailLogger).getAuditTrailActivities();
         Mockito.doReturn(entityStateLogger).when(auditTrailLogger).getEntityStateLogger();
 
-        RequestLog requestLog = new RequestLog();
-        requestLog.setSessionId(faker.number().digit());
-        entityManager.persist(requestLog);
-        Mockito.doReturn(Optional.of(requestLog)).when(auditTrailLogger).getRequest();
+        Task task = new Task();
+        task.setStartedOn(LocalDateTime.now());
+        task.setName(faker.funnyName().name());
+        task.setType(faker.app().name());
+        entityManager.persist(task);
+        Mockito.doReturn(Optional.of(task)).when(auditTrailLogger).getTask();
     }
 
     @AfterEach
@@ -85,7 +87,7 @@ class AuditTrailLoggerDelegateTest extends EntityTest {
         assertEquals(3, entityStateRepository.count());
         assertEquals(3, entityStateAttributeRepository.count());
 
-        List<AuditTrail> units = auditTrailRepository.getAllByRequest(auditTrailLogger.getRequest().get());
+        List<AuditTrail> units = auditTrailRepository.getAllByRequest(auditTrailLogger.getTask().get());
 
         assertEquals(1, units.size());
         AuditTrail auditTrail = units.iterator().next();
@@ -139,9 +141,9 @@ class AuditTrailLoggerDelegateTest extends EntityTest {
 
     @Test
     void saveEntityHistory() {
-        AuditTrail auditTrail = createUnitOfWork();
+        AuditTrail auditTrail = createAuditTrail();
         OperationType operationType = OperationType.CREATE;
-        EntityType<?> entityType = entityManager.getEntityManagerFactory().getMetamodel().entity(RequestLog.class);
+        EntityType<?> entityType = entityManager.getEntityManagerFactory().getMetamodel().entity(Task.class);
         EntityIdentifier entityIdentifier = new EntityIdentifierImpl(entityType, faker.number().randomDigit());
         EntityOperation historyLog = new EntityOperation(entityIdentifier, operationType);
         EntityState entityState = auditTrailLoggerDelegate.createEntityHistory(auditTrail, historyLog);
@@ -191,7 +193,7 @@ class AuditTrailLoggerDelegateTest extends EntityTest {
         return entityOperations;
     }
 
-    private AuditTrail createUnitOfWork() {
+    private AuditTrail createAuditTrail() {
         AuditTrail auditTrail = new AuditTrail();
         auditTrail.setStartedOn(auditTrailLogger.getStartTime());
         auditTrail.setStatus(AuditTrail.Status.SUCCESSFUL);
@@ -203,7 +205,7 @@ class AuditTrailLoggerDelegateTest extends EntityTest {
 
     private EntityState createEntityHistory() {
         EntityState entityState = new EntityState();
-        entityState.setAuditTrail(createUnitOfWork());
+        entityState.setAuditTrail(createAuditTrail());
         entityState.setOperationType(OperationType.CREATE);
         entityState.setEntityName(faker.funnyName().name());
         entityState.setEntityId(faker.number().digit());
