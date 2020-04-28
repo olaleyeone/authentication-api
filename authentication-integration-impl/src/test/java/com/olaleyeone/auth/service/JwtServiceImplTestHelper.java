@@ -7,13 +7,13 @@ import com.olaleyeone.auth.data.entity.RefreshToken;
 
 import java.util.Random;
 
-public class JwtServiceImplTestHelper {
+public final class JwtServiceImplTestHelper {
+
+    protected static Faker faker = Faker.instance(new Random());
 
     private JwtServiceImplTestHelper() {
         //noop
     }
-
-    protected static Faker faker = Faker.instance(new Random());
 
     public static RefreshToken refreshToken() {
         PortalUser portalUser = new PortalUser();
