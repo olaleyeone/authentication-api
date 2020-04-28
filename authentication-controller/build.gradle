@@ -5,6 +5,30 @@ test {
     finalizedBy jacocoTestReport
 }
 
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                minimum = 0.95
+            }
+            excludes = [
+                    'com.olaleyeone.auth.advice.*',
+                    'com.olaleyeone.auth.exception.*',
+                    'com.olaleyeone.auth.configuration.*'
+            ]
+        }
+    }
+}
+check.dependsOn jacocoTestCoverageVerification
+
 dependencies {
     implementation(project(":${projectName}-domain"))
     implementation(project(":${projectName}-repository")) {
@@ -33,20 +57,3 @@ dependencies {
     testRuntimeOnly "org.hibernate.validator:hibernate-validator:$hibernateValidator"
     testRuntimeOnly "org.apache.tomcat.embed:tomcat-embed-el:9.0.34"
 }
-
-jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            element = 'CLASS'
-            limit {
-                minimum = 0.95
-            }
-            excludes = [
-                    'com.olaleyeone.auth.advice.*',
-                    'com.olaleyeone.auth.exception.*',
-                    'com.olaleyeone.auth.configuration.*'
-            ]
-        }
-    }
-}
-check.dependsOn jacocoTestCoverageVerification

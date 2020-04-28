@@ -5,6 +5,26 @@ test {
     finalizedBy jacocoTestReport
 }
 
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                minimum = 0.95
+            }
+        }
+    }
+}
+check.dependsOn jacocoTestCoverageVerification
+
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     api(project(":${projectName}-domain"))
@@ -24,15 +44,3 @@ dependencies {
     testImplementation fileTree(dir: 'test-libs', include: ['*.jar'])
     testImplementation(project(":${projectName}-test-starter"))
 }
-
-jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            element = 'CLASS'
-            limit {
-                minimum = 0.95
-            }
-        }
-    }
-}
-check.dependsOn jacocoTestCoverageVerification
