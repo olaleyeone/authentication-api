@@ -1,11 +1,9 @@
 package com.olaleyeone.entitysearch.util;
 
 import com.olaleyeone.entitysearchtest.EntityTest;
-import com.olaleyeone.entitysearchtest.data.QRecord;
-import com.olaleyeone.entitysearchtest.data.Record;
-import com.querydsl.core.types.Expression;
+import com.olaleyeone.entitysearchtest.data.QEntityRecord;
+import com.olaleyeone.entitysearchtest.data.EntityRecord;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanOperation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -26,7 +24,7 @@ class PredicateExtractorTest extends EntityTest {
     @Autowired
     private HttpServletRequest httpServletRequest;
 
-    private QuerydslBinderCustomizer<QRecord> binderCustomizer;
+    private QuerydslBinderCustomizer<QEntityRecord> binderCustomizer;
 
     @BeforeEach
     public void setUp() {
@@ -35,17 +33,17 @@ class PredicateExtractorTest extends EntityTest {
 
     @Test
     void getPredicateWithoutFilters() {
-        Predicate predicate = predicateExtractor.getPredicate(binderCustomizer, Record.class);
+        Predicate predicate = predicateExtractor.getPredicate(binderCustomizer, EntityRecord.class);
         Mockito.verify(httpServletRequest, Mockito.times(1)).getParameterMap();
         assertNull(predicate);
     }
 
     @Test
     void getPredicateWithFilters() {
-        Mockito.doReturn(Collections.singletonMap(QRecord.record.id.getMetadata().getName(), new String[]{"1"}))
+        Mockito.doReturn(Collections.singletonMap(QEntityRecord.entityRecord.id.getMetadata().getName(), new String[]{"1"}))
                 .when(httpServletRequest)
                 .getParameterMap();
-        Predicate predicate = predicateExtractor.getPredicate(binderCustomizer, Record.class);
+        Predicate predicate = predicateExtractor.getPredicate(binderCustomizer, EntityRecord.class);
         Mockito.verify(httpServletRequest, Mockito.times(1)).getParameterMap();
         assertNotNull(predicate);
     }

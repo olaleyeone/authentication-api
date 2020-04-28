@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,11 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public class RequestMetadataFactory implements FactoryBean<AuthorizedRequest> {
+
+    @Value("${IP_V4_LOCALHOST}")
+    private String IP_V4_LOCALHOST;
+    @Value("${IP_V6_LOCALHOST}")
+    private String IP_V6_LOCALHOST;
 
     private final HttpServletRequest httpServletRequest;
     private final AccessClaimsExtractor accessClaimsExtractor;
@@ -70,6 +76,6 @@ public class RequestMetadataFactory implements FactoryBean<AuthorizedRequest> {
     }
 
     public boolean isLocalhost(String ipAddress) {
-        return ipAddress.equals("127.0.0.1") || ipAddress.equals("0:0:0:0:0:0:0:1");
+        return ipAddress.equals(IP_V4_LOCALHOST) || ipAddress.equals(IP_V6_LOCALHOST);
     }
 }

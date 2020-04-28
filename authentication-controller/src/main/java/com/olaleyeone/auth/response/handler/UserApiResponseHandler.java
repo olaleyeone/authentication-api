@@ -22,7 +22,6 @@ public class UserApiResponseHandler {
         }
         PortalUser portalUser = optionalPortalUser.get();
 
-        UserApiResponse apiResponse = new UserApiResponse(portalUser);
-        return apiResponse;
+        return new UserApiResponse(portalUser);
     }
 }

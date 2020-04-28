@@ -10,7 +10,7 @@ import org.springframework.context.ApplicationContext;
 import javax.persistence.EntityManager;
 
 @SpringBootTest(classes = TestApplication.class)
-public abstract class EntityTest {
+public class EntityTest {
 
     @Autowired
     protected ApplicationContext applicationContext;

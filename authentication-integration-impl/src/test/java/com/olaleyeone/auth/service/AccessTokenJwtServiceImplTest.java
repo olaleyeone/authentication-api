@@ -2,7 +2,6 @@ package com.olaleyeone.auth.service;
 
 import com.google.gson.Gson;
 import com.olaleyeone.auth.data.entity.PortalUser;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.security.data.AccessClaims;
 import com.olaleyeone.auth.test.ComponentTest;
@@ -11,7 +10,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
 import java.time.LocalDateTime;
 
@@ -21,25 +19,15 @@ class AccessTokenJwtServiceImplTest extends ComponentTest {
 
     private AccessTokenJwtServiceImpl jwtService;
 
-    @Mock
-    private SettingService settingService;
-
     private PortalUser portalUser;
-    private PortalUserAuthentication userAuthentication;
     private RefreshToken refreshToken;
 
     @BeforeEach
     public void setUp() {
-        jwtService = new AccessTokenJwtServiceImpl(Keys.secretKeyFor(SignatureAlgorithm.HS256), settingService, new Gson());
-        portalUser = new PortalUser();
-        portalUser.setId(faker.number().randomNumber());
-        userAuthentication = new PortalUserAuthentication();
-        userAuthentication.setPortalUser(portalUser);
+        jwtService = new AccessTokenJwtServiceImpl(Keys.secretKeyFor(SignatureAlgorithm.HS256), new Gson());
 
-        refreshToken = new RefreshToken();
-        refreshToken.setId(faker.number().randomNumber());
-        refreshToken.setActualAuthentication(userAuthentication);
-        refreshToken.setPortalUser();
+        refreshToken = JwtServiceImplTestHelper.refreshToken();
+        portalUser = refreshToken.getPortalUser();
     }
 
     @Test
