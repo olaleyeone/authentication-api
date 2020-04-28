@@ -26,7 +26,7 @@ class SearchFilterPredicateExtractorTest extends EntityTest {
 
             @Override
             public void customize(QuerydslBindings bindings, QRecord root) {
-
+                //No op
             }
         };
         searchFilterPredicateExtractor = new SearchFilterPredicateExtractor(predicateExtractor);
