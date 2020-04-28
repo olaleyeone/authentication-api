@@ -1,12 +1,13 @@
 package com.olaleyeone.auth.service;
 
-import com.olaleyeone.audittrail.api.ActivityLogger;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
+import com.olaleyeone.audittrail.api.Activity;
+import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.auth.data.entity.PortalUser;
+import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
-import com.olaleyeone.data.RequestMetadata;
 import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
+import com.olaleyeone.data.RequestMetadata;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Named;
@@ -17,14 +18,15 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class ImplicitAuthenticationServiceImpl implements ImplicitAuthenticationService {
 
-    private final Provider<ActivityLogger> activityLoggerProvider;
+    private final Provider<TaskContext> activityLoggerProvider;
     private final PortalUserAuthenticationRepository portalUserAuthenticationRepository;
 
+    @Activity("LOGIN")
     @Transactional
     @Override
     public PortalUserAuthentication createSignUpAuthentication(PortalUser portalUser, RequestMetadata requestMetadata) {
-        activityLoggerProvider.get().log("LOGIN",
-                String.format("Auto login for user %s after registration", portalUser.getId()));
+        activityLoggerProvider.get().setDescription(
+                String.format("Auto login user %s after registration", portalUser.getId()));
         PortalUserAuthentication userAuthentication = new PortalUserAuthentication();
         userAuthentication.setPortalUser(portalUser);
         userAuthentication.setType(AuthenticationType.USER_REGISTRATION);

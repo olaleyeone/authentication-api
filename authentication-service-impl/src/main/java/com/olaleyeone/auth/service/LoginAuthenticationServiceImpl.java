@@ -1,14 +1,15 @@
 package com.olaleyeone.auth.service;
 
-import com.olaleyeone.audittrail.api.ActivityLogger;
+import com.olaleyeone.audittrail.api.Activity;
+import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
 import com.olaleyeone.auth.dto.data.LoginApiRequest;
-import com.olaleyeone.data.RequestMetadata;
 import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
+import com.olaleyeone.data.RequestMetadata;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Named;
@@ -23,8 +24,9 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
     private final PortalUserIdentifierRepository portalUserIdentifierRepository;
     private final PortalUserAuthenticationRepository portalUserAuthenticationRepository;
     private final PasswordService passwordService;
-    private final Provider<ActivityLogger> activityLoggerProvider;
+    private final Provider<TaskContext> taskContextProvider;
 
+    @Activity("PROCESS USER LOGIN")
     @Transactional
     @Override
     public PortalUserAuthentication getAuthenticationResponse(LoginApiRequest requestDto, RequestMetadata requestMetadata) {
@@ -40,26 +42,41 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
     }
 
     private PortalUserAuthentication createUnknownAccountResponse(LoginApiRequest requestDto, RequestMetadata requestMetadata) {
-        activityLoggerProvider.get().log("FAILED LOGIN", "Unknown account " + requestDto.getIdentifier());
-        PortalUserAuthentication userAuthentication = makeAuthenticationResponse(requestDto, requestMetadata, AuthenticationResponseType.UNKNOWN_ACCOUNT);
-        return portalUserAuthenticationRepository.save(userAuthentication);
+        return taskContextProvider.get().execute("FAILED LOGIN",
+                "Unknown account " + requestDto.getIdentifier(),
+                () -> {
+                    PortalUserAuthentication userAuthentication = makeAuthenticationResponse(
+                            requestDto, requestMetadata, AuthenticationResponseType.UNKNOWN_ACCOUNT);
+                    return portalUserAuthenticationRepository.save(userAuthentication);
+                });
     }
 
-    private PortalUserAuthentication createInvalidCredentialResponse(PortalUserIdentifier userIdentifier, LoginApiRequest requestDto, RequestMetadata requestMetadata) {
-        activityLoggerProvider.get().log("FAILED LOGIN", "Invalid credentials for account " + requestDto.getIdentifier());
-        PortalUserAuthentication userAuthentication = makeAuthenticationResponse(requestDto, requestMetadata, AuthenticationResponseType.INCORRECT_CREDENTIAL);
-        userAuthentication.setPortalUserIdentifier(userIdentifier);
-        return portalUserAuthenticationRepository.save(userAuthentication);
+    private PortalUserAuthentication createInvalidCredentialResponse(
+            PortalUserIdentifier userIdentifier, LoginApiRequest requestDto, RequestMetadata requestMetadata) {
+        return taskContextProvider.get().execute("FAILED LOGIN",
+                "Invalid credentials for account " + requestDto.getIdentifier(),
+                () -> {
+                    PortalUserAuthentication userAuthentication = makeAuthenticationResponse(
+                            requestDto, requestMetadata, AuthenticationResponseType.INCORRECT_CREDENTIAL);
+                    userAuthentication.setPortalUserIdentifier(userIdentifier);
+                    return portalUserAuthenticationRepository.save(userAuthentication);
+                });
     }
 
-    private PortalUserAuthentication createSuccessfulAuthenticationResponse(PortalUserIdentifier userIdentifier, LoginApiRequest requestDto, RequestMetadata requestMetadata) {
-        activityLoggerProvider.get().log("SUCCESSFUL LOGIN", requestDto.getIdentifier() + " logged in");
-        PortalUserAuthentication userAuthentication = makeAuthenticationResponse(requestDto, requestMetadata, AuthenticationResponseType.SUCCESSFUL);
-        userAuthentication.setPortalUserIdentifier(userIdentifier);
-        return portalUserAuthenticationRepository.save(userAuthentication);
+    private PortalUserAuthentication createSuccessfulAuthenticationResponse(
+            PortalUserIdentifier userIdentifier, LoginApiRequest requestDto, RequestMetadata requestMetadata) {
+        return taskContextProvider.get().execute("SUCCESSFUL LOGIN",
+                requestDto.getIdentifier() + " logged in",
+                () -> {
+                    PortalUserAuthentication userAuthentication = makeAuthenticationResponse(
+                            requestDto, requestMetadata, AuthenticationResponseType.SUCCESSFUL);
+                    userAuthentication.setPortalUserIdentifier(userIdentifier);
+                    return portalUserAuthenticationRepository.save(userAuthentication);
+                });
     }
 
-    private PortalUserAuthentication makeAuthenticationResponse(LoginApiRequest requestDto, RequestMetadata requestMetadata, AuthenticationResponseType authenticationResponseType) {
+    private PortalUserAuthentication makeAuthenticationResponse(
+            LoginApiRequest requestDto, RequestMetadata requestMetadata, AuthenticationResponseType authenticationResponseType) {
         PortalUserAuthentication userAuthentication = new PortalUserAuthentication();
         userAuthentication.setType(AuthenticationType.LOGIN);
         userAuthentication.setResponseType(authenticationResponseType);

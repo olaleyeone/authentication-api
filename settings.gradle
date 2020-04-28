@@ -9,6 +9,4 @@ include "${projectName}-domain",
         "${projectName}-web-infrastructure",
         "${projectName}-controller",
         "authorization",
-        "audit-trail",
-        "audit-trail-spring-data-jpa",
         "entity-search"

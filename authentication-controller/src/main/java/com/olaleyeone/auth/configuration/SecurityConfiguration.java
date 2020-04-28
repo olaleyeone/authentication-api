@@ -3,13 +3,11 @@ package com.olaleyeone.auth.configuration;
 import com.olaleyeone.auth.qualifier.JwtToken;
 import com.olaleyeone.auth.qualifier.JwtTokenType;
 import com.olaleyeone.auth.security.access.AccessStatus;
-import com.olaleyeone.auth.security.data.AccessClaimsExtractor;
 import com.olaleyeone.auth.security.access.TrustedIpAddressAuthorizer;
 import com.olaleyeone.auth.security.annotations.TrustedIpAddress;
 import com.olaleyeone.auth.security.data.AccessClaims;
+import com.olaleyeone.auth.security.data.AccessClaimsExtractor;
 import com.olaleyeone.auth.security.data.RequestMetadataFactory;
-import com.olaleyeone.auth.security.interceptors.AccessConstraintHandlerInterceptor;
-import com.olaleyeone.auth.security.interceptors.RemoteAddressConstraintHandlerInterceptor;
 import com.olaleyeone.auth.service.JwtService;
 import com.olaleyeone.auth.service.SettingService;
 import lombok.RequiredArgsConstructor;
@@ -18,23 +16,15 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Configuration
-public class SecurityConfiguration implements WebMvcConfigurer {
+public class SecurityConfiguration {
 
     private final AutowireCapableBeanFactory beanFactory;
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(beanFactory.createBean(RemoteAddressConstraintHandlerInterceptor.class));
-        registry.addInterceptor(beanFactory.createBean(AccessConstraintHandlerInterceptor.class));
-    }
 
     @Bean
     public RequestMetadataFactory requestMetadataFactory() {

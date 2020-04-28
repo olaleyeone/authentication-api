@@ -17,7 +17,7 @@ public class AccessTokenApiResponse {
     private String refreshToken;
 
     @JsonProperty("token_type")
-    private final String tokenType = "Bearer";
+    private static final String tokenType = "Bearer";
     @JsonProperty("access_token")
     private String accessToken;
     @JsonProperty("expires_in")

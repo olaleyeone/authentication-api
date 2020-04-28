@@ -1,12 +1,15 @@
 package com.olaleyeone.auth.configuration;
 
-import com.olaleyeone.entitysearch.JpaQuerySource;
-import org.springframework.context.annotation.Bean;
+import com.olaleyeone.auth.security.interceptors.AccessConstraintHandlerInterceptor;
+import com.olaleyeone.auth.security.interceptors.RemoteAddressConstraintHandlerInterceptor;
+import com.olaleyeone.entitysearch.configuration.SearchConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-
-import javax.persistence.EntityManager;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @ComponentScan({
@@ -20,12 +23,18 @@ import javax.persistence.EntityManager;
 @Import({
         AdditionalComponentsConfiguration.class,
         BeanValidationConfiguration.class,
-        SecurityConfiguration.class
+        SecurityConfiguration.class,
+        SearchConfiguration.class
 })
-public class WebConfiguration {
+public class WebConfiguration implements WebMvcConfigurer {
 
-    @Bean
-    public JpaQuerySource jpaQuerySource(EntityManager entityManager) {
-        return new JpaQuerySource(entityManager);
+    @Autowired
+    private AutowireCapableBeanFactory beanFactory;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(beanFactory.createBean(TaskContextHandlerInterceptor.class));
+        registry.addInterceptor(beanFactory.createBean(RemoteAddressConstraintHandlerInterceptor.class));
+        registry.addInterceptor(beanFactory.createBean(AccessConstraintHandlerInterceptor.class));
     }
 }

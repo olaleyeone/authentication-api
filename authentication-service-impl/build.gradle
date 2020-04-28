@@ -5,8 +5,28 @@ test {
     finalizedBy jacocoTestReport
 }
 
-dependencies {
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+    }
+}
 
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                minimum = 0.95
+            }
+        }
+    }
+}
+check.dependsOn jacocoTestCoverageVerification
+
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     api(project(":${projectName}-domain"))
     implementation(project(":${projectName}-repository")) {
         exclude module: "hibernate-jpa-2.1-api"
@@ -21,20 +41,6 @@ dependencies {
 
     implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
 
-    implementation(project(":audit-trail"))
-
+    testImplementation fileTree(dir: 'test-libs', include: ['*.jar'])
     testImplementation(project(":${projectName}-test-starter"))
-    testImplementation(project(":audit-trail-spring-data-jpa"))
 }
-
-jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            element = 'CLASS'
-            limit {
-                minimum = 0.95
-            }
-        }
-    }
-}
-check.dependsOn jacocoTestCoverageVerification

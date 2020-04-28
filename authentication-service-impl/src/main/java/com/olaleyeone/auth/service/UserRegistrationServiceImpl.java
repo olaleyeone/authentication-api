@@ -1,14 +1,15 @@
 package com.olaleyeone.auth.service;
 
-import com.olaleyeone.audittrail.api.ActivityLogger;
+import com.olaleyeone.audittrail.api.Activity;
+import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
-import com.olaleyeone.data.RequestMetadata;
 import com.olaleyeone.auth.dto.data.UserRegistrationApiRequest;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.repository.PortalUserRepository;
+import com.olaleyeone.data.RequestMetadata;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,12 +29,13 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     private final PhoneNumberService phoneNumberService;
     private final PasswordService passwordService;
     private final ImplicitAuthenticationService implicitAuthenticationService;
-    private final Provider<ActivityLogger> activityLoggerProvider;
+    private final Provider<TaskContext> taskContextProvider;
 
+    @Activity("USER REGISTRATION")
     @Transactional
     @Override
     public PortalUserAuthentication registerUser(UserRegistrationApiRequest dto, RequestMetadata requestMetadata) {
-        activityLoggerProvider.get().log("USER REGISTRATION", String.format("Registering user with email %s", dto.getEmail()));
+        taskContextProvider.get().setDescription(String.format("Register user with email %s", dto.getEmail()));
         PortalUser portalUser = new PortalUser();
         portalUser.setFirstName(StringUtils.normalizeSpace(dto.getFirstName()));
         portalUser.setLastName(getNonEmptyString(dto.getLastName()));

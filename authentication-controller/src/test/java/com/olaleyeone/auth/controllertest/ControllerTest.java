@@ -7,14 +7,17 @@ import com.github.javafaker.Faker;
 import com.olaleyeone.auth.configuration.AdditionalComponentsConfiguration;
 import com.olaleyeone.auth.configuration.BeanValidationConfiguration;
 import com.olaleyeone.auth.configuration.SecurityConfiguration;
-import com.olaleyeone.auth.search.util.PredicateExtractor;
-import com.olaleyeone.auth.search.util.SearchFilterPredicateExtractor;
+import com.olaleyeone.entitysearch.util.PredicateExtractor;
+import com.olaleyeone.entitysearch.util.SearchFilterPredicateExtractor;
 import com.olaleyeone.auth.security.data.AccessClaims;
 import com.olaleyeone.auth.security.data.AccessClaimsExtractor;
+import com.olaleyeone.auth.security.interceptors.AccessConstraintHandlerInterceptor;
+import com.olaleyeone.auth.security.interceptors.RemoteAddressConstraintHandlerInterceptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.mockito.internal.creation.bytebuddy.MockAccess;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +30,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.inject.Inject;
 import java.util.Random;
@@ -93,7 +98,16 @@ public abstract class ControllerTest {
             ResponseHandlerMockConfig.class,
             SearchHandlerMockConfig.class
     })
-    static class $Config {
+    static class $Config implements WebMvcConfigurer {
+
+        @Autowired
+        private AutowireCapableBeanFactory beanFactory;
+
+        @Override
+        public void addInterceptors(InterceptorRegistry registry) {
+            registry.addInterceptor(beanFactory.createBean(RemoteAddressConstraintHandlerInterceptor.class));
+            registry.addInterceptor(beanFactory.createBean(AccessConstraintHandlerInterceptor.class));
+        }
 
         @Bean
         public PredicateExtractor predicateExtractor(ApplicationContext applicationContext) {
