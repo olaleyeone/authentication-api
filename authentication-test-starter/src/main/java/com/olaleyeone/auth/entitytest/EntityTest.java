@@ -20,7 +20,7 @@ import java.util.Map;
 @Transactional
 @SpringBootTest(classes = TestApplication.class)
 @Import({TestDataFactoryConfiguration.class})
-public abstract class EntityTest {
+public class EntityTest {
 
     @Autowired
     protected EntityManager entityManager;

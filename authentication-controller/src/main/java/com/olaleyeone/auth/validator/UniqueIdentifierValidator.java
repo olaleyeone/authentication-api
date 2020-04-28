@@ -32,9 +32,10 @@ public class UniqueIdentifierValidator implements UniqueIdentifier.Validator {
         if (StringUtils.isBlank(value)) {
             return true;
         }
+        String phoneNumber = value;
         if (identifierType == UserIdentifierType.PHONE_NUMBER) {
-            value = phoneNumberService.formatPhoneNumber(value);
+            phoneNumber = phoneNumberService.formatPhoneNumber(phoneNumber);
         }
-        return !portalUserIdentifierRepository.findByIdentifier(value).isPresent();
+        return !portalUserIdentifierRepository.findByIdentifier(phoneNumber).isPresent();
     }
 }

@@ -28,7 +28,7 @@ public class PortalUserAuthenticationSearchFilter implements SearchFilter<Portal
 
     @Override
     public void customize(QuerydslBindings bindings, QPortalUserAuthentication root) {
-
+        //noop
     }
 
     @Getter
