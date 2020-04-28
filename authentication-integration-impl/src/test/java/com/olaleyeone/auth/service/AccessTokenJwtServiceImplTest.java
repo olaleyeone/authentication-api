@@ -11,7 +11,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
 import java.time.LocalDateTime;
 
@@ -21,16 +20,13 @@ class AccessTokenJwtServiceImplTest extends ComponentTest {
 
     private AccessTokenJwtServiceImpl jwtService;
 
-    @Mock
-    private SettingService settingService;
-
     private PortalUser portalUser;
     private PortalUserAuthentication userAuthentication;
     private RefreshToken refreshToken;
 
     @BeforeEach
     public void setUp() {
-        jwtService = new AccessTokenJwtServiceImpl(Keys.secretKeyFor(SignatureAlgorithm.HS256), settingService, new Gson());
+        jwtService = new AccessTokenJwtServiceImpl(Keys.secretKeyFor(SignatureAlgorithm.HS256), new Gson());
         portalUser = new PortalUser();
         portalUser.setId(faker.number().randomNumber());
         userAuthentication = new PortalUserAuthentication();
