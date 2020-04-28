@@ -18,7 +18,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         OpenApiConfiguration.class,
         IntegrationConfiguration.class
 })
-@EnableJpaRepositories({"com.olaleyeone.auth.repository"})
+@EnableJpaRepositories({
+        "com.olaleyeone.auth.repository",
+        "com.olaleyeone.audittrail.repository"
+})
 @EntityScan({
         "com.olaleyeone.data",
         "com.olaleyeone.auth.data",

@@ -39,22 +39,6 @@ class RefreshTokenServiceImplTest extends ServiceTest {
         assertTrue((durationInSeconds - 1) == actualExpiryDurationInSeconds || durationInSeconds == actualExpiryDurationInSeconds);
     }
 
-//    @Test
-//    public void shouldPreventDuplicateRefreshToken() {
-//        int duration = 5;
-//        RefreshToken prevRefreshToken = modelFactory.pipe(RefreshToken.class)
-//                .then(it -> {
-//                    it.setActualAuthentication(userAuthentication);
-//                    return it;
-//                }).create();
-//        settingService.getInteger(RefreshTokenServiceImpl.REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES, duration);
-//        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userAuthentication);
-//        assertNotNull(refreshToken);
-//        assertNotNull(refreshToken.getId());
-//        assertEquals(userAuthentication.getId(), refreshToken.getActualAuthentication().getId());
-//        assertNotNull(prevRefreshToken.getTimeDeactivated());
-//    }
-
     @Test
     public void deactivateRefreshToken() {
         RefreshToken refreshToken = modelFactory.create(RefreshToken.class);

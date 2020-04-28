@@ -24,6 +24,7 @@ dependencies {
     api "org.springframework.data:spring-data-jpa:$springDataVersion"
     api "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:$hibernateJpaVersion"
+    compileOnly "javax.servlet:javax.servlet-api:$servletVersion"
 
     testCompileOnly "com.querydsl:querydsl-jpa:${queryDslVersion}"
     testAnnotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
@@ -33,6 +34,7 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
 
+    testImplementation "javax.servlet:javax.servlet-api:$servletVersion"
     testImplementation "org.hibernate:hibernate-core:$hibernateVersion"
     testRuntimeOnly "com.h2database:h2:$h2Version"
 }

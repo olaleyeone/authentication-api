@@ -1,6 +1,7 @@
 package com.olaleyeone.auth.service;
 
-import com.olaleyeone.audittrail.api.ActivityLogger;
+import com.olaleyeone.audittrail.api.Activity;
+import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
@@ -21,13 +22,14 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     private final SettingService settingService;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final Provider<ActivityLogger> activityLoggerProvider;
+    private final Provider<TaskContext> taskContextProvider;
 
+    @Activity("REFRESH TOKEN CREATION FOR USER")
     @Transactional
     @Override
     public RefreshToken createRefreshToken(PortalUserAuthentication userAuthentication) {
-        activityLoggerProvider.get().log("REFRESH TOKEN CREATION FOR USER",
-                String.format("Creating refresh token for logged in user %s", userAuthentication.getPortalUser().getId()));
+        taskContextProvider.get().setDescription(
+                String.format("Create refresh token for logged in user %s", userAuthentication.getPortalUser().getId()));
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setActualAuthentication(userAuthentication);
         refreshToken.setExpiresAt(getExpiresAt());
@@ -50,11 +52,11 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 180));
     }
 
+    @Activity("TOKEN DEACTIVATION")
     @Transactional
     @Override
     public void deactivateRefreshToken(RefreshToken refreshToken) {
-        activityLoggerProvider.get().log("TOKEN DEACTIVATION",
-                String.format("deactivating token with id %d", refreshToken.getId()));
+        taskContextProvider.get().setDescription(String.format("deactivate token with id %d", refreshToken.getId()));
         refreshToken.setTimeDeactivated(LocalDateTime.now());
         refreshTokenRepository.save(refreshToken);
     }

@@ -1,6 +1,7 @@
 package com.olaleyeone.auth.service;
 
-import com.olaleyeone.audittrail.api.ActivityLogger;
+import com.olaleyeone.audittrail.api.Activity;
+import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.dto.data.PasswordUpdateApiRequest;
@@ -17,15 +18,16 @@ import javax.transaction.Transactional;
 @Named
 public class PasswordUpdateServiceImpl implements PasswordUpdateService {
 
-    private final Provider<ActivityLogger> activityLoggerProvider;
+    private final Provider<TaskContext> taskContextProvider;
     private final PasswordService passwordService;
     private final PortalUserRepository portalUserRepository;
     private final PortalUserAuthenticationRepository portalUserAuthenticationRepository;
 
+    @Activity("PASSWORD UPDATE")
     @Transactional
     @Override
     public void updatePassword(RefreshToken refreshToken, PasswordUpdateApiRequest passwordUpdateApiRequest) {
-        activityLoggerProvider.get().log("PASSWORD UPDATE",
+        taskContextProvider.get().setDescription(
                 String.format("Updating password for logged in user %s", refreshToken.getPortalUser().getId()));
         PortalUser portalUser = refreshToken.getPortalUser();
         portalUser.setPassword(passwordService.hashPassword(passwordUpdateApiRequest.getPassword()));

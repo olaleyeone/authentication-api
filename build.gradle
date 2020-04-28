@@ -39,13 +39,12 @@ dependencies {
     }
 
     /* add modules */
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(path: ":${projectName}-domain", configuration: 'default')
     implementation project(path: ":${projectName}-repository", configuration: 'default')
     implementation project(path: ":${projectName}-service-impl", configuration: 'default')
     implementation project(path: ":${projectName}-integration-impl", configuration: 'default')
     implementation project(path: ":${projectName}-controller", configuration: 'default')
-
-    implementation(project(":audit-trail-spring-data-jpa"))
 }
 
 test {
