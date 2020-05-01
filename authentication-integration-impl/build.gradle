@@ -27,12 +27,13 @@ check.dependsOn jacocoTestCoverageVerification
 
 dependencies {
 
-    implementation "javax.inject:javax.inject:1"
+    implementation fileTree(dir: project(":${projectName}-domain").file('libs'), include: ['*.jar'])
     implementation(project(":${projectName}-repository"))
     api(project(":${projectName}-service"))
     api(project(":${projectName}-integration"))
     implementation(project(":authorization"))
 
+    implementation "javax.inject:javax.inject:1"
     implementation "javax.servlet:javax.servlet-api:$servletVersion"
 
     implementation "org.apache.commons:commons-lang3:$commonsLang3Version"

@@ -12,11 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class RequestMetadataFactory implements FactoryBean<AuthorizedRequest> {
+public class AuthorizedRequestFactory implements FactoryBean<AuthorizedRequest> {
 
-    @Value("${IP_V4_LOCALHOST}")
+    @Value("${IP_V4_LOCALHOST:127.0.0.1}")
     private String IP_V4_LOCALHOST;
-    @Value("${IP_V6_LOCALHOST}")
+    @Value("${IP_V6_LOCALHOST:0:0:0:0:0:0:0:1}")
     private String IP_V6_LOCALHOST;
 
     private final HttpServletRequest httpServletRequest;

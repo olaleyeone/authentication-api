@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.response.pojo;
+package com.olaleyeone.web;
 
 import lombok.Data;
 

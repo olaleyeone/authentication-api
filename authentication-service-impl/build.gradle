@@ -24,9 +24,8 @@ jacocoTestCoverageVerification {
 }
 check.dependsOn jacocoTestCoverageVerification
 
-
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: project(":${projectName}-domain").file('libs'), include: ['*.jar'])
     api(project(":${projectName}-domain"))
     implementation(project(":${projectName}-repository")) {
         exclude module: "hibernate-jpa-2.1-api"

@@ -36,7 +36,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         refreshToken.setAccessExpiresAt(getAccessExpiresAt());
         refreshTokenRepository.save(refreshToken);
 
-        userAuthentication.setLastActiveAt(refreshToken.getDateCreated());
+        userAuthentication.setLastActiveAt(refreshToken.getCreatedOn());
         userAuthentication.setBecomesInactiveAt(refreshToken.getAccessExpiresAt());
         userAuthentication.setAutoLogoutAt(refreshToken.getExpiresAt());
         return refreshToken;

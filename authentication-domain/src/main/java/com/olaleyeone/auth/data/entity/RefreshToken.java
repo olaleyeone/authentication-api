@@ -1,9 +1,9 @@
 package com.olaleyeone.auth.data.entity;
 
-import com.olaleyeone.auth.data.embeddable.PersistTimeSetter;
+import com.olaleyeone.audittrail.Audited;
+import com.olaleyeone.audittrail.embeddable.Audit;
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Delegate;
 
@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Entity
 @Data
-public class RefreshToken {
+public class RefreshToken implements Audited {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,11 +29,10 @@ public class RefreshToken {
     @Setter(value = AccessLevel.NONE)
     private PortalUser portalUser;
 
-    @Embedded
     @Delegate
-    @Setter(value = AccessLevel.NONE)
-    @Getter(value = AccessLevel.NONE)
-    private PersistTimeSetter persistTimeSetter = new PersistTimeSetter();
+    @Embedded
+    @Setter(AccessLevel.NONE)
+    private Audit audit = new Audit();
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime accessExpiresAt;

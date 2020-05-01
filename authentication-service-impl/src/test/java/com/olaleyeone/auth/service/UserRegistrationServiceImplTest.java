@@ -66,7 +66,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
         assertEquals(dto.getLastName(), portalUser.getLastName());
         assertEquals(dto.getOtherName(), portalUser.getOtherName());
         assertNotNull(portalUser.getId());
-        assertNotNull(portalUser.getDateCreated());
+        assertNotNull(portalUser.getCreatedOn());
     }
 
     @Test

@@ -34,6 +34,6 @@ public class PortalUserIdentifierTest extends EntityTest {
         assertEquals(identifier, userIdentifier.getIdentifier());
         assertEquals(identifierType, userIdentifier.getIdentifierType());
         assertEquals(user.getId(), userIdentifier.getPortalUser().getId());
-        assertNotNull(userIdentifier.getDateCreated());
+        assertNotNull(userIdentifier.getCreatedOn());
     }
 }

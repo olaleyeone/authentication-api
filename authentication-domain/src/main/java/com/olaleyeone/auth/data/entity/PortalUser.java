@@ -1,10 +1,10 @@
 package com.olaleyeone.auth.data.entity;
 
+import com.olaleyeone.audittrail.Audited;
 import com.olaleyeone.audittrail.api.IgnoreData;
-import com.olaleyeone.auth.data.embeddable.PersistTimeSetter;
+import com.olaleyeone.audittrail.embeddable.Audit;
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Delegate;
 
@@ -12,7 +12,7 @@ import javax.persistence.*;
 
 @Entity
 @Data
-public class PortalUser {
+public class PortalUser implements Audited {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,9 +28,8 @@ public class PortalUser {
 
     private String otherName;
 
-    @Embedded
     @Delegate
-    @Setter(value = AccessLevel.NONE)
-    @Getter(value = AccessLevel.NONE)
-    private PersistTimeSetter persistTimeSetter = new PersistTimeSetter();
+    @Embedded
+    @Setter(AccessLevel.NONE)
+    private Audit audit = new Audit();
 }

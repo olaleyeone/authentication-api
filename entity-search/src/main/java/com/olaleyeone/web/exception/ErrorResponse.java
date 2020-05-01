@@ -1,6 +1,6 @@
-package com.olaleyeone.auth.exception;
+package com.olaleyeone.web.exception;
 
-import com.olaleyeone.auth.response.pojo.ApiResponse;
+import com.olaleyeone.web.ApiResponse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.http.HttpStatus;

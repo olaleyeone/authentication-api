@@ -1,6 +1,6 @@
 package com.olaleyeone.data.entity;
 
-import com.olaleyeone.auth.data.embeddable.PersistTimeSetter;
+import com.olaleyeone.audittrail.embeddable.Audit;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -27,5 +27,5 @@ public class Setting {
     @Delegate
     @Setter(value = AccessLevel.NONE)
     @Getter(value = AccessLevel.NONE)
-    private PersistTimeSetter persistTimeSetter = new PersistTimeSetter();
+    private Audit audit = new Audit();
 }

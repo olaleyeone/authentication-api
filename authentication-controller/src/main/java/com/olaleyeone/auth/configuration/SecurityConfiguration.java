@@ -7,7 +7,7 @@ import com.olaleyeone.auth.security.access.TrustedIpAddressAuthorizer;
 import com.olaleyeone.auth.security.annotations.TrustedIpAddress;
 import com.olaleyeone.auth.security.data.AccessClaims;
 import com.olaleyeone.auth.security.data.AccessClaimsExtractor;
-import com.olaleyeone.auth.security.data.RequestMetadataFactory;
+import com.olaleyeone.auth.security.data.AuthorizedRequestFactory;
 import com.olaleyeone.auth.service.JwtService;
 import com.olaleyeone.auth.service.SettingService;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +27,8 @@ public class SecurityConfiguration {
     private final AutowireCapableBeanFactory beanFactory;
 
     @Bean
-    public RequestMetadataFactory requestMetadataFactory() {
-        return beanFactory.createBean(RequestMetadataFactory.class);
+    public AuthorizedRequestFactory requestMetadataFactory() {
+        return beanFactory.createBean(AuthorizedRequestFactory.class);
     }
 
     @Profile("!test")
