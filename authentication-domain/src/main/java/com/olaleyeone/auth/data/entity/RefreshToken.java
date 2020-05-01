@@ -51,15 +51,15 @@ public class RefreshToken implements Audited {
     }
 
     @Transient
+    public Long getSecondsTillExpiry() {
+        return Instant.now().until(getExpiryInstant(), ChronoUnit.SECONDS);
+    }
+
+    @Transient
     public Instant getAccessExpiryInstant() {
         return Optional.ofNullable(accessExpiresAt)
                 .map(it -> it.atZone(ZoneId.systemDefault()).toInstant())
                 .orElse(null);
-    }
-
-    @Transient
-    public Long getSecondsTillExpiry() {
-        return Instant.now().until(getExpiryInstant(), ChronoUnit.SECONDS);
     }
 
     @Transient
