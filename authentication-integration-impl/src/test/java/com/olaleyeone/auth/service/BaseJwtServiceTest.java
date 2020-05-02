@@ -42,7 +42,6 @@ class BaseJwtServiceTest extends ComponentTest {
         kpg.initialize(2048);
         keyPair = kpg.generateKeyPair();
 
-
         signatureKey = new SignatureKey();
         signatureKey.setKeyId(faker.idNumber().ssnValid());
     }

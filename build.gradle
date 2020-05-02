@@ -39,8 +39,8 @@ dependencies {
     }
 
     /* add modules */
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation fileTree(dir: project(":${projectName}-domain").file('libs'), include: ['*.jar'])
+    implementation fileTree(dir: project(":${projectName}-integration-impl").file('libs'), include: ['*.jar'])
     implementation project(path: ":${projectName}-domain", configuration: 'default')
     implementation project(path: ":${projectName}-repository", configuration: 'default')
     implementation project(path: ":${projectName}-service-impl", configuration: 'default')
