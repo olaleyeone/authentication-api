@@ -47,15 +47,15 @@ public abstract class ControllerTest {
     @Autowired
     protected ObjectMapper objectMapper;
 
-    protected Faker faker = Faker.instance(new Random());
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Autowired
     protected AccessClaimsExtractor accessClaimsExtractor;
 
     protected AccessClaims accessClaims;
 
-    @Inject
-    private ApplicationContext applicationContext;
+    protected final Faker faker = Faker.instance(new Random());
 
     protected RequestPostProcessor loggedInUser = request -> {
         request.addHeader(HttpHeaders.AUTHORIZATION, "Bearer ");
@@ -119,5 +119,4 @@ public abstract class ControllerTest {
             return applicationContext.getAutowireCapableBeanFactory().createBean(SearchFilterPredicateExtractor.class);
         }
     }
-
 }

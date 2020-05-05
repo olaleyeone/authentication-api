@@ -5,6 +5,7 @@ import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.dto.data.PasswordUpdateApiRequest;
+import com.olaleyeone.auth.integration.etc.HashService;
 import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import com.olaleyeone.auth.repository.PortalUserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ import javax.transaction.Transactional;
 public class PasswordUpdateServiceImpl implements PasswordUpdateService {
 
     private final Provider<TaskContext> taskContextProvider;
-    private final PasswordService passwordService;
+    private final HashService hashService;
     private final PortalUserRepository portalUserRepository;
     private final PortalUserAuthenticationRepository portalUserAuthenticationRepository;
 
@@ -30,7 +31,7 @@ public class PasswordUpdateServiceImpl implements PasswordUpdateService {
         taskContextProvider.get().setDescription(
                 String.format("Updating password for logged in user %s", refreshToken.getPortalUser().getId()));
         PortalUser portalUser = refreshToken.getPortalUser();
-        portalUser.setPassword(passwordService.hashPassword(passwordUpdateApiRequest.getPassword()));
+        portalUser.setPassword(hashService.generateHash(passwordUpdateApiRequest.getPassword()));
         portalUserRepository.save(portalUser);
         if (BooleanUtils.isTrue(passwordUpdateApiRequest.getInvalidateOtherSessions())) {
             portalUserAuthenticationRepository.deactivateOtherSessions(refreshToken.getActualAuthentication());

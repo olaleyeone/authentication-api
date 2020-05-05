@@ -1,9 +1,8 @@
 package com.olaleyeone.auth.controllertest;
 
-import com.olaleyeone.auth.service.LoginAuthenticationService;
-import com.olaleyeone.auth.service.PasswordUpdateService;
-import com.olaleyeone.auth.service.PhoneNumberService;
-import com.olaleyeone.auth.service.UserRegistrationService;
+import com.olaleyeone.auth.integration.etc.PhoneNumberService;
+import com.olaleyeone.auth.service.*;
+import com.olaleyeone.auth.integration.email.VerificationEmailSender;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,5 +28,15 @@ class ServiceMockConfig {
     @Bean
     public PasswordUpdateService passwordUpdateService() {
         return Mockito.mock(PasswordUpdateService.class);
+    }
+
+    @Bean
+    public PortalUserIdentifierVerificationService portalUserIdentifierVerificationService() {
+        return Mockito.mock(PortalUserIdentifierVerificationService.class);
+    }
+
+    @Bean
+    public VerificationEmailSender verificationEmailSender() {
+        return Mockito.mock(VerificationEmailSender.class);
     }
 }

@@ -7,6 +7,8 @@ import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.dto.data.UserRegistrationApiRequest;
+import com.olaleyeone.auth.integration.etc.HashService;
+import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.repository.PortalUserRepository;
 import com.olaleyeone.data.RequestMetadata;
@@ -27,7 +29,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     private final PortalUserRepository portalUserRepository;
     private final PortalUserIdentifierRepository portalUserIdentifierRepository;
     private final PhoneNumberService phoneNumberService;
-    private final PasswordService passwordService;
+    private final HashService hashService;
     private final ImplicitAuthenticationService implicitAuthenticationService;
     private final Provider<TaskContext> taskContextProvider;
 
@@ -40,7 +42,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         portalUser.setFirstName(StringUtils.normalizeSpace(dto.getFirstName()));
         portalUser.setLastName(getNonEmptyString(dto.getLastName()));
         portalUser.setOtherName(getNonEmptyString(dto.getOtherName()));
-        portalUser.setPassword(passwordService.hashPassword(dto.getPassword()));
+        portalUser.setPassword(hashService.generateHash(dto.getPassword()));
 
         portalUserRepository.save(portalUser);
 

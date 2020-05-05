@@ -28,6 +28,7 @@ jacocoTestCoverageVerification {
 check.dependsOn jacocoTestCoverageVerification
 
 dependencies {
+    implementation fileTree(dir: project(":${projectName}-domain").file('libs'), include: ['*.jar'])
     api(project(":${projectName}-domain"))
     api "org.springframework.data:spring-data-jpa:$springDataVersion"
 

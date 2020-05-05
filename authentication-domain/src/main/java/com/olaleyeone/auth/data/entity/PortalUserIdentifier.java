@@ -36,4 +36,7 @@ public class PortalUserIdentifier implements Audited {
 
     @ManyToOne(optional = false)
     private PortalUser portalUser;
+
+    @OneToOne
+    private PortalUserIdentifierVerification verification;
 }

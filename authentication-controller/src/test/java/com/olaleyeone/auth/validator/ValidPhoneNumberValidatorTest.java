@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.validator;
 
-import com.olaleyeone.auth.service.PhoneNumberService;
+import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import com.olaleyeone.auth.test.ComponentTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

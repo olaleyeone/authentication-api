@@ -5,6 +5,8 @@ import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
+import com.olaleyeone.auth.integration.etc.HashService;
+import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import com.olaleyeone.data.RequestMetadata;
 import com.olaleyeone.auth.dto.data.UserRegistrationApiRequest;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
@@ -27,7 +29,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
     @Autowired
     private PhoneNumberService phoneNumberService;
     @Autowired
-    private PasswordService passwordService;
+    private HashService hashService;
 
     @Autowired
     private PortalUserIdentifierRepository portalUserIdentifierRepository;
@@ -73,12 +75,12 @@ class UserRegistrationServiceImplTest extends ServiceTest {
     public void shouldEncryptPassword() {
         String encryptPassword = UUID.randomUUID().toString();
         Mockito.doReturn(encryptPassword)
-                .when(passwordService).hashPassword(Mockito.anyString());
+                .when(hashService).generateHash(Mockito.anyString());
         PortalUserAuthentication userAuthentication = userRegistrationService.registerUser(dto, requestMetadata);
         PortalUser portalUser = userAuthentication.getPortalUser();
         assertEquals(encryptPassword, portalUser.getPassword());
-        Mockito.verify(passwordService, Mockito.times(1))
-                .hashPassword(dto.getPassword());
+        Mockito.verify(hashService, Mockito.times(1))
+                .generateHash(dto.getPassword());
     }
 
     @Test

@@ -3,6 +3,7 @@ package com.olaleyeone.auth.service;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.dto.data.PasswordUpdateApiRequest;
+import com.olaleyeone.auth.integration.etc.HashService;
 import com.olaleyeone.auth.servicetest.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ class PasswordUpdateServiceImplTest extends ServiceTest {
     private PasswordUpdateService passwordUpdateService;
 
     @Autowired
-    private PasswordService passwordService;
+    private HashService hashService;
 
     private PasswordUpdateApiRequest apiRequest;
 

@@ -22,7 +22,7 @@ class PortalUserTest extends EntityTest {
     }
 
     @Test
-    void shouldNotOverwriteCreatedOd() {
+    void shouldNotOverwriteCreatedOn() {
         LocalDateTime then = LocalDateTime.now().minusDays(1);
         PortalUser user = new PortalUser();
         user.setFirstName(faker.name().firstName());

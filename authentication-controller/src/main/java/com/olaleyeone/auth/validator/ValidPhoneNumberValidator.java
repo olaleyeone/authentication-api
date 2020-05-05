@@ -1,7 +1,7 @@
 package com.olaleyeone.auth.validator;
 
 import com.olaleyeone.auth.dto.constraints.ValidPhoneNumber;
-import com.olaleyeone.auth.service.PhoneNumberService;
+import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 

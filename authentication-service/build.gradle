@@ -1,4 +1,4 @@
 dependencies {
-
+    implementation fileTree(dir: project(":${projectName}-domain").file('libs'), include: ['*.jar'])
     api(project(":${projectName}-domain"))
 }
