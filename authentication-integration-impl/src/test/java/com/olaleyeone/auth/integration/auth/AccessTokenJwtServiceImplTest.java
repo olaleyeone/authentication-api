@@ -1,8 +1,7 @@
 package com.olaleyeone.auth.integration.auth;
 
+import com.olaleyeone.audittrail.context.Action;
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
-import com.olaleyeone.audittrail.impl.TaskContextImpl;
-import com.olaleyeone.audittrail.impl.TaskContextSaver;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.entity.SignatureKey;
 import com.olaleyeone.auth.security.data.AccessClaims;
@@ -31,8 +30,6 @@ class AccessTokenJwtServiceImplTest extends ComponentTest {
     @Mock
     private TaskContextFactory taskContextFactory;
     @Mock
-    private TaskContextSaver taskContextSaver;
-    @Mock
     private BaseJwtService baseJwtService;
 
     @BeforeEach
@@ -41,7 +38,6 @@ class AccessTokenJwtServiceImplTest extends ComponentTest {
                 .baseJwtService(baseJwtService)
                 .keyGenerator(keyGenerator)
                 .taskContextFactory(taskContextFactory)
-                .taskContextSaver(taskContextSaver)
                 .build();
 
         refreshToken = JwtServiceImplTestHelper.refreshToken();
@@ -49,23 +45,23 @@ class AccessTokenJwtServiceImplTest extends ComponentTest {
 
     @Test
     public void shouldInitializeKey() {
+        Mockito.doAnswer(invocation -> {
+            Action action = invocation.getArgument(2);
+            action.execute();
+            return null;
+        }).when(taskContextFactory).startBackgroundTask(Mockito.any(), Mockito.any(), Mockito.any());
+
         Pair<Key, SignatureKey> key = Pair.of(null, null);
-        TaskContextImpl taskContext = Mockito.mock(TaskContextImpl.class);
         Mockito.doReturn(key)
                 .when(keyGenerator)
                 .generateKey();
-        Mockito.doReturn(taskContext)
-                .when(taskContextFactory)
-                .start(Mockito.any());
         jwtService.init();
         Mockito.verify(keyGenerator, Mockito.times(1))
                 .generateKey();
         Mockito.verify(baseJwtService, Mockito.times(1))
                 .updateKey(key);
         Mockito.verify(taskContextFactory, Mockito.times(1))
-                .start(Mockito.any());
-        Mockito.verify(taskContextSaver, Mockito.times(1))
-                .save(taskContext);
+                .startBackgroundTask(Mockito.any(), Mockito.any(), Mockito.any());
     }
 
     @Test

@@ -29,15 +29,22 @@ public class PortalUserIdentifierVerificationServiceImpl implements PortalUserId
 
     @Transactional
     @Override
-    public Map.Entry<PortalUserIdentifierVerification, String> createVerification(String identifier, UserIdentifierType identifierType) {
+    public Map.Entry<PortalUserIdentifierVerification, String> createVerification(String identifierArg, UserIdentifierType identifierType) {
+
+        LocalDateTime now = LocalDateTime.now();
+        String identifier = identifierArg;
+        if (identifierType == UserIdentifierType.PHONE_NUMBER) {
+            identifier = phoneNumberService.formatPhoneNumber(identifier);
+        }
+
+        portalUserIdentifierVerificationRepository.getAllActive(identifier)
+                .forEach(verification -> {
+                    verification.setDeactivatedOn(now);
+                    portalUserIdentifierVerificationRepository.save(verification);
+                });
         PortalUserIdentifierVerification portalUserIdentifierVerification = new PortalUserIdentifierVerification();
         portalUserIdentifierVerification.setIdentifierType(identifierType);
-        if (identifierType == UserIdentifierType.PHONE_NUMBER) {
-            portalUserIdentifierVerification.setIdentifier(phoneNumberService.formatPhoneNumber(identifier));
-        } else {
-            portalUserIdentifierVerification.setIdentifier(identifier);
-        }
-        LocalDateTime now = LocalDateTime.now();
+        portalUserIdentifierVerification.setIdentifier(identifier);
         portalUserIdentifierVerification.setCreatedOn(now);
         int duration = settingService.getInteger("IDENTIFIER_VERIFICATION_CODE_EXPIRY_PERIOD_IN_SECONDS", 300);
         portalUserIdentifierVerification.setExpiresOn(now.plusSeconds(duration));

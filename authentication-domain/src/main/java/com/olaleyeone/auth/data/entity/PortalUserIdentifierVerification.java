@@ -18,7 +18,7 @@ public class PortalUserIdentifierVerification {
     @Enumerated(EnumType.STRING)
     private UserIdentifierType identifierType;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String identifier;
 
     private String verificationCode;
@@ -31,6 +31,7 @@ public class PortalUserIdentifierVerification {
     @Column(updatable = false, nullable = false)
     private LocalDateTime expiresOn;
     private LocalDateTime usedOn;
+    private LocalDateTime deactivatedOn;
 
     @PrePersist
     public void prePersist() {

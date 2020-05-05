@@ -45,6 +45,19 @@ class PortalUserIdentifierVerificationServiceImplTest extends ServiceTest {
     }
 
     @Test
+    void deactivatePreviousCode() {
+        String emailAddress = faker.internet().emailAddress();
+        Map.Entry<PortalUserIdentifierVerification, String> verification1 =
+                portalUserIdentifierVerificationService.createVerification(emailAddress, UserIdentifierType.EMAIL);
+        Map.Entry<PortalUserIdentifierVerification, String> verification2 =
+                portalUserIdentifierVerificationService.createVerification(emailAddress, UserIdentifierType.EMAIL);
+        entityManager.flush();
+        entityManager.refresh(verification1.getKey());
+        assertNotNull(verification1.getKey().getDeactivatedOn());
+        assertNull(verification2.getKey().getDeactivatedOn());
+    }
+
+    @Test
     void createVerificationForPhoneNumber() {
         String formattedPhoneNumber = faker.phoneNumber().cellPhone();
         Mockito.doReturn(formattedPhoneNumber).when(phoneNumberService).formatPhoneNumber(Mockito.anyString());

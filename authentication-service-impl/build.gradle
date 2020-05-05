@@ -41,6 +41,6 @@ dependencies {
 
     implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
 
-    testImplementation fileTree(dir: 'test-libs', include: ['*.jar'])
+    testImplementation fileTree(dir: project(":${projectName}-integration-impl").file('libs'), include: ['*.jar'])
     testImplementation(project(":${projectName}-test-starter"))
 }

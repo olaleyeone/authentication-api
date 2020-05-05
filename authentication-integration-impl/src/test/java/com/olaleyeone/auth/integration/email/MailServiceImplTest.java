@@ -10,9 +10,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import retrofit2.Call;
+import retrofit2.HttpException;
 import retrofit2.Response;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -46,7 +48,8 @@ class MailServiceImplTest extends ComponentTest {
                 faker.backToTheFuture().quote()
         ))).when(call).execute();
         HtmlEmailDto emailDto = new HtmlEmailDto();
-        mailService.sendEmail(emailDto);
+        emailDto.setRecipientEmails(Collections.singletonList(faker.internet().emailAddress()));
+        assertThrows(HttpException.class, () -> mailService.sendEmail(emailDto));
     }
 
     @Test

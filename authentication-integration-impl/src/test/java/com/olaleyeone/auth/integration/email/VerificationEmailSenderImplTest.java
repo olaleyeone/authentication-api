@@ -1,5 +1,7 @@
 package com.olaleyeone.auth.integration.email;
 
+import com.olaleyeone.audittrail.context.Action;
+import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.integration.etc.TemplateEngine;
 import com.olaleyeone.auth.integration.exception.TemplateNotFoundException;
@@ -9,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.util.Optional;
 
@@ -26,11 +30,24 @@ class VerificationEmailSenderImplTest extends ComponentTest {
     @Mock
     private MailService mailService;
 
+    @Mock
+    private TaskContextFactory taskContextFactory;
+
     private VerificationEmailSenderImpl verificationEmailSender;
 
     @BeforeEach
     void setUp() {
-        verificationEmailSender = new VerificationEmailSenderImpl(settingService, templateEngine, mailService);
+        Mockito.doAnswer(invocation -> {
+            Action action = invocation.getArgument(2);
+            action.execute();
+            return null;
+        }).when(taskContextFactory).startBackgroundTask(Mockito.any(), Mockito.any(), Mockito.any());
+        verificationEmailSender = VerificationEmailSenderImpl.builder()
+                .mailService(mailService)
+                .templateEngine(templateEngine)
+                .settingService(settingService)
+                .taskContextFactory(taskContextFactory)
+                .build();
     }
 
     @Test
