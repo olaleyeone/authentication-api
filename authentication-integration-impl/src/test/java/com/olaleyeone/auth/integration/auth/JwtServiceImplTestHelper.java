@@ -9,7 +9,7 @@ import java.util.Random;
 
 public final class JwtServiceImplTestHelper {
 
-    protected static Faker faker = Faker.instance(new Random());
+    protected static final Faker faker = Faker.instance(new Random());
 
     private JwtServiceImplTestHelper() {
         //noop

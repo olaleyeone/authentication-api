@@ -41,7 +41,7 @@ public class ErrorAdvice {
             errors.add(violation.getPropertyPath() + " : " + violation.getMessage());
         }
         ApiResponse<List<String>> apiResponse = new ApiResponse<>();
-        apiResponse.setMessage(errors.size() > 0 ? errors.get(0) : "Invalid request");
+        apiResponse.setMessage(!errors.isEmpty() ? errors.get(0) : "Invalid request");
         apiResponse.setData(errors);
         return new ResponseEntity<>(apiResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
