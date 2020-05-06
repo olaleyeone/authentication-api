@@ -7,17 +7,20 @@ import com.github.javafaker.Faker;
 import com.olaleyeone.auth.configuration.AdditionalComponentsConfiguration;
 import com.olaleyeone.auth.configuration.BeanValidationConfiguration;
 import com.olaleyeone.auth.configuration.SecurityConfiguration;
-import com.olaleyeone.entitysearch.util.PredicateExtractor;
-import com.olaleyeone.entitysearch.util.SearchFilterPredicateExtractor;
 import com.olaleyeone.auth.security.data.AccessClaims;
 import com.olaleyeone.auth.security.data.AccessClaimsExtractor;
 import com.olaleyeone.auth.security.interceptors.AccessConstraintHandlerInterceptor;
 import com.olaleyeone.auth.security.interceptors.RemoteAddressConstraintHandlerInterceptor;
+import com.olaleyeone.entitysearch.util.PredicateExtractor;
+import com.olaleyeone.entitysearch.util.SearchFilterPredicateExtractor;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.mockito.internal.creation.bytebuddy.MockAccess;
+import org.springdoc.webmvc.api.OpenApiResource;
+import org.springdoc.webmvc.ui.SwaggerWelcome;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +36,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.inject.Inject;
+import java.util.Arrays;
 import java.util.Random;
 
 @ActiveProfiles("test")
@@ -101,12 +104,20 @@ public abstract class ControllerTest {
     static class $Config implements WebMvcConfigurer {
 
         @Autowired
-        private AutowireCapableBeanFactory beanFactory;
+        private ApplicationContext applicationContext;
 
         @Override
         public void addInterceptors(InterceptorRegistry registry) {
+            AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
             registry.addInterceptor(beanFactory.createBean(RemoteAddressConstraintHandlerInterceptor.class));
-            registry.addInterceptor(beanFactory.createBean(AccessConstraintHandlerInterceptor.class));
+            AccessConstraintHandlerInterceptor accessConstraintHandlerInterceptor = new AccessConstraintHandlerInterceptor(
+                    applicationContext,
+                    Arrays.asList(BasicErrorController.class,
+                            OpenApiResource.class,
+                            SwaggerWelcome.class)
+            );
+            beanFactory.autowireBean(accessConstraintHandlerInterceptor);
+            registry.addInterceptor(accessConstraintHandlerInterceptor);
         }
 
         @Bean

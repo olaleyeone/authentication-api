@@ -37,16 +37,16 @@ public class UserIdentifierVerificationController {
 
     @Public
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/user-emails/{identifier}/verification-code")
-    public void requestEmailVerificationCode(@PathVariable @Email String identifier) {
-        Optional<PortalUserIdentifier> optionalPortalUserIdentifier = portalUserIdentifierRepository.findByIdentifier(identifier);
+    @PostMapping("/user-emails/{email}/verification-code")
+    public void requestEmailVerificationCode(@PathVariable @Email String email) {
+        Optional<PortalUserIdentifier> optionalPortalUserIdentifier = portalUserIdentifierRepository.findByIdentifier(email);
         if (optionalPortalUserIdentifier.isPresent() && BooleanUtils.isTrue(optionalPortalUserIdentifier.get().getVerified())) {
             throw new ErrorResponse(HttpStatus.CONFLICT, ApiResponse.builder()
-                    .message(String.format("Email %s already verified by user", identifier))
+                    .message(String.format("Email %s already verified by user", email))
                     .build());
         }
         Map.Entry<PortalUserIdentifierVerification, String> verification
-                = portalUserIdentifierVerificationService.createVerification(identifier, UserIdentifierType.EMAIL);
+                = portalUserIdentifierVerificationService.createVerification(email, UserIdentifierType.EMAIL);
         try {
             verificationEmailSender.sendVerificationCode(verification.getKey(), verification.getValue());
         } catch (Exception e) {

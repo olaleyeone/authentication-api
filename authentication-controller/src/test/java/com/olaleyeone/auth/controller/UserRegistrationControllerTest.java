@@ -7,6 +7,7 @@ import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.UserRegistrationService;
 import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.validator.UniqueIdentifierValidator;
+import com.olaleyeone.auth.validator.ValidEmailRegistrationCodeValidator;
 import com.olaleyeone.auth.validator.ValidPhoneNumberValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,9 @@ class UserRegistrationControllerTest extends ControllerTest {
     @Autowired
     private ValidPhoneNumberValidator validPhoneNumberValidator;
 
+    @Autowired
+    private ValidEmailRegistrationCodeValidator validEmailRegistrationCodeValidator;
+
     private UserRegistrationApiRequest userRegistrationApiRequest;
     private AccessTokenApiResponse accessTokenApiResponse;
 
@@ -47,6 +51,9 @@ class UserRegistrationControllerTest extends ControllerTest {
                 .when(validPhoneNumberValidator).isValid(Mockito.anyString(), Mockito.any());
         Mockito.doReturn(true)
                 .when(uniqueIdentifierValidator).isValid(Mockito.anyString(), Mockito.any());
+
+        Mockito.doReturn(true)
+                .when(validEmailRegistrationCodeValidator).isValid(Mockito.any(), Mockito.any());
 
         accessTokenApiResponse = new AccessTokenApiResponse();
         Mockito.when(accessTokenApiResponseHandler.getAccessToken(Mockito.any()))
@@ -80,6 +87,9 @@ class UserRegistrationControllerTest extends ControllerTest {
 
         Mockito.verify(validPhoneNumberValidator, Mockito.times(1))
                 .isValid(Mockito.eq(userRegistrationApiRequest.getPhoneNumber()), Mockito.any());
+
+        Mockito.verify(validEmailRegistrationCodeValidator, Mockito.times(1))
+                .isValid(Mockito.eq(userRegistrationApiRequest), Mockito.any());
 
         Mockito.verify(uniqueIdentifierValidator, Mockito.times(1))
                 .isValid(Mockito.eq(userRegistrationApiRequest.getEmail()), Mockito.any());

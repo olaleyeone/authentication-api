@@ -8,9 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import javax.inject.Named;
 import javax.validation.ConstraintValidatorContext;
 
-/**
- * @author Olaleye Afolabi <oafolabi@byteworks.com.ng>
- */
 @RequiredArgsConstructor
 @Named
 public class ValidPhoneNumberValidator implements ValidPhoneNumber.Validator {

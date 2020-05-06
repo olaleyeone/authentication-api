@@ -3,6 +3,7 @@ package com.olaleyeone.auth.service;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
+import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.integration.etc.HashService;
@@ -16,6 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -113,6 +116,76 @@ class UserRegistrationServiceImplTest extends ServiceTest {
         PortalUserIdentifier portalUserIdentifier = optionalPortalUserIdentifier.get();
         assertEquals(portalUser.getId(), portalUserIdentifier.getPortalUser().getId());
         assertEquals(UserIdentifierType.EMAIL, portalUserIdentifier.getIdentifierType());
+    }
+
+    @Test
+    public void shouldSaveEmailWithValidVerificationCode() {
+        dto.setEmailVerificationCode(faker.code().asin());
+        PortalUserIdentifierVerification verification = modelFactory.pipe(PortalUserIdentifierVerification.class)
+                .then(it -> {
+                    it.setIdentifier(dto.getEmail());
+                    return it;
+                })
+                .create();
+        Mockito.doReturn(true).when(hashService).isSameHash(Mockito.any(), Mockito.any());
+
+        userRegistrationService.registerUser(dto, requestMetadata);
+
+        Optional<PortalUserIdentifier> optionalPortalUserIdentifier = portalUserIdentifierRepository.findByIdentifier(dto.getEmail());
+        assertTrue(optionalPortalUserIdentifier.isPresent());
+        PortalUserIdentifier portalUserIdentifier = optionalPortalUserIdentifier.get();
+        assertEquals(portalUserIdentifier.getVerification(), verification);
+
+        Mockito.verify(hashService, Mockito.times(1))
+                .isSameHash(dto.getEmailVerificationCode(), verification.getVerificationCodeHash());
+    }
+
+    @Test
+    public void shouldSaveEmailWithDuplicateVerificationCode() {
+        dto.setEmailVerificationCode(faker.code().asin());
+        List<PortalUserIdentifierVerification> verifications = modelFactory.pipe(PortalUserIdentifierVerification.class)
+                .then(it -> {
+                    it.setIdentifier(dto.getEmail());
+                    return it;
+                })
+                .create(3);
+        Mockito.doReturn(true).when(hashService).isSameHash(Mockito.any(), Mockito.any());
+
+        userRegistrationService.registerUser(dto, requestMetadata);
+
+        Iterator<PortalUserIdentifierVerification> iterator = verifications.iterator();
+        assertNotNull(iterator.next().getUsedOn());
+        while (iterator.hasNext()) {
+            assertNotNull(iterator.next().getDeactivatedOn());
+        }
+    }
+
+    @Test
+    public void shouldSaveEmailWithInvalidVerificationCode() {
+        dto.setEmailVerificationCode(faker.code().asin());
+
+        assertThrows(IllegalArgumentException.class, () -> userRegistrationService.registerUser(dto, requestMetadata));
+
+        Mockito.verify(hashService, Mockito.never())
+                .isSameHash(Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void shouldSaveEmailWithWrongHash() {
+        dto.setEmailVerificationCode(faker.code().asin());
+
+        PortalUserIdentifierVerification verification = modelFactory.pipe(PortalUserIdentifierVerification.class)
+                .then(it -> {
+                    it.setIdentifier(dto.getEmail());
+                    return it;
+                })
+                .create();
+        Mockito.doReturn(false).when(hashService).isSameHash(Mockito.any(), Mockito.any());
+
+        assertThrows(IllegalArgumentException.class, () -> userRegistrationService.registerUser(dto, requestMetadata));
+
+        Mockito.verify(hashService, Mockito.times(1))
+                .isSameHash(dto.getEmailVerificationCode(), verification.getVerificationCodeHash());
     }
 
     @Test

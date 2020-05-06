@@ -29,6 +29,7 @@ public class AccessConstraintHandlerInterceptor extends HandlerInterceptorAdapte
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final ApplicationContext applicationContext;
+    private final List<Class<?>> excludedHandlers;
 
     @Autowired
     private Provider<AuthorizedRequest> authorizedRequestProvider;
@@ -81,9 +82,7 @@ public class AccessConstraintHandlerInterceptor extends HandlerInterceptorAdapte
         if (accessConstraints.isEmpty() && (
                 handlerMethod.hasMethodAnnotation(Public.class)
                         || handlerMethod.getMethod().getDeclaringClass().isAnnotationPresent(Public.class)
-//                        || (BasicErrorController.class.isAssignableFrom(handlerMethod.getBeanType()))
-//                        || (OpenApiResource.class.isAssignableFrom(handlerMethod.getBeanType()))
-//                        || (SwaggerWelcome.class.isAssignableFrom(handlerMethod.getBeanType()))
+                        || excludedHandlers.contains(handlerMethod.getBeanType())
         )) {
             return true;
         }

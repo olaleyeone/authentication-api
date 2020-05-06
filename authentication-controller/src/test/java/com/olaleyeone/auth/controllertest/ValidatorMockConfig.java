@@ -1,6 +1,7 @@
 package com.olaleyeone.auth.controllertest;
 
 import com.olaleyeone.auth.validator.UniqueIdentifierValidator;
+import com.olaleyeone.auth.validator.ValidEmailRegistrationCodeValidator;
 import com.olaleyeone.auth.validator.ValidPhoneNumberValidator;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
@@ -17,5 +18,10 @@ class ValidatorMockConfig {
     @Bean
     public ValidPhoneNumberValidator validPhoneNumberValidator() {
         return Mockito.mock(ValidPhoneNumberValidator.class);
+    }
+
+    @Bean
+    public ValidEmailRegistrationCodeValidator validEmailRegistrationCodeValidator() {
+        return Mockito.mock(ValidEmailRegistrationCodeValidator.class);
     }
 }

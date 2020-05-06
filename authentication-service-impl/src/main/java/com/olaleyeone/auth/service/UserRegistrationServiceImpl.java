@@ -5,11 +5,13 @@ import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
+import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.dto.data.UserRegistrationApiRequest;
 import com.olaleyeone.auth.integration.etc.HashService;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
+import com.olaleyeone.auth.repository.PortalUserIdentifierVerificationRepository;
 import com.olaleyeone.auth.repository.PortalUserRepository;
 import com.olaleyeone.data.RequestMetadata;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,9 @@ import org.apache.commons.lang3.StringUtils;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +36,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     private final HashService hashService;
     private final ImplicitAuthenticationService implicitAuthenticationService;
     private final Provider<TaskContext> taskContextProvider;
+    private final PortalUserIdentifierVerificationRepository portalUserIdentifierVerificationRepository;
 
     @Activity("USER REGISTRATION")
     @Transactional
@@ -82,6 +87,35 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         portalUserIdentifier.setIdentifier(dto.getEmail().trim());
         portalUserIdentifier.setIdentifierType(UserIdentifierType.EMAIL);
         portalUserIdentifier.setPortalUser(portalUser);
-        return portalUserIdentifierRepository.save(portalUserIdentifier);
+        if (StringUtils.isNotBlank(dto.getEmailVerificationCode())) {
+            resolveVerification(portalUserIdentifier, dto.getEmailVerificationCode());
+        }
+        portalUserIdentifierRepository.save(portalUserIdentifier);
+        return portalUserIdentifier;
+    }
+
+    private void resolveVerification(PortalUserIdentifier portalUserIdentifier, String verificationCode) {
+        LocalDateTime now = LocalDateTime.now();
+        List<PortalUserIdentifierVerification> list =
+                portalUserIdentifierVerificationRepository.getAllActive(portalUserIdentifier.getIdentifier());
+        if (list.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        Iterator<PortalUserIdentifierVerification> iterator = list.iterator();
+        PortalUserIdentifierVerification portalUserIdentifierVerification = iterator.next();
+        if (!hashService.isSameHash(verificationCode, portalUserIdentifierVerification.getVerificationCodeHash())) {
+            throw new IllegalArgumentException();
+        }
+        portalUserIdentifier.setVerified(true);
+        portalUserIdentifier.setVerification(portalUserIdentifierVerification);
+
+        portalUserIdentifierVerification.setUsedOn(now);
+        portalUserIdentifierVerificationRepository.save(portalUserIdentifierVerification);
+
+        while (iterator.hasNext()) {
+            PortalUserIdentifierVerification next = iterator.next();
+            next.setDeactivatedOn(now);
+            portalUserIdentifierVerificationRepository.save(next);
+        }
     }
 }

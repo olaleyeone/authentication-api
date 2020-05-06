@@ -2,7 +2,7 @@ package com.olaleyeone.auth.integration.etc;
 
 public interface HashService {
 
-    boolean isSameHash(String password, String hash);
+    boolean isSameHash(String rawText, String hash);
 
-    String generateHash(String password);
+    String generateHash(String rawText);
 }
