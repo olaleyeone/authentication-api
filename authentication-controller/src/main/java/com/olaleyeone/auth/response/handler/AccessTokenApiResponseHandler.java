@@ -3,10 +3,10 @@ package com.olaleyeone.auth.response.handler;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.dto.JwtDto;
+import com.olaleyeone.auth.integration.auth.JwtService;
 import com.olaleyeone.auth.qualifier.JwtToken;
 import com.olaleyeone.auth.qualifier.JwtTokenType;
-import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
-import com.olaleyeone.auth.integration.auth.JwtService;
+import com.olaleyeone.auth.response.pojo.UserApiResponse;
 import com.olaleyeone.auth.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.CacheControl;
@@ -26,15 +26,27 @@ public class AccessTokenApiResponseHandler {
     @JwtToken(JwtTokenType.REFRESH)
     private final JwtService refreshTokenJwtService;
 
-    public HttpEntity<AccessTokenApiResponse> getAccessToken(PortalUserAuthentication portalUserAuthentication) {
+    public HttpEntity<UserApiResponse> getAccessToken(PortalUserAuthentication portalUserAuthentication) {
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(portalUserAuthentication);
 
-        AccessTokenApiResponse accessTokenApiResponse = new AccessTokenApiResponse(portalUserAuthentication.getPortalUser());
+        return getUserApiResponseHttpEntity(refreshToken);
+    }
+
+    public HttpEntity<UserApiResponse> getAccessToken(RefreshToken currentRefreshToken) {
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(currentRefreshToken.getActualAuthentication());
+
+        return getUserApiResponseHttpEntity(refreshToken);
+    }
+
+    private HttpEntity<UserApiResponse> getUserApiResponseHttpEntity(RefreshToken refreshToken) {
+        UserApiResponse accessTokenApiResponse = new UserApiResponse(refreshToken.getPortalUser());
         JwtDto refreshTokenJwt = refreshTokenJwtService.generateJwt(refreshToken);
         JwtDto accessTokenJwt = accessTokenJwtService.generateJwt(refreshToken);
 
 //        accessTokenApiResponse.setRefreshToken(refreshTokenJwt);
 //        accessTokenApiResponse.setAccessToken(accessTokenJwt.getToken());
+
+        accessTokenApiResponse.setExpiresAt(refreshToken.getAccessExpiresAt());
         accessTokenApiResponse.setSecondsTillExpiry(accessTokenJwt.getSecondsTillExpiry());
 
         HttpHeaders httpHeaders = new HttpHeaders();

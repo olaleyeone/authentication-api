@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.data.entity;
 
+import com.olaleyeone.audittrail.api.IgnoreData;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import lombok.Data;
 
@@ -23,6 +24,7 @@ public class PortalUserIdentifierVerification {
 
     private String verificationCode;
 
+    @IgnoreData
     @Column(updatable = false, nullable = false)
     private String verificationCodeHash;
 
@@ -30,6 +32,7 @@ public class PortalUserIdentifierVerification {
     private LocalDateTime createdOn;
     @Column(updatable = false, nullable = false)
     private LocalDateTime expiresOn;
+
     private LocalDateTime usedOn;
     private LocalDateTime deactivatedOn;
 

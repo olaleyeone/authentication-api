@@ -6,7 +6,7 @@ import com.olaleyeone.auth.dto.data.LoginApiRequest;
 import com.olaleyeone.data.RequestMetadata;
 import com.olaleyeone.web.exception.ErrorResponse;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
-import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
+import com.olaleyeone.auth.response.pojo.UserApiResponse;
 import com.olaleyeone.auth.security.annotations.Public;
 import com.olaleyeone.auth.service.LoginAuthenticationService;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class LoginController {
 
     @Public
     @PostMapping("/login")
-    public HttpEntity<AccessTokenApiResponse> login(@Valid @RequestBody LoginApiRequest dto) {
+    public HttpEntity<UserApiResponse> login(@Valid @RequestBody LoginApiRequest dto) {
         PortalUserAuthentication portalUserAuthentication = authenticationService.getAuthenticationResponse(dto, requestMetadata.get());
         if (portalUserAuthentication.getResponseType() != AuthenticationResponseType.SUCCESSFUL) {
             throw new ErrorResponse(HttpStatus.UNAUTHORIZED);

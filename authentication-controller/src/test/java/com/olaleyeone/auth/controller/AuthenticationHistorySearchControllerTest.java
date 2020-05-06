@@ -1,8 +1,6 @@
 package com.olaleyeone.auth.controller;
 
 import com.olaleyeone.auth.controllertest.ControllerTest;
-import com.olaleyeone.auth.response.pojo.UserApiResponse;
-import com.olaleyeone.auth.search.filter.PortalUserAuthenticationSearchFilter;
 import com.olaleyeone.auth.search.handler.PortalUserAuthenticationSearchHandler;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

@@ -1,18 +1,20 @@
 package com.olaleyeone.auth.controller;
 
+import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.dto.data.UserRegistrationApiRequest;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
-import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
+import com.olaleyeone.auth.response.pojo.UserApiResponse;
 import com.olaleyeone.auth.service.UserRegistrationService;
-import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.validator.UniqueIdentifierValidator;
 import com.olaleyeone.auth.validator.ValidEmailRegistrationCodeValidator;
 import com.olaleyeone.auth.validator.ValidPhoneNumberValidator;
+import com.olaleyeone.web.exception.ErrorResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -37,7 +39,7 @@ class UserRegistrationControllerTest extends ControllerTest {
     private ValidEmailRegistrationCodeValidator validEmailRegistrationCodeValidator;
 
     private UserRegistrationApiRequest userRegistrationApiRequest;
-    private AccessTokenApiResponse accessTokenApiResponse;
+    private UserApiResponse accessTokenApiResponse;
 
     @BeforeEach
     void setUp() {
@@ -55,8 +57,8 @@ class UserRegistrationControllerTest extends ControllerTest {
         Mockito.doReturn(true)
                 .when(validEmailRegistrationCodeValidator).isValid(Mockito.any(), Mockito.any());
 
-        accessTokenApiResponse = new AccessTokenApiResponse();
-        Mockito.when(accessTokenApiResponseHandler.getAccessToken(Mockito.any()))
+        accessTokenApiResponse = new UserApiResponse();
+        Mockito.when(accessTokenApiResponseHandler.getAccessToken(Mockito.any(PortalUserAuthentication.class)))
                 .then(invocation -> ResponseEntity.ok(accessTokenApiResponse));
     }
 
@@ -72,7 +74,7 @@ class UserRegistrationControllerTest extends ControllerTest {
                 .with(body(userRegistrationApiRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(result -> {
-                    AccessTokenApiResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), AccessTokenApiResponse.class);
+                    UserApiResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), UserApiResponse.class);
                     assertEquals(accessTokenApiResponse, response);
                 });
         Mockito.verify(userRegistrationService, Mockito.times(1))
@@ -82,8 +84,12 @@ class UserRegistrationControllerTest extends ControllerTest {
     @Test
     void shouldValidateRequest() throws Exception {
 
+        Mockito.doThrow(new ErrorResponse(HttpStatus.BAD_REQUEST))
+                .when(userRegistrationService).registerUser(Mockito.any(), Mockito.any());
+
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
-                .with(body(userRegistrationApiRequest)));
+                .with(body(userRegistrationApiRequest)))
+                .andExpect(status().isBadRequest());
 
         Mockito.verify(validPhoneNumberValidator, Mockito.times(1))
                 .isValid(Mockito.eq(userRegistrationApiRequest.getPhoneNumber()), Mockito.any());

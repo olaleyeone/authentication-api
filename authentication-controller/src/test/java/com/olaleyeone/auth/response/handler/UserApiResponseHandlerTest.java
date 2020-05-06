@@ -1,9 +1,9 @@
 package com.olaleyeone.auth.response.handler;
 
 import com.olaleyeone.auth.data.entity.PortalUser;
+import com.olaleyeone.auth.response.pojo.UserApiResponse;
 import com.olaleyeone.web.exception.NotFoundException;
 import com.olaleyeone.auth.repository.PortalUserRepository;
-import com.olaleyeone.auth.response.pojo.UserApiResponse;
 import com.olaleyeone.auth.test.ComponentTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

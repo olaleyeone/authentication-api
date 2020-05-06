@@ -25,7 +25,6 @@ public final class JwtServiceImplTestHelper {
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setId(faker.number().randomNumber());
         refreshToken.setActualAuthentication(userAuthentication);
-        refreshToken.setPortalUser();
         return refreshToken;
     }
 }
