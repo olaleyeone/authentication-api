@@ -54,7 +54,7 @@ public class EntityTest {
         entityManager.flush();
     }
 
-    protected void save(Object[] entities) {
+    protected void save(Object... entities) {
         for (Object entity : entities) {
             if (entityManager.contains(entity)) {
                 entityManager.merge(entity);

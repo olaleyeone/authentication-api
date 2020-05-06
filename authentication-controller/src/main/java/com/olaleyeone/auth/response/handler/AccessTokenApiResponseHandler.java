@@ -6,7 +6,7 @@ import com.olaleyeone.auth.dto.JwtDto;
 import com.olaleyeone.auth.qualifier.JwtToken;
 import com.olaleyeone.auth.qualifier.JwtTokenType;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
-import com.olaleyeone.auth.service.JwtService;
+import com.olaleyeone.auth.integration.auth.JwtService;
 import com.olaleyeone.auth.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.CacheControl;

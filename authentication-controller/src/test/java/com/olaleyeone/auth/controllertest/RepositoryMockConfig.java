@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.controllertest;
 
+import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
 import com.olaleyeone.auth.repository.SignatureKeyRepository;
 import org.mockito.Mockito;
@@ -17,5 +18,10 @@ class RepositoryMockConfig {
     @Bean
     public SignatureKeyRepository signatureKeyRepository() {
         return Mockito.mock(SignatureKeyRepository.class);
+    }
+
+    @Bean
+    public PortalUserIdentifierRepository portalUserIdentifierRepository() {
+        return Mockito.mock(PortalUserIdentifierRepository.class);
     }
 }

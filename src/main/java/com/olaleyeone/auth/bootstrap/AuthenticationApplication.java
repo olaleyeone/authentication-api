@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @Import({
@@ -28,6 +29,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         "com.olaleyeone.audittrail.entity"
 })
 @ComponentScan("com.olaleyeone.auth.service")
+@EnableAsync
 public class AuthenticationApplication {
 
     public static void main(String[] args) {

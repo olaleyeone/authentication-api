@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import org.springframework.http.HttpStatus;
 
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public class ErrorResponse extends RuntimeException {
 
     private final HttpStatus httpStatus;
@@ -14,5 +14,10 @@ public class ErrorResponse extends RuntimeException {
 
     public ErrorResponse(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
+    }
+
+    public ErrorResponse(HttpStatus httpStatus, ApiResponse<?> response) {
+        this.httpStatus = httpStatus;
+        this.response = response;
     }
 }

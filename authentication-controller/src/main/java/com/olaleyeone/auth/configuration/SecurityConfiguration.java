@@ -8,7 +8,7 @@ import com.olaleyeone.auth.security.annotations.TrustedIpAddress;
 import com.olaleyeone.auth.security.data.AccessClaims;
 import com.olaleyeone.auth.security.data.AccessClaimsExtractor;
 import com.olaleyeone.auth.security.data.AuthorizedRequestFactory;
-import com.olaleyeone.auth.service.JwtService;
+import com.olaleyeone.auth.integration.auth.JwtService;
 import com.olaleyeone.auth.service.SettingService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
