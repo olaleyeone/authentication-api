@@ -26,12 +26,13 @@ public class MailServiceImpl implements MailService {
                 htmlEmailDto.getHtmlMessage(),
                 htmlEmailDto.getSubject())
                 .execute();
-        if (!response.isSuccessful()) {
-            logger.error("===> Mail sending to {} failed with code {} and message {} ",
-                    String.join(", ", htmlEmailDto.getRecipientEmails()),
-                    response.code(),
-                    response.errorBody() != null ? response.errorBody().string() : "null");
-            throw new HttpException(response);
+        if (response.isSuccessful()) {
+            return;
         }
+        logger.error("===> Mail sending to {} failed with code {} and message {} ",
+                String.join(", ", htmlEmailDto.getRecipientEmails()),
+                response.code(),
+                response.errorBody() != null ? response.errorBody().string() : "null");
+        throw new HttpException(response);
     }
 }

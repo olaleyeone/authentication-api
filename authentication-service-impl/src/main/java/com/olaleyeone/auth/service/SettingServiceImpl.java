@@ -25,11 +25,7 @@ public class SettingServiceImpl implements SettingService {
     public String getString(String name, String value) {
         taskContextProvider.get().setDescription(String.format("Fetch setting %s", name));
         return getString(name).orElseGet(() -> {
-            taskContextProvider.get().setDescription(String.format("Initialize setting %s", name));
-            Setting setting = new Setting();
-            setting.setName(name);
-            setting.setValue(value);
-            settingRepository.save(setting);
+            initializeSetting(name, value);
             return value;
         });
     }
@@ -40,11 +36,7 @@ public class SettingServiceImpl implements SettingService {
     public String getString(String name, Supplier<? extends String> value) {
         taskContextProvider.get().setDescription(String.format("Fetch setting %s", name));
         return getString(name).orElseGet(() -> {
-            taskContextProvider.get().setDescription(String.format("Initialize setting %s", name));
-            Setting setting = new Setting();
-            setting.setName(name);
-            setting.setValue(value.get());
-            settingRepository.save(setting);
+            initializeSetting(name, value.get());
             return value.get();
         });
     }
@@ -52,7 +44,10 @@ public class SettingServiceImpl implements SettingService {
     @Override
     public Optional<String> getString(String name) {
         Setting setting = settingRepository.findByName(name);
-        return setting != null ? Optional.of(setting.getValue()) : Optional.empty();
+        if (setting == null) {
+            return Optional.empty();
+        }
+        return Optional.of(setting.getValue());
     }
 
     @Activity("FETCH SETTING")
@@ -61,11 +56,7 @@ public class SettingServiceImpl implements SettingService {
     public Integer getInteger(String name, int value) {
         taskContextProvider.get().setDescription(String.format("Fetch setting %s", name));
         return getInteger(name).orElseGet(() -> {
-            taskContextProvider.get().setDescription(String.format("Initialize setting %s", name));
-            Setting setting = new Setting();
-            setting.setName(name);
-            setting.setValue(String.valueOf(value));
-            settingRepository.save(setting);
+            initializeSetting(name, String.valueOf(value));
             return value;
         });
     }
@@ -73,7 +64,10 @@ public class SettingServiceImpl implements SettingService {
     @Override
     public Optional<Integer> getInteger(String name) {
         Setting setting = settingRepository.findByName(name);
-        return setting != null ? Optional.of(Integer.valueOf(setting.getValue())) : Optional.empty();
+        if (setting == null) {
+            return Optional.empty();
+        }
+        return Optional.of(Integer.valueOf(setting.getValue()));
     }
 
     @Activity("FETCH SETTING")
@@ -82,11 +76,7 @@ public class SettingServiceImpl implements SettingService {
     public Long getLong(String name, long value) {
         taskContextProvider.get().setDescription(String.format("Fetch setting %s", name));
         return getLong(name).orElseGet(() -> {
-            taskContextProvider.get().setDescription(String.format("Initialize setting %s", name));
-            Setting setting = new Setting();
-            setting.setName(name);
-            setting.setValue(String.valueOf(value));
-            settingRepository.save(setting);
+            initializeSetting(name, String.valueOf(value));
             return value;
         });
     }
@@ -94,6 +84,18 @@ public class SettingServiceImpl implements SettingService {
     @Override
     public Optional<Long> getLong(String name) {
         Setting setting = settingRepository.findByName(name);
-        return setting != null ? Optional.of(Long.valueOf(setting.getValue())) : Optional.empty();
+        if (setting == null) {
+            return Optional.empty();
+        }
+        return Optional.of(Long.valueOf(setting.getValue()));
+    }
+
+    private Setting initializeSetting(String name, String value) {
+        taskContextProvider.get().setDescription(String.format("Initialize setting %s", name));
+        Setting setting = new Setting();
+        setting.setName(name);
+        setting.setValue(value);
+        settingRepository.save(setting);
+        return setting;
     }
 }

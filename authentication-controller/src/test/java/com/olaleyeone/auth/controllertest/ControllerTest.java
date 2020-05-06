@@ -42,7 +42,7 @@ import java.util.Random;
 @ActiveProfiles("test")
 @WebMvcTest
 @ContextConfiguration(classes = {ControllerTest.$Config.class})
-public abstract class ControllerTest {
+public class ControllerTest {
 
     @Autowired
     protected MockMvc mockMvc;
