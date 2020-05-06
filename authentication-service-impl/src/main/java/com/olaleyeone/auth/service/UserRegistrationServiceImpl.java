@@ -36,6 +36,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     private final HashService hashService;
     private final ImplicitAuthenticationService implicitAuthenticationService;
     private final Provider<TaskContext> taskContextProvider;
+    private final PortalUserIdentifierVerificationService portalUserIdentifierVerificationService;
     private final PortalUserIdentifierVerificationRepository portalUserIdentifierVerificationRepository;
 
     @Activity("USER REGISTRATION")

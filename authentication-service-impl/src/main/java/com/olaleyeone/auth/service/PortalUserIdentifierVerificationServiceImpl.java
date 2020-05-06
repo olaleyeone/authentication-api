@@ -58,23 +58,6 @@ public class PortalUserIdentifierVerificationServiceImpl implements PortalUserId
         return Pair.of(portalUserIdentifierVerification, verificationCode);
     }
 
-    @Transactional
-    @Override
-    public boolean confirmVerification(PortalUserIdentifierVerification verification, String verificationCode) {
-        if (verification.getExpiresOn().isBefore(LocalDateTime.now())) {
-            return false;
-        }
-        if (verification.getUsedOn() != null) {
-            return false;
-        }
-        if (!hashService.isSameHash(verificationCode, verification.getVerificationCodeHash())) {
-            return false;
-        }
-        verification.setUsedOn(LocalDateTime.now());
-        portalUserIdentifierVerificationRepository.save(verification);
-        return true;
-    }
-
     private String generateVerificationCode() {
         StringBuilder builder = new StringBuilder();
         int tokenLength = settingService.getInteger("IDENTIFIER_VERIFICATION_CODE_LENGTH", 6);

@@ -8,6 +8,4 @@ import java.util.Map;
 public interface PortalUserIdentifierVerificationService {
 
     Map.Entry<PortalUserIdentifierVerification, String> createVerification(String identifier, UserIdentifierType identifierType);
-
-    boolean confirmVerification(PortalUserIdentifierVerification verification, String verificationCode);
 }

@@ -70,28 +70,4 @@ class PortalUserIdentifierVerificationServiceImplTest extends ServiceTest {
         Mockito.verify(phoneNumberService, Mockito.times(1)).formatPhoneNumber(rawPhoneNumber);
         assertEquals(formattedPhoneNumber, verification.getKey().getIdentifier());
     }
-
-    @Test
-    void confirmVerificationWithValidCode() {
-        String emailAddress = faker.internet().emailAddress();
-        Map.Entry<PortalUserIdentifierVerification, String> verification =
-                portalUserIdentifierVerificationService.createVerification(emailAddress, UserIdentifierType.EMAIL);
-        Mockito.doReturn(true).when(hashService).isSameHash(Mockito.anyString(), Mockito.anyString());
-        boolean confirmationResult = portalUserIdentifierVerificationService.confirmVerification(verification.getKey(), verification.getValue());
-        assertTrue(confirmationResult);
-        Mockito.verify(hashService, Mockito.times(1))
-                .isSameHash(verification.getValue(), verification.getKey().getVerificationCodeHash());
-    }
-
-    @Test
-    void confirmVerificationWithInvalidCode() {
-        String emailAddress = faker.internet().emailAddress();
-        Map.Entry<PortalUserIdentifierVerification, String> verification =
-                portalUserIdentifierVerificationService.createVerification(emailAddress, UserIdentifierType.EMAIL);
-        Mockito.doReturn(false).when(hashService).isSameHash(Mockito.anyString(), Mockito.anyString());
-        boolean confirmationResult = portalUserIdentifierVerificationService.confirmVerification(verification.getKey(), verification.getValue());
-        assertFalse(confirmationResult);
-        Mockito.verify(hashService, Mockito.times(1))
-                .isSameHash(verification.getValue(), verification.getKey().getVerificationCodeHash());
-    }
 }
