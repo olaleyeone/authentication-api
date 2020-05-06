@@ -16,11 +16,8 @@ import com.olaleyeone.entitysearch.util.SearchFilterPredicateExtractor;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.mockito.internal.creation.bytebuddy.MockAccess;
-import org.springdoc.webmvc.api.OpenApiResource;
-import org.springdoc.webmvc.ui.SwaggerWelcome;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +33,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 
 @ActiveProfiles("test")
@@ -112,9 +109,7 @@ public class ControllerTest {
             registry.addInterceptor(beanFactory.createBean(RemoteAddressConstraintHandlerInterceptor.class));
             AccessConstraintHandlerInterceptor accessConstraintHandlerInterceptor = new AccessConstraintHandlerInterceptor(
                     applicationContext,
-                    Arrays.asList(BasicErrorController.class,
-                            OpenApiResource.class,
-                            SwaggerWelcome.class)
+                    Collections.emptyList()
             );
             beanFactory.autowireBean(accessConstraintHandlerInterceptor);
             registry.addInterceptor(accessConstraintHandlerInterceptor);

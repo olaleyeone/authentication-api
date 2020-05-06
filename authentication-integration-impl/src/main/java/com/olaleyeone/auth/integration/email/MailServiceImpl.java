@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import retrofit2.HttpException;
 import retrofit2.Response;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 public class MailServiceImpl implements MailService {
 
@@ -32,7 +34,12 @@ public class MailServiceImpl implements MailService {
         logger.error("===> Mail sending to {} failed with code {} and message {} ",
                 String.join(", ", htmlEmailDto.getRecipientEmails()),
                 response.code(),
-                response.errorBody() != null ? response.errorBody().string() : "null");
+                Optional.ofNullable(response.errorBody()).map(this::getString).orElse(null));
         throw new HttpException(response);
+    }
+
+    @SneakyThrows
+    protected String getString(ResponseBody responseBody) {
+        return responseBody.string();
     }
 }

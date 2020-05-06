@@ -60,4 +60,11 @@ class MailServiceImplTest extends ComponentTest {
         HtmlEmailDto emailDto = new HtmlEmailDto();
         assertThrows(RuntimeException.class, () -> mailService.sendEmail(emailDto));
     }
+
+    @Test
+    void getStringFromResponseBody() throws IOException {
+        ResponseBody responseBody = Mockito.spy(ResponseBody.create(MediaType.get("text/plain"), faker.lordOfTheRings().character()));
+        Mockito.when(responseBody.string()).thenThrow(new RuntimeException());
+        assertThrows(RuntimeException.class, () -> mailService.getString(responseBody));
+    }
 }
