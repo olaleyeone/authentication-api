@@ -36,7 +36,6 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     private final HashService hashService;
     private final ImplicitAuthenticationService implicitAuthenticationService;
     private final Provider<TaskContext> taskContextProvider;
-    private final PortalUserIdentifierVerificationService portalUserIdentifierVerificationService;
     private final PortalUserIdentifierVerificationRepository portalUserIdentifierVerificationRepository;
 
     @Activity("USER REGISTRATION")
@@ -89,7 +88,13 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         portalUserIdentifier.setIdentifierType(UserIdentifierType.EMAIL);
         portalUserIdentifier.setPortalUser(portalUser);
         if (StringUtils.isNotBlank(dto.getEmailVerificationCode())) {
-            resolveVerification(portalUserIdentifier, dto.getEmailVerificationCode());
+            taskContextProvider.get().execute(
+                    "EMAIL VERIFICATION CODE VALIDATION",
+                    String.format("Validate email verification code for %s", dto.getEmail()),
+                    () -> {
+                        resolveVerification(portalUserIdentifier, dto.getEmailVerificationCode());
+                        return null;
+                    });
         }
         portalUserIdentifierRepository.save(portalUserIdentifier);
         return portalUserIdentifier;
