@@ -4,20 +4,20 @@ import com.olaleyeone.audittrail.context.Action;
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.integration.etc.TemplateEngine;
-import com.olaleyeone.auth.integration.exception.TemplateNotFoundException;
 import com.olaleyeone.auth.service.SettingService;
 import com.olaleyeone.auth.test.ComponentTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import org.springframework.util.StreamUtils;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 class VerificationEmailSenderImplTest extends ComponentTest {
 
@@ -51,9 +51,26 @@ class VerificationEmailSenderImplTest extends ComponentTest {
     }
 
     @Test
-    void testNoEmailTemplate() {
-        assertThrows(TemplateNotFoundException.class,
-                () -> verificationEmailSender.sendVerificationCode(new PortalUserIdentifierVerification(), faker.code().asin()));
+    void testNoEmailTemplate() throws IOException {
+        verificationEmailSender.sendVerificationCode(new PortalUserIdentifierVerification(), faker.code().asin());
+        String templateStr = StreamUtils.copyToString(getClass().getResourceAsStream("/email/email-verification-code.html"),
+                Charset.forName("utf-8"));
+        Mockito.verify(templateEngine, Mockito.times(1))
+                .getAsString(Mockito.eq(templateStr), Mockito.any());
+    }
+
+    @Test
+    void shouldCacheDefaultEmailTemplate() throws IOException {
+        verificationEmailSender.sendVerificationCode(new PortalUserIdentifierVerification(), faker.code().asin());
+        Mockito.verify(templateEngine, Mockito.times(1))
+                .getAsString(Mockito.argThat(argument1 -> {
+                    Mockito.verify(templateEngine, Mockito.times(1))
+                            .getAsString(Mockito.argThat(argument2 -> {
+                                assertSame(argument1, argument2);
+                                return true;
+                            }), Mockito.any());
+                    return true;
+                }), Mockito.any());
     }
 
     @Test
