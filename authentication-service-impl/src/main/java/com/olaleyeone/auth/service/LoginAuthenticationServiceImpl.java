@@ -7,6 +7,7 @@ import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
 import com.olaleyeone.auth.dto.data.LoginApiRequest;
+import com.olaleyeone.auth.integration.etc.HashService;
 import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.data.RequestMetadata;
@@ -23,7 +24,7 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
 
     private final PortalUserIdentifierRepository portalUserIdentifierRepository;
     private final PortalUserAuthenticationRepository portalUserAuthenticationRepository;
-    private final PasswordService passwordService;
+    private final HashService hashService;
     private final Provider<TaskContext> taskContextProvider;
 
     @Activity("PROCESS USER LOGIN")
@@ -35,7 +36,7 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
             return createUnknownAccountResponse(requestDto, requestMetadata);
         }
         PortalUserIdentifier userIdentifier = optionalUserIdentifier.get();
-        if (!passwordService.isSameHash(requestDto.getPassword(), userIdentifier.getPortalUser().getPassword())) {
+        if (!hashService.isSameHash(requestDto.getPassword(), userIdentifier.getPortalUser().getPassword())) {
             return createInvalidCredentialResponse(userIdentifier, requestDto, requestMetadata);
         }
         return createSuccessfulAuthenticationResponse(userIdentifier, requestDto, requestMetadata);

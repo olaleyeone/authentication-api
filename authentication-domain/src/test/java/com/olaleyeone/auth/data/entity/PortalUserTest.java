@@ -18,7 +18,19 @@ class PortalUserTest extends EntityTest {
         user.setLastName(faker.name().lastName());
         saveAndFlush(user);
         assertNotNull(user.getId());
-        assertNotNull(user.getDateCreated());
+        assertNotNull(user.getCreatedOn());
+    }
+
+    @Test
+    void shouldNotOverwriteCreatedOn() {
+        LocalDateTime then = LocalDateTime.now().minusDays(1);
+        PortalUser user = new PortalUser();
+        user.setFirstName(faker.name().firstName());
+        user.setLastName(faker.name().lastName());
+        user.setCreatedOn(then);
+        saveAndFlush(user);
+        entityManager.refresh(user);
+        assertEquals(then, user.getCreatedOn());
     }
 
     @Test
@@ -39,11 +51,11 @@ class PortalUserTest extends EntityTest {
                 })
                 .create();
 
-        LocalDateTime dateCreated = user.getDateCreated();
+        LocalDateTime dateCreated = user.getCreatedOn();
         user.setPassword(UUID.randomUUID().toString());
         saveAndFlush(user);
         entityManager.refresh(user);
         assertNotEquals(password, user.getPassword());
-        assertEquals(dateCreated, user.getDateCreated());
+        assertEquals(dateCreated, user.getCreatedOn());
     }
 }

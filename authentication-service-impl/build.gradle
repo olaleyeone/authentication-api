@@ -24,9 +24,8 @@ jacocoTestCoverageVerification {
 }
 check.dependsOn jacocoTestCoverageVerification
 
-
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: project(":${projectName}-domain").file('libs'), include: ['*.jar'])
     api(project(":${projectName}-domain"))
     implementation(project(":${projectName}-repository")) {
         exclude module: "hibernate-jpa-2.1-api"
@@ -37,10 +36,11 @@ dependencies {
     implementation(project(":${projectName}-integration"))
 
     implementation "javax.inject:javax.inject:1"
+    compileOnly "javax.annotation:javax.annotation-api:1.3.2"
     implementation "javax.transaction:javax.transaction-api:1.2"
 
     implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
 
-    testImplementation fileTree(dir: 'test-libs', include: ['*.jar'])
+    testImplementation fileTree(dir: project(":${projectName}-integration-impl").file('libs'), include: ['*.jar'])
     testImplementation(project(":${projectName}-test-starter"))
 }

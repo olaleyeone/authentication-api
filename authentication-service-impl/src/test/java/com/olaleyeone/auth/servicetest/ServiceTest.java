@@ -6,8 +6,8 @@ import com.olaleyeone.audittrail.impl.TaskContextHolder;
 import com.olaleyeone.audittrail.impl.TaskContextImpl;
 import com.olaleyeone.audittrail.impl.TaskTransactionContextFactory;
 import com.olaleyeone.auth.entitytest.EntityTest;
-import com.olaleyeone.auth.service.PasswordService;
-import com.olaleyeone.auth.service.PhoneNumberService;
+import com.olaleyeone.auth.integration.etc.HashService;
+import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.mockito.internal.creation.bytebuddy.MockAccess;
@@ -49,8 +49,8 @@ public class ServiceTest extends EntityTest {
     static class $Config {
 
         @Bean
-        public PasswordService passwordService() {
-            return Mockito.mock(PasswordService.class);
+        public HashService passwordService() {
+            return Mockito.mock(HashService.class);
         }
 
         @Bean

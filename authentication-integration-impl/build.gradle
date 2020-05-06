@@ -26,13 +26,16 @@ check.dependsOn jacocoTestCoverageVerification
 
 
 dependencies {
-
-    implementation "javax.inject:javax.inject:1"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: project(":${projectName}-domain").file('libs'), include: ['*.jar'])
     implementation(project(":${projectName}-repository"))
     api(project(":${projectName}-service"))
     api(project(":${projectName}-integration"))
     implementation(project(":authorization"))
 
+    implementation "javax.inject:javax.inject:1"
+    compileOnly "javax.annotation:javax.annotation-api:1.3.2"
+    implementation "javax.transaction:javax.transaction-api:1.2"
     implementation "javax.servlet:javax.servlet-api:$servletVersion"
 
     implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
@@ -40,8 +43,12 @@ dependencies {
     implementation "com.googlecode.libphonenumber:libphonenumber:8.10.20"
     implementation "com.google.code.gson:gson:2.8.6"
 
-
     implementation "at.favre.lib:bcrypt:0.9.0"
+
+    implementation "com.squareup.retrofit2:retrofit:2.6.1"
+    implementation "com.squareup.retrofit2:converter-gson:2.6.1"
+
+    implementation 'org.freemarker:freemarker:2.3.23'
 
     implementation 'io.jsonwebtoken:jjwt-api:0.11.1'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.1',
@@ -49,4 +56,5 @@ dependencies {
             'io.jsonwebtoken:jjwt-jackson:0.11.1'
 
     testImplementation(project(":${projectName}-test-starter"))
+    testImplementation "org.springframework:spring-web:$springVersion"
 }

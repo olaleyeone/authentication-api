@@ -1,4 +1,5 @@
 dependencies {
+    implementation fileTree(dir: project(":${projectName}-domain").file('libs'), include: ['*.jar'])
     api(project(":${projectName}-domain"))
     api(project(":${projectName}-repository"))
     api "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:$hibernateJpaVersion"

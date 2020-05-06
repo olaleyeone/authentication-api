@@ -6,8 +6,8 @@ import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.dto.JwtDto;
+import com.olaleyeone.auth.integration.auth.JwtService;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
-import com.olaleyeone.auth.service.JwtService;
 import com.olaleyeone.auth.service.RefreshTokenService;
 import com.olaleyeone.auth.test.ComponentTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +38,6 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
     private AccessTokenApiResponseHandler handler;
 
     private PortalUser user;
-    private PortalUserIdentifier userIdentifier;
     private RefreshToken refreshToken;
     private PortalUserAuthentication userAuthentication;
 
@@ -52,7 +51,7 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
         user.setFirstName(faker.name().firstName());
         user.setLastName(faker.name().lastName());
 
-        userIdentifier = new PortalUserIdentifier();
+        PortalUserIdentifier userIdentifier = new PortalUserIdentifier();
         userIdentifier.setPortalUser(user);
 
         userAuthentication = new PortalUserAuthentication();

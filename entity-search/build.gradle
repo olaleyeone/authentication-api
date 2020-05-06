@@ -20,7 +20,7 @@ jacocoTestCoverageVerification {
                 minimum = 0.95
             }
             excludes = [
-
+                    "com.olaleyeone.web.exception.*"
             ]
         }
     }
@@ -29,6 +29,7 @@ check.dependsOn jacocoTestCoverageVerification
 
 dependencies {
     api "org.springframework.data:spring-data-jpa:$springDataVersion"
+    api "org.springframework:spring-web:$springVersion"
     api "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:$hibernateJpaVersion"
     compileOnly "javax.servlet:javax.servlet-api:$servletVersion"

@@ -3,7 +3,7 @@ package com.olaleyeone.auth.validator;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.dto.constraints.UniqueIdentifier;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
-import com.olaleyeone.auth.service.PhoneNumberService;
+import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;

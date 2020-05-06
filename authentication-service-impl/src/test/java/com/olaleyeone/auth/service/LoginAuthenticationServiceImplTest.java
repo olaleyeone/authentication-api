@@ -4,6 +4,7 @@ import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.dto.data.LoginApiRequest;
+import com.olaleyeone.auth.integration.etc.HashService;
 import com.olaleyeone.data.RequestMetadata;
 import com.olaleyeone.auth.servicetest.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +21,7 @@ class LoginAuthenticationServiceImplTest extends ServiceTest {
     private LoginAuthenticationService authenticationService;
 
     @Autowired
-    private PasswordService passwordService;
+    private HashService hashService;
 
     private LoginApiRequest loginApiRequest;
     private RequestMetadata requestMetadata;
@@ -47,10 +48,10 @@ class LoginAuthenticationServiceImplTest extends ServiceTest {
 
     @Test
     void authenticationShouldFailForWrongCredential() {
-        Mockito.when(passwordService.isSameHash(Mockito.anyString(), Mockito.anyString())).thenReturn(false);
+        Mockito.when(hashService.isSameHash(Mockito.anyString(), Mockito.anyString())).thenReturn(false);
         PortalUserIdentifier userIdentifier = getUserIdentifier();
         PortalUserAuthentication userAuthentication = authenticationService.getAuthenticationResponse(loginApiRequest, requestMetadata);
-        Mockito.verify(passwordService, Mockito.times(1))
+        Mockito.verify(hashService, Mockito.times(1))
                 .isSameHash(loginApiRequest.getPassword(), userIdentifier.getPortalUser().getPassword());
         assertNotNull(userAuthentication);
         assertNotNull(userAuthentication.getId());
@@ -60,10 +61,10 @@ class LoginAuthenticationServiceImplTest extends ServiceTest {
 
     @Test
     void authenticationShouldSucceedForCorrectCredential() {
-        Mockito.when(passwordService.isSameHash(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+        Mockito.when(hashService.isSameHash(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
         PortalUserIdentifier userIdentifier = getUserIdentifier();
         PortalUserAuthentication userAuthentication = authenticationService.getAuthenticationResponse(loginApiRequest, requestMetadata);
-        Mockito.verify(passwordService, Mockito.times(1))
+        Mockito.verify(hashService, Mockito.times(1))
                 .isSameHash(loginApiRequest.getPassword(), userIdentifier.getPortalUser().getPassword());
         assertNotNull(userAuthentication);
         assertNotNull(userAuthentication.getId());
