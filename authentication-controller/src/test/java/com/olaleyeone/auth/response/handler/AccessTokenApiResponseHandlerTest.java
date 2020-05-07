@@ -80,7 +80,6 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
                 .then(invocation -> refreshJwt);
         Mockito.when(jwtService.generateJwt(Mockito.any()))
                 .then(invocation -> accessJwt);
-        Mockito.doReturn(faker.internet().domainWord()).when(httpServletRequest).getContextPath();
     }
 
     @Test
@@ -122,19 +121,23 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
         HttpCookie httpCookie = httpCookies.iterator().next();
         assertEquals(accessJwt.getSecondsTillExpiry(), httpCookie.getMaxAge());
         assertEquals("/", httpCookie.getPath());
-        assertSecure(httpCookie);
+        assertFalse(httpCookie.getSecure());
+        assertTrue(httpCookie.isHttpOnly());
     }
 
     @Test
     public void shouldReturnRefreshTokenCookies() {
+
+        Mockito.doReturn(true).when(httpServletRequest).isSecure();
         HttpEntity<AccessTokenApiResponse> responseEntity = handler.getAccessToken(userAuthentication);
 
         List<HttpCookie> httpCookies = getCookiesByName(responseEntity, "refresh_token");
         assertEquals(1, httpCookies.size());
         HttpCookie httpCookie = httpCookies.iterator().next();
         assertTrue((refreshToken.getSecondsTillExpiry() - httpCookie.getMaxAge()) <= 1);
-        assertEquals(httpServletRequest.getContextPath() + AccessTokenApiResponseHandler.TOKEN_ENDPOINT, httpCookie.getPath());
-        assertSecure(httpCookie);
+        assertEquals("/", httpCookie.getPath());
+        assertTrue(httpCookie.getSecure());
+        assertTrue(httpCookie.isHttpOnly());
     }
 
     private List<HttpCookie> getCookiesByName(HttpEntity<?> responseEntity, String name) {
@@ -147,10 +150,5 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
         List<String> list = responseEntity.getHeaders().get(HttpHeaders.SET_COOKIE);
         assertNotNull(list);
         return String.join(", ", list);
-    }
-
-    private void assertSecure(HttpCookie httpCookie) {
-        assertTrue(httpCookie.getSecure());
-        assertTrue(httpCookie.isHttpOnly());
     }
 }

@@ -32,7 +32,7 @@ public class AccessTokenController {
 
     @Public
     @PostMapping("/oauth2/token")
-    public HttpEntity<AccessTokenApiResponse> getUserDetails(HttpServletRequest httpServletRequest) {
+    public HttpEntity<AccessTokenApiResponse> getAccessToken(HttpServletRequest httpServletRequest) {
         if (httpServletRequest.getCookies() == null) {
             throw new ErrorResponse(HttpStatus.UNAUTHORIZED);
         }
@@ -40,8 +40,9 @@ public class AccessTokenController {
         Optional<String> optionalToken = Arrays.asList(httpServletRequest.getCookies())
                 .stream()
                 .filter(cookie -> cookie.getName().equals(AccessTokenApiResponseHandler.REFRESH_TOKEN_COOKIE_NAME)
-                        && cookie.isHttpOnly()
-                        && cookie.getSecure())
+//                        && cookie.isHttpOnly()
+//                        && (!httpServletRequest.isSecure() || cookie.getSecure())
+                )
                 .findFirst()
                 .map(Cookie::getValue);
         if (!optionalToken.isPresent()) {

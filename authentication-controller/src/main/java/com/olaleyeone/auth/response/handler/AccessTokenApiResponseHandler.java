@@ -59,17 +59,30 @@ public class AccessTokenApiResponseHandler {
         httpHeaders.setCacheControl(CacheControl.noStore());
         httpHeaders.setPragma("no-cache");
 
-        httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("%s=%s; Max-Age=%d; Path=%s; Secure; HttpOnly",
-                REFRESH_TOKEN_COOKIE_NAME,
-                refreshTokenJwt.getToken(),
-                refreshToken.getSecondsTillExpiry(),
-                httpServletRequest.getContextPath() + TOKEN_ENDPOINT));
+        if (httpServletRequest.isSecure()) {
+            httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("%s=%s; Max-Age=%d; Path=%s; Secure; HttpOnly",
+                    REFRESH_TOKEN_COOKIE_NAME,
+                    refreshTokenJwt.getToken(),
+                    refreshToken.getSecondsTillExpiry(),
+                    "/"));//httpServletRequest.getContextPath() + TOKEN_ENDPOINT
 
-        httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("%s=%s; Max-Age=%d; Path=/; Secure; HttpOnly",
-                ACCESS_TOKEN_COOKIE_NAME,
-                accessTokenJwt.getToken(),
-                accessTokenJwt.getSecondsTillExpiry()
-        ));
+            httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("%s=%s; Max-Age=%d; Path=/; Secure; HttpOnly",
+                    ACCESS_TOKEN_COOKIE_NAME,
+                    accessTokenJwt.getToken(),
+                    accessTokenJwt.getSecondsTillExpiry()
+            ));
+        } else {
+            httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("%s=%s; Max-Age=%d; Path=/; HttpOnly",
+                    REFRESH_TOKEN_COOKIE_NAME,
+                    refreshTokenJwt.getToken(),
+                    refreshToken.getSecondsTillExpiry()));
+
+            httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("%s=%s; Max-Age=%d; Path=/; HttpOnly",
+                    ACCESS_TOKEN_COOKIE_NAME,
+                    accessTokenJwt.getToken(),
+                    accessTokenJwt.getSecondsTillExpiry()
+            ));
+        }
         return new HttpEntity(accessTokenApiResponse, httpHeaders);
     }
 }

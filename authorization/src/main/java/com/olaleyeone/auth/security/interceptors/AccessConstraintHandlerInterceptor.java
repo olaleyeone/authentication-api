@@ -39,6 +39,7 @@ public class AccessConstraintHandlerInterceptor extends HandlerInterceptorAdapte
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
+
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         try {
             List<Annotation> accessConstraints = collectAccessConstraints(handlerMethod.getMethod().getDeclaringClass().getAnnotations());
@@ -51,13 +52,13 @@ public class AccessConstraintHandlerInterceptor extends HandlerInterceptorAdapte
             }
 
             if (authorizedRequest.getAccessToken() == null) {
-                return rejectGuestAccess(response, handlerMethod, accessConstraints);
+                return rejectGuestAccess(request, response);
             }
             if (authorizedRequest.getAccessClaims() == null) {
                 return rejectInvalidToken(response);
             }
 
-            return validateUserAccess(response, accessConstraints);
+            return validateUserAccess(request, response, accessConstraints);
         } catch (IllegalStateException e) {
             logger.error(e.getMessage(), e);
         }
@@ -71,16 +72,20 @@ public class AccessConstraintHandlerInterceptor extends HandlerInterceptorAdapte
         return false;
     }
 
-    private boolean rejectGuestAccess(HttpServletResponse response, HandlerMethod handlerMethod, List<Annotation> accessConstraints) throws IOException {
+    private boolean rejectGuestAccess(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logger.info("Guest denied access to {}", request.getRequestURL());
         response.setStatus(401);
         response.getWriter().append("Unauthorized");
         return false;
     }
 
-    private boolean validateUserAccess(HttpServletResponse response, List<Annotation> accessConstraints) throws IOException {
+    private boolean validateUserAccess(HttpServletRequest request, HttpServletResponse response, List<Annotation> accessConstraints) throws IOException {
         for (Annotation annotation : accessConstraints) {
             AccessStatus accessStatus = getAccessStatus(annotation);
             if (!accessStatus.hasAccess()) {
+                logger.info("{}: User denied access to {}",
+                        annotation.annotationType().getName(),
+                        request.getRequestURL());
                 response.setStatus(403);
                 response.getWriter().append(accessStatus.reason());
                 return false;

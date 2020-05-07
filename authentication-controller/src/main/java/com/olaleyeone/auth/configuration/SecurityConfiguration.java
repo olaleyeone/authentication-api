@@ -46,8 +46,9 @@ public class SecurityConfiguration {
                 return Arrays.asList(httpServletRequest.getCookies())
                         .stream()
                         .filter(cookie -> cookie.getName().equals(AccessTokenApiResponseHandler.ACCESS_TOKEN_COOKIE_NAME)
-                                && cookie.isHttpOnly()
-                                && cookie.getSecure())
+//                                && cookie.isHttpOnly()
+//                                && cookie.getSecure()
+                        )
                         .findFirst()
                         .map(Cookie::getValue);
             }
