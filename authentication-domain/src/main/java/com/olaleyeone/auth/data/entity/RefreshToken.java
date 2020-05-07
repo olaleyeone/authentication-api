@@ -40,7 +40,6 @@ public class RefreshToken implements Audited {
     @Column(nullable = false, updatable = false)
     private LocalDateTime expiresAt;
 
-    private LocalDateTime lastUsedAt;
     private LocalDateTime timeDeactivated;
 
     public void setActualAuthentication(PortalUserAuthentication actualAuthentication) {

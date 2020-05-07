@@ -1,27 +1,65 @@
 package com.olaleyeone.auth.response.handler;
 
-import com.olaleyeone.auth.data.entity.PortalUser;
-import com.olaleyeone.auth.repository.PortalUserRepository;
+import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.RefreshToken;
+import com.olaleyeone.auth.dto.JwtDto;
+import com.olaleyeone.auth.integration.auth.JwtService;
+import com.olaleyeone.auth.qualifier.JwtToken;
+import com.olaleyeone.auth.qualifier.JwtTokenType;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
-import com.olaleyeone.web.exception.NotFoundException;
+import com.olaleyeone.auth.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 
 import javax.inject.Named;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Named
 public class UserApiResponseHandler {
 
-    private final PortalUserRepository portalUserRepository;
+    public static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
+    public static final String ACCESS_TOKEN_COOKIE_NAME = "access_token";
 
-    public UserApiResponse getUserApiResponse(Long userId) {
-        Optional<PortalUser> optionalPortalUser = portalUserRepository.findById(userId);
-        if (!optionalPortalUser.isPresent()) {
-            throw new NotFoundException();
-        }
-        PortalUser portalUser = optionalPortalUser.get();
+    private final RefreshTokenService refreshTokenService;
 
-        return new UserApiResponse(portalUser);
+    @JwtToken(JwtTokenType.ACCESS)
+    private final JwtService accessTokenJwtService;
+    @JwtToken(JwtTokenType.REFRESH)
+    private final JwtService refreshTokenJwtService;
+
+    public HttpEntity<UserApiResponse> getAccessToken(PortalUserAuthentication portalUserAuthentication) {
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(portalUserAuthentication);
+
+        return getUserApiResponseHttpEntity(refreshToken);
+    }
+
+    public HttpEntity<UserApiResponse> getAccessToken(RefreshToken currentRefreshToken) {
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(currentRefreshToken.getActualAuthentication());
+
+        return getUserApiResponseHttpEntity(refreshToken);
+    }
+
+    private HttpEntity<UserApiResponse> getUserApiResponseHttpEntity(RefreshToken refreshToken) {
+        UserApiResponse accessTokenApiResponse = new UserApiResponse(refreshToken.getPortalUser());
+        JwtDto refreshTokenJwt = refreshTokenJwtService.generateJwt(refreshToken);
+        JwtDto accessTokenJwt = accessTokenJwtService.generateJwt(refreshToken);
+
+//        accessTokenApiResponse.setRefreshToken(refreshTokenJwt);
+//        accessTokenApiResponse.setAccessToken(accessTokenJwt.getToken());
+
+        accessTokenApiResponse.setExpiresAt(refreshToken.getAccessExpiresAt());
+        accessTokenApiResponse.setSecondsTillExpiry(accessTokenJwt.getSecondsTillExpiry());
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setCacheControl(CacheControl.noStore());
+        httpHeaders.setPragma("no-cache");
+
+        httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("%s=%s; Max-Age=%d; Path=/; Secure; HttpOnly",
+                REFRESH_TOKEN_COOKIE_NAME, refreshTokenJwt.getToken(), refreshToken.getSecondsTillExpiry()));
+        httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("%s=%s; Max-Age=%d; Path=/; Secure; HttpOnly",
+                ACCESS_TOKEN_COOKIE_NAME, accessTokenJwt.getToken(), accessTokenJwt.getSecondsTillExpiry()));
+        return new HttpEntity(accessTokenApiResponse, httpHeaders);
     }
 }

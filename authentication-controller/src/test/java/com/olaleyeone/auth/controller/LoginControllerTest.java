@@ -3,7 +3,7 @@ package com.olaleyeone.auth.controller;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.dto.data.LoginApiRequest;
-import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
+import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
 import com.olaleyeone.auth.service.LoginAuthenticationService;
 import com.olaleyeone.auth.controllertest.ControllerTest;
@@ -24,7 +24,7 @@ class LoginControllerTest extends ControllerTest {
     private LoginAuthenticationService authenticationService;
 
     @Autowired
-    private AccessTokenApiResponseHandler accessTokenApiResponseHandler;
+    private UserApiResponseHandler accessTokenApiResponseHandler;
 
     private LoginApiRequest loginApiRequest;
 

@@ -41,15 +41,17 @@ public class PortalUserAuthentication {
 
     private LocalDateTime lastActiveAt;
     private LocalDateTime becomesInactiveAt;
+
     private LocalDateTime autoLogoutAt;
     private LocalDateTime loggedOutAt;
+    
     private LocalDateTime deactivatedAt;
 
     @Column(updatable = false, nullable = false)
     private LocalDateTime dateCreated;
 
     @PrePersist
-    public void setPortalUser() {
+    public void prePersist() {
         dateCreated = LocalDateTime.now();
         Optional.ofNullable(portalUserIdentifier)
                 .map(PortalUserIdentifier::getPortalUser)

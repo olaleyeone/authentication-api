@@ -2,7 +2,7 @@ package com.olaleyeone.auth.controller;
 
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.dto.data.UserRegistrationApiRequest;
-import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
+import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
 import com.olaleyeone.auth.security.annotations.Public;
 import com.olaleyeone.auth.service.UserRegistrationService;
@@ -24,7 +24,7 @@ import javax.validation.Valid;
 public class UserRegistrationController {
 
     private final UserRegistrationService userRegistrationService;
-    private final AccessTokenApiResponseHandler accessTokenApiResponseHandler;
+    private final UserApiResponseHandler accessTokenApiResponseHandler;
     private final Provider<RequestMetadata> requestMetadata;
 
     @Public

@@ -5,7 +5,7 @@ import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.dto.data.LoginApiRequest;
 import com.olaleyeone.data.RequestMetadata;
 import com.olaleyeone.web.exception.ErrorResponse;
-import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
+import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
 import com.olaleyeone.auth.security.annotations.Public;
 import com.olaleyeone.auth.service.LoginAuthenticationService;
@@ -25,7 +25,7 @@ public class LoginController {
 
     private final LoginAuthenticationService authenticationService;
     private final Provider<RequestMetadata> requestMetadata;
-    private final AccessTokenApiResponseHandler accessTokenApiResponseHandler;
+    private final UserApiResponseHandler accessTokenApiResponseHandler;
 
     @Public
     @PostMapping("/login")

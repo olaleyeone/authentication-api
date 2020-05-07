@@ -3,7 +3,7 @@ package com.olaleyeone.auth.controller;
 import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.dto.data.UserRegistrationApiRequest;
-import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
+import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
 import com.olaleyeone.auth.service.UserRegistrationService;
 import com.olaleyeone.auth.validator.UniqueIdentifierValidator;
@@ -27,7 +27,7 @@ class UserRegistrationControllerTest extends ControllerTest {
     private UserRegistrationService userRegistrationService;
 
     @Autowired
-    private AccessTokenApiResponseHandler accessTokenApiResponseHandler;
+    private UserApiResponseHandler accessTokenApiResponseHandler;
 
     @Autowired
     private UniqueIdentifierValidator uniqueIdentifierValidator;
