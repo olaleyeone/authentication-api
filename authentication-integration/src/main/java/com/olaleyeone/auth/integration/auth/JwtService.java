@@ -8,5 +8,5 @@ public interface JwtService {
 
     JwtDto generateJwt(RefreshToken refreshToken);
 
-    AccessClaims parseAccessToken(String token);
+    AccessClaims parseToken(String token);
 }

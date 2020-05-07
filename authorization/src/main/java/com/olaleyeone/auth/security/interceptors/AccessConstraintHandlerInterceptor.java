@@ -45,8 +45,13 @@ public class AccessConstraintHandlerInterceptor extends HandlerInterceptorAdapte
             accessConstraints.addAll(collectAccessConstraints(handlerMethod.getMethod().getDeclaredAnnotations()));
 
             AuthorizedRequest authorizedRequest = authorizedRequestProvider.get();
+
+            if (isPublicEndpoint(handlerMethod, accessConstraints)) {
+                return true;
+            }
+
             if (authorizedRequest.getAccessToken() == null) {
-                return validateGuestAccess(response, handlerMethod, accessConstraints);
+                return rejectGuestAccess(response, handlerMethod, accessConstraints);
             }
             if (authorizedRequest.getAccessClaims() == null) {
                 return rejectInvalidToken(response);
@@ -66,6 +71,12 @@ public class AccessConstraintHandlerInterceptor extends HandlerInterceptorAdapte
         return false;
     }
 
+    private boolean rejectGuestAccess(HttpServletResponse response, HandlerMethod handlerMethod, List<Annotation> accessConstraints) throws IOException {
+        response.setStatus(401);
+        response.getWriter().append("Unauthorized");
+        return false;
+    }
+
     private boolean validateUserAccess(HttpServletResponse response, List<Annotation> accessConstraints) throws IOException {
         for (Annotation annotation : accessConstraints) {
             AccessStatus accessStatus = getAccessStatus(annotation);
@@ -78,17 +89,12 @@ public class AccessConstraintHandlerInterceptor extends HandlerInterceptorAdapte
         return true;
     }
 
-    private boolean validateGuestAccess(HttpServletResponse response, HandlerMethod handlerMethod, List<Annotation> accessConstraints) throws IOException {
-        if (accessConstraints.isEmpty() && (
+    private boolean isPublicEndpoint(HandlerMethod handlerMethod, List<Annotation> accessConstraints) {
+        return accessConstraints.isEmpty() && (
                 handlerMethod.hasMethodAnnotation(Public.class)
                         || handlerMethod.getMethod().getDeclaringClass().isAnnotationPresent(Public.class)
                         || excludedHandlers.contains(handlerMethod.getBeanType())
-        )) {
-            return true;
-        }
-        response.setStatus(401);
-        response.getWriter().append("Unauthorized");
-        return false;
+        );
     }
 
     private List<Annotation> collectAccessConstraints(Annotation[] stream) {

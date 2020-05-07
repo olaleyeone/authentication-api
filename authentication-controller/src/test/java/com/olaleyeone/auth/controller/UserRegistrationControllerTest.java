@@ -3,8 +3,8 @@ package com.olaleyeone.auth.controller;
 import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.dto.data.UserRegistrationApiRequest;
-import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
-import com.olaleyeone.auth.response.pojo.UserApiResponse;
+import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
+import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.UserRegistrationService;
 import com.olaleyeone.auth.validator.UniqueIdentifierValidator;
 import com.olaleyeone.auth.validator.ValidEmailRegistrationCodeValidator;
@@ -27,7 +27,7 @@ class UserRegistrationControllerTest extends ControllerTest {
     private UserRegistrationService userRegistrationService;
 
     @Autowired
-    private UserApiResponseHandler accessTokenApiResponseHandler;
+    private AccessTokenApiResponseHandler accessTokenApiResponseHandler;
 
     @Autowired
     private UniqueIdentifierValidator uniqueIdentifierValidator;
@@ -39,7 +39,7 @@ class UserRegistrationControllerTest extends ControllerTest {
     private ValidEmailRegistrationCodeValidator validEmailRegistrationCodeValidator;
 
     private UserRegistrationApiRequest userRegistrationApiRequest;
-    private UserApiResponse accessTokenApiResponse;
+    private AccessTokenApiResponse accessTokenApiResponse;
 
     @BeforeEach
     void setUp() {
@@ -57,7 +57,7 @@ class UserRegistrationControllerTest extends ControllerTest {
         Mockito.doReturn(true)
                 .when(validEmailRegistrationCodeValidator).isValid(Mockito.any(), Mockito.any());
 
-        accessTokenApiResponse = new UserApiResponse();
+        accessTokenApiResponse = new AccessTokenApiResponse();
         Mockito.when(accessTokenApiResponseHandler.getAccessToken(Mockito.any(PortalUserAuthentication.class)))
                 .then(invocation -> ResponseEntity.ok(accessTokenApiResponse));
     }
@@ -74,7 +74,7 @@ class UserRegistrationControllerTest extends ControllerTest {
                 .with(body(userRegistrationApiRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(result -> {
-                    UserApiResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), UserApiResponse.class);
+                    AccessTokenApiResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), AccessTokenApiResponse.class);
                     assertEquals(accessTokenApiResponse, response);
                 });
         Mockito.verify(userRegistrationService, Mockito.times(1))

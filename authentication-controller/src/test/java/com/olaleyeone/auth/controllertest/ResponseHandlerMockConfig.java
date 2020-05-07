@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.controllertest;
 
-import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
+import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 class ResponseHandlerMockConfig {
 
     @Bean
-    public UserApiResponseHandler userApiResponseHandler() {
-        return Mockito.mock(UserApiResponseHandler.class);
+    public AccessTokenApiResponseHandler userApiResponseHandler() {
+        return Mockito.mock(AccessTokenApiResponseHandler.class);
     }
 }

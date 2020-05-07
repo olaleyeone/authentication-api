@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-public class UserApiResponse {
+public class AccessTokenApiResponse {
 
     private Long id;
     private String firstName;
@@ -28,7 +28,7 @@ public class UserApiResponse {
     @JsonProperty("expires_at")
     private LocalDateTime expiresAt;
 
-    public UserApiResponse(PortalUser user) {
+    public AccessTokenApiResponse(PortalUser user) {
         this.id = user.getId();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();

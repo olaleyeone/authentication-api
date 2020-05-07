@@ -2,8 +2,8 @@ package com.olaleyeone.auth.controller;
 
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.dto.data.UserRegistrationApiRequest;
-import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
-import com.olaleyeone.auth.response.pojo.UserApiResponse;
+import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
+import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.security.annotations.Public;
 import com.olaleyeone.auth.service.UserRegistrationService;
 import com.olaleyeone.data.RequestMetadata;
@@ -24,15 +24,15 @@ import javax.validation.Valid;
 public class UserRegistrationController {
 
     private final UserRegistrationService userRegistrationService;
-    private final UserApiResponseHandler accessTokenApiResponseHandler;
+    private final AccessTokenApiResponseHandler accessTokenApiResponseHandler;
     private final Provider<RequestMetadata> requestMetadata;
 
     @Public
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/users")
-    public HttpEntity<UserApiResponse> registerUser(@Valid @RequestBody UserRegistrationApiRequest dto) {
+    public HttpEntity<AccessTokenApiResponse> registerUser(@Valid @RequestBody UserRegistrationApiRequest dto) {
         PortalUserAuthentication portalUserAuthentication = userRegistrationService.registerUser(dto, requestMetadata.get());
-        HttpEntity<UserApiResponse> httpEntity = accessTokenApiResponseHandler.getAccessToken(portalUserAuthentication);
+        HttpEntity<AccessTokenApiResponse> httpEntity = accessTokenApiResponseHandler.getAccessToken(portalUserAuthentication);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .headers(httpEntity.getHeaders())
                 .body(httpEntity.getBody());

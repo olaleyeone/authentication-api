@@ -7,7 +7,7 @@ import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.dto.JwtDto;
 import com.olaleyeone.auth.integration.auth.JwtService;
-import com.olaleyeone.auth.response.pojo.UserApiResponse;
+import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.RefreshTokenService;
 import com.olaleyeone.auth.test.ComponentTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +18,7 @@ import org.mockito.Mockito;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.HttpCookie;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UserApiResponseHandlerTest extends ComponentTest {
+class AccessTokenApiResponseHandlerTest extends ComponentTest {
 
     @Mock
     private RefreshTokenService refreshTokenService;
@@ -34,8 +35,11 @@ class UserApiResponseHandlerTest extends ComponentTest {
     @Mock
     private JwtService jwtService;
 
+    @Mock
+    private HttpServletRequest httpServletRequest;
+
     @InjectMocks
-    private UserApiResponseHandler handler;
+    private AccessTokenApiResponseHandler handler;
 
     private PortalUser user;
     private RefreshToken refreshToken;
@@ -76,33 +80,34 @@ class UserApiResponseHandlerTest extends ComponentTest {
                 .then(invocation -> refreshJwt);
         Mockito.when(jwtService.generateJwt(Mockito.any()))
                 .then(invocation -> accessJwt);
+        Mockito.doReturn(faker.internet().domainWord()).when(httpServletRequest).getContextPath();
     }
 
     @Test
     public void getUserPojoForAuthentication() {
-        HttpEntity<UserApiResponse> responseEntity = handler.getAccessToken(userAuthentication);
-        UserApiResponse userApiResponse = responseEntity.getBody();
-        assertNotNull(userApiResponse);
-        assertEquals(user.getFirstName(), userApiResponse.getFirstName());
-        assertEquals(user.getLastName(), userApiResponse.getLastName());
-        assertNull(userApiResponse.getRefreshToken());
-        assertNull(userApiResponse.getAccessToken());
+        HttpEntity<AccessTokenApiResponse> responseEntity = handler.getAccessToken(userAuthentication);
+        AccessTokenApiResponse accessTokenApiResponse = responseEntity.getBody();
+        assertNotNull(accessTokenApiResponse);
+        assertEquals(user.getFirstName(), accessTokenApiResponse.getFirstName());
+        assertEquals(user.getLastName(), accessTokenApiResponse.getLastName());
+        assertNull(accessTokenApiResponse.getRefreshToken());
+        assertNull(accessTokenApiResponse.getAccessToken());
     }
 
     @Test
     public void getUserPojoForRefreshToken() {
-        HttpEntity<UserApiResponse> responseEntity = handler.getAccessToken(refreshToken);
-        UserApiResponse userApiResponse = responseEntity.getBody();
-        assertNotNull(userApiResponse);
-        assertEquals(user.getFirstName(), userApiResponse.getFirstName());
-        assertEquals(user.getLastName(), userApiResponse.getLastName());
-        assertNull(userApiResponse.getRefreshToken());
-        assertNull(userApiResponse.getAccessToken());
+        HttpEntity<AccessTokenApiResponse> responseEntity = handler.getAccessToken(refreshToken);
+        AccessTokenApiResponse accessTokenApiResponse = responseEntity.getBody();
+        assertNotNull(accessTokenApiResponse);
+        assertEquals(user.getFirstName(), accessTokenApiResponse.getFirstName());
+        assertEquals(user.getLastName(), accessTokenApiResponse.getLastName());
+        assertNull(accessTokenApiResponse.getRefreshToken());
+        assertNull(accessTokenApiResponse.getAccessToken());
     }
 
     @Test
     public void shouldReturnCacheHeaders() {
-        HttpEntity<UserApiResponse> responseEntity = handler.getAccessToken(userAuthentication);
+        HttpEntity<AccessTokenApiResponse> responseEntity = handler.getAccessToken(userAuthentication);
         assertEquals("no-store", responseEntity.getHeaders().getCacheControl());
         assertEquals("no-cache", responseEntity.getHeaders().getPragma());
     }
@@ -110,23 +115,25 @@ class UserApiResponseHandlerTest extends ComponentTest {
     @Test
     public void shouldReturnAccessTokenCookies() {
 
-        HttpEntity<UserApiResponse> responseEntity = handler.getAccessToken(userAuthentication);
+        HttpEntity<AccessTokenApiResponse> responseEntity = handler.getAccessToken(userAuthentication);
 
         List<HttpCookie> httpCookies = getCookiesByName(responseEntity, "access_token");
         assertEquals(1, httpCookies.size());
         HttpCookie httpCookie = httpCookies.iterator().next();
         assertEquals(accessJwt.getSecondsTillExpiry(), httpCookie.getMaxAge());
+        assertEquals("/", httpCookie.getPath());
         assertSecure(httpCookie);
     }
 
     @Test
     public void shouldReturnRefreshTokenCookies() {
-        HttpEntity<UserApiResponse> responseEntity = handler.getAccessToken(userAuthentication);
+        HttpEntity<AccessTokenApiResponse> responseEntity = handler.getAccessToken(userAuthentication);
 
         List<HttpCookie> httpCookies = getCookiesByName(responseEntity, "refresh_token");
         assertEquals(1, httpCookies.size());
         HttpCookie httpCookie = httpCookies.iterator().next();
         assertTrue((refreshToken.getSecondsTillExpiry() - httpCookie.getMaxAge()) <= 1);
+        assertEquals(httpServletRequest.getContextPath() + AccessTokenApiResponseHandler.TOKEN_ENDPOINT, httpCookie.getPath());
         assertSecure(httpCookie);
     }
 

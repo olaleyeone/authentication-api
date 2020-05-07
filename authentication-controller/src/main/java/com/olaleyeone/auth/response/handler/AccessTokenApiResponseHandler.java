@@ -6,7 +6,7 @@ import com.olaleyeone.auth.dto.JwtDto;
 import com.olaleyeone.auth.integration.auth.JwtService;
 import com.olaleyeone.auth.qualifier.JwtToken;
 import com.olaleyeone.auth.qualifier.JwtTokenType;
-import com.olaleyeone.auth.response.pojo.UserApiResponse;
+import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.CacheControl;
@@ -14,14 +14,17 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 
 @RequiredArgsConstructor
 @Named
-public class UserApiResponseHandler {
+public class AccessTokenApiResponseHandler {
 
     public static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
     public static final String ACCESS_TOKEN_COOKIE_NAME = "access_token";
+    public static final String TOKEN_ENDPOINT = "/oauth2/token";
 
+    private final HttpServletRequest httpServletRequest;
     private final RefreshTokenService refreshTokenService;
 
     @JwtToken(JwtTokenType.ACCESS)
@@ -29,20 +32,20 @@ public class UserApiResponseHandler {
     @JwtToken(JwtTokenType.REFRESH)
     private final JwtService refreshTokenJwtService;
 
-    public HttpEntity<UserApiResponse> getAccessToken(PortalUserAuthentication portalUserAuthentication) {
+    public HttpEntity<AccessTokenApiResponse> getAccessToken(PortalUserAuthentication portalUserAuthentication) {
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(portalUserAuthentication);
 
         return getUserApiResponseHttpEntity(refreshToken);
     }
 
-    public HttpEntity<UserApiResponse> getAccessToken(RefreshToken currentRefreshToken) {
+    public HttpEntity<AccessTokenApiResponse> getAccessToken(RefreshToken currentRefreshToken) {
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(currentRefreshToken.getActualAuthentication());
 
         return getUserApiResponseHttpEntity(refreshToken);
     }
 
-    private HttpEntity<UserApiResponse> getUserApiResponseHttpEntity(RefreshToken refreshToken) {
-        UserApiResponse accessTokenApiResponse = new UserApiResponse(refreshToken.getPortalUser());
+    private HttpEntity<AccessTokenApiResponse> getUserApiResponseHttpEntity(RefreshToken refreshToken) {
+        AccessTokenApiResponse accessTokenApiResponse = new AccessTokenApiResponse(refreshToken.getPortalUser());
         JwtDto refreshTokenJwt = refreshTokenJwtService.generateJwt(refreshToken);
         JwtDto accessTokenJwt = accessTokenJwtService.generateJwt(refreshToken);
 
@@ -56,10 +59,17 @@ public class UserApiResponseHandler {
         httpHeaders.setCacheControl(CacheControl.noStore());
         httpHeaders.setPragma("no-cache");
 
+        httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("%s=%s; Max-Age=%d; Path=%s; Secure; HttpOnly",
+                REFRESH_TOKEN_COOKIE_NAME,
+                refreshTokenJwt.getToken(),
+                refreshToken.getSecondsTillExpiry(),
+                httpServletRequest.getContextPath() + TOKEN_ENDPOINT));
+
         httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("%s=%s; Max-Age=%d; Path=/; Secure; HttpOnly",
-                REFRESH_TOKEN_COOKIE_NAME, refreshTokenJwt.getToken(), refreshToken.getSecondsTillExpiry()));
-        httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("%s=%s; Max-Age=%d; Path=/; Secure; HttpOnly",
-                ACCESS_TOKEN_COOKIE_NAME, accessTokenJwt.getToken(), accessTokenJwt.getSecondsTillExpiry()));
+                ACCESS_TOKEN_COOKIE_NAME,
+                accessTokenJwt.getToken(),
+                accessTokenJwt.getSecondsTillExpiry()
+        ));
         return new HttpEntity(accessTokenApiResponse, httpHeaders);
     }
 }

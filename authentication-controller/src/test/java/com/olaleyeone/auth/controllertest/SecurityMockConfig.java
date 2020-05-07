@@ -1,5 +1,8 @@
 package com.olaleyeone.auth.controllertest;
 
+import com.olaleyeone.auth.integration.auth.JwtService;
+import com.olaleyeone.auth.qualifier.JwtToken;
+import com.olaleyeone.auth.qualifier.JwtTokenType;
 import com.olaleyeone.auth.security.data.AccessClaimsExtractor;
 import com.olaleyeone.auth.security.access.TrustedIpAddressAuthorizer;
 import com.olaleyeone.auth.security.authorizer.NotClientTokenAuthorizer;
@@ -23,5 +26,11 @@ class SecurityMockConfig {
     @Bean
     public NotClientTokenAuthorizer notClientTokenAccessManager() {
         return Mockito.mock(NotClientTokenAuthorizer.class);
+    }
+
+    @JwtToken(JwtTokenType.REFRESH)
+    @Bean
+    public JwtService jwtService() {
+        return Mockito.mock(JwtService.class);
     }
 }

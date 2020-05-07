@@ -34,7 +34,7 @@ public class AccessTokenJwtServiceImpl implements JwtService {
     }
 
     @Override
-    public AccessClaims parseAccessToken(String jws) {
+    public AccessClaims parseToken(String jws) {
         return baseJwtService.parseAccessToken(jws);
     }
 

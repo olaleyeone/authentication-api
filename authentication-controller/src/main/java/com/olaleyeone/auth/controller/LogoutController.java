@@ -1,8 +1,7 @@
 package com.olaleyeone.auth.controller;
 
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
-import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
-import com.olaleyeone.auth.security.annotations.Public;
+import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.security.constraint.NotClientToken;
 import com.olaleyeone.auth.service.LogoutService;
 import com.olaleyeone.data.RequestMetadata;
@@ -31,8 +30,8 @@ public class LogoutController {
         refreshTokenRepository.findActiveToken(Long.valueOf(requestMetadataProvider.get().getRefreshTokenId()))
                 .ifPresent(refreshToken -> logoutService.logout(refreshToken.getActualAuthentication()));
 
-        clearCookie(response, UserApiResponseHandler.ACCESS_TOKEN_COOKIE_NAME);
-        clearCookie(response, UserApiResponseHandler.REFRESH_TOKEN_COOKIE_NAME);
+        clearCookie(response, AccessTokenApiResponseHandler.ACCESS_TOKEN_COOKIE_NAME);
+        clearCookie(response, AccessTokenApiResponseHandler.REFRESH_TOKEN_COOKIE_NAME);
     }
 
     private void clearCookie(HttpServletResponse response, String accessTokenCookieName) {

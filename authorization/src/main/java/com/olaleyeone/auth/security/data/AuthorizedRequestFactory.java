@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class AuthorizedRequestFactory implements FactoryBean<AuthorizedRequest> {
+public abstract class AuthorizedRequestFactory implements FactoryBean<AuthorizedRequest> {
 
     @Value("${IP_V4_LOCALHOST:127.0.0.1}")
     private String IP_V4_LOCALHOST;
@@ -25,8 +25,6 @@ public class AuthorizedRequestFactory implements FactoryBean<AuthorizedRequest> 
     @Getter
     @Setter
     private String proxyIpHeader = "X-FORWARDED-FOR";
-
-    private String tokenPrefix = "Bearer ";
 
     @Override
     public AuthorizedRequest getObject() {
@@ -53,11 +51,13 @@ public class AuthorizedRequestFactory implements FactoryBean<AuthorizedRequest> 
                     requestMetadata.setIpAddress(getActualIpAddress(httpServletRequest));
                     requestMetadata.setLocalhost(isLocalhost(requestMetadata.getIpAddress()));
                     requestMetadata.setUserAgent(httpServletRequest.getHeader(HttpHeaders.USER_AGENT));
-                    String authorizationHeader = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
-                    if (StringUtils.isNotBlank(authorizationHeader) && authorizationHeader.startsWith(tokenPrefix)) {
-                        requestMetadata.setAccessToken(authorizationHeader.substring(tokenPrefix.length()));
-                        requestMetadata.setAccessClaims(accessClaimsExtractor.getClaims(requestMetadata.getAccessToken()));
-                    }
+
+                    getAccessToken(httpServletRequest)
+                            .ifPresent(accessToken -> {
+                                requestMetadata.setAccessToken(accessToken);
+                                requestMetadata.setAccessClaims(accessClaimsExtractor.getClaims(accessToken));
+                            });
+
                     httpServletRequest.setAttribute(AuthorizedRequestImpl.class.getName(), requestMetadata);
                     return requestMetadata;
                 });
@@ -78,4 +78,6 @@ public class AuthorizedRequestFactory implements FactoryBean<AuthorizedRequest> 
     public boolean isLocalhost(String ipAddress) {
         return ipAddress.equals(IP_V4_LOCALHOST) || ipAddress.equals(IP_V6_LOCALHOST);
     }
+
+    protected abstract Optional<String> getAccessToken(HttpServletRequest httpServletRequest);
 }

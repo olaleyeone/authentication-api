@@ -3,8 +3,8 @@ package com.olaleyeone.auth.controller;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.dto.data.LoginApiRequest;
-import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
-import com.olaleyeone.auth.response.pojo.UserApiResponse;
+import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
+import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.LoginAuthenticationService;
 import com.olaleyeone.auth.controllertest.ControllerTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +24,7 @@ class LoginControllerTest extends ControllerTest {
     private LoginAuthenticationService authenticationService;
 
     @Autowired
-    private UserApiResponseHandler accessTokenApiResponseHandler;
+    private AccessTokenApiResponseHandler accessTokenApiResponseHandler;
 
     private LoginApiRequest loginApiRequest;
 
@@ -51,7 +51,7 @@ class LoginControllerTest extends ControllerTest {
     @Test
     void loginWithCorrectCredentials() throws Exception {
 
-        UserApiResponse accessTokenApiResponse = new UserApiResponse();
+        AccessTokenApiResponse accessTokenApiResponse = new AccessTokenApiResponse();
 
         Mockito.when(authenticationService.getAuthenticationResponse(Mockito.any(), Mockito.any()))
                 .then(invocation -> {
@@ -66,7 +66,7 @@ class LoginControllerTest extends ControllerTest {
                 .with(body(loginApiRequest)))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
-                    UserApiResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), UserApiResponse.class);
+                    AccessTokenApiResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), AccessTokenApiResponse.class);
                     assertNotNull(response);
                     assertEquals(accessTokenApiResponse, response);
                 });

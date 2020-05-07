@@ -4,7 +4,7 @@ import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
-import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
+import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.security.access.AccessStatus;
 import com.olaleyeone.auth.security.authorizer.NotClientTokenAuthorizer;
 import com.olaleyeone.auth.service.LogoutService;
@@ -51,11 +51,11 @@ class LogoutControllerTest extends ControllerTest {
                 .with(loggedInUser))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
-                    Cookie refreshTokenCookie = result.getResponse().getCookie(UserApiResponseHandler.REFRESH_TOKEN_COOKIE_NAME);
+                    Cookie refreshTokenCookie = result.getResponse().getCookie(AccessTokenApiResponseHandler.REFRESH_TOKEN_COOKIE_NAME);
                     assertNotNull(refreshTokenCookie);
                     assertEquals(0, refreshTokenCookie.getMaxAge());
 
-                    Cookie accessTokenCookie = result.getResponse().getCookie(UserApiResponseHandler.ACCESS_TOKEN_COOKIE_NAME);
+                    Cookie accessTokenCookie = result.getResponse().getCookie(AccessTokenApiResponseHandler.ACCESS_TOKEN_COOKIE_NAME);
                     assertNotNull(accessTokenCookie);
                     assertEquals(0, accessTokenCookie.getMaxAge());
                 });

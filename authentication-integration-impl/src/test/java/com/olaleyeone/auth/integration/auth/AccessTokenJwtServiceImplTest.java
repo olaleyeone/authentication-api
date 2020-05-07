@@ -87,7 +87,7 @@ class AccessTokenJwtServiceImplTest extends ComponentTest {
                 .parseAccessToken(Mockito.any());
 
         String jws = faker.buffy().quotes();
-        AccessClaims actual = jwtService.parseAccessToken(jws);
+        AccessClaims actual = jwtService.parseToken(jws);
         assertSame(expected, actual);
         Mockito.verify(baseJwtService, Mockito.times(1))
                 .parseAccessToken(jws);
