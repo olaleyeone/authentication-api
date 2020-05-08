@@ -91,10 +91,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
             taskContextProvider.get().execute(
                     "EMAIL VERIFICATION CODE VALIDATION",
                     String.format("Validate email verification code for %s", dto.getEmail()),
-                    () -> {
-                        resolveVerification(portalUserIdentifier, dto.getEmailVerificationCode());
-                        return null;
-                    });
+                    () -> resolveVerification(portalUserIdentifier, dto.getEmailVerificationCode()));
         }
         portalUserIdentifierRepository.save(portalUserIdentifier);
         return portalUserIdentifier;

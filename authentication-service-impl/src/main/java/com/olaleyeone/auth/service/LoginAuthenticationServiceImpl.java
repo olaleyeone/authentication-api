@@ -43,7 +43,7 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
     }
 
     private PortalUserAuthentication createUnknownAccountResponse(LoginApiRequest requestDto, RequestMetadata requestMetadata) {
-        return taskContextProvider.get().execute("FAILED LOGIN",
+        return taskContextProvider.get().executeAndReturn("FAILED LOGIN",
                 "Unknown account " + requestDto.getIdentifier(),
                 () -> {
                     PortalUserAuthentication userAuthentication = makeAuthenticationResponse(
@@ -54,7 +54,7 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
 
     private PortalUserAuthentication createInvalidCredentialResponse(
             PortalUserIdentifier userIdentifier, LoginApiRequest requestDto, RequestMetadata requestMetadata) {
-        return taskContextProvider.get().execute("FAILED LOGIN",
+        return taskContextProvider.get().executeAndReturn("FAILED LOGIN",
                 "Invalid credentials for account " + requestDto.getIdentifier(),
                 () -> {
                     PortalUserAuthentication userAuthentication = makeAuthenticationResponse(
@@ -66,7 +66,7 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
 
     private PortalUserAuthentication createSuccessfulAuthenticationResponse(
             PortalUserIdentifier userIdentifier, LoginApiRequest requestDto, RequestMetadata requestMetadata) {
-        return taskContextProvider.get().execute("SUCCESSFUL LOGIN",
+        return taskContextProvider.get().executeAndReturn("SUCCESSFUL LOGIN",
                 requestDto.getIdentifier() + " logged in",
                 () -> {
                     PortalUserAuthentication userAuthentication = makeAuthenticationResponse(

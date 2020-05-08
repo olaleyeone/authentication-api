@@ -60,7 +60,6 @@ public class PortalUserIdentifierVerificationServiceImpl implements PortalUserId
                         verification.setDeactivatedOn(now);
                         portalUserIdentifierVerificationRepository.save(verification);
                     });
-                    return null;
                 });
 
         portalUserIdentifierVerification.setCreatedOn(now);

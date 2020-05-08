@@ -1,8 +1,8 @@
 package com.olaleyeone.auth.configuration;
 
 import com.olaleyeone.audittrail.embeddable.Duration;
-import com.olaleyeone.audittrail.embeddable.WebRequest;
 import com.olaleyeone.audittrail.entity.Task;
+import com.olaleyeone.audittrail.entity.WebRequest;
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.audittrail.impl.TaskContextHolder;
 import com.olaleyeone.audittrail.impl.TaskContextImpl;
@@ -11,7 +11,7 @@ import com.olaleyeone.data.RequestMetadata;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.inject.Provider;
@@ -58,8 +58,11 @@ public class TaskContextHandlerInterceptor extends HandlerInterceptorAdapter {
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        super.postHandle(request, response, handler, modelAndView);
+    public void afterCompletion(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Object handler,
+            @Nullable Exception ex) {
         TaskContextImpl taskContext = taskContextHolder.getObject();
         Task task = taskContext.getTask();
         WebRequest webRequest = task.getWebRequest();
