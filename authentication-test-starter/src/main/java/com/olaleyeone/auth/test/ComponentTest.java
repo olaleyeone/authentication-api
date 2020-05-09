@@ -10,5 +10,5 @@ import java.util.Random;
 @ExtendWith(MockitoExtension.class)
 public class ComponentTest {
 
-    protected Faker faker = Faker.instance(new Random());
+    protected final Faker faker = Faker.instance(new Random());
 }

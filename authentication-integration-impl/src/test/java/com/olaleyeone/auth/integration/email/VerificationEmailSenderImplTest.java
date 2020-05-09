@@ -8,6 +8,7 @@ import com.olaleyeone.auth.service.SettingService;
 import com.olaleyeone.auth.test.ComponentTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.util.StreamUtils;
@@ -33,6 +34,7 @@ class VerificationEmailSenderImplTest extends ComponentTest {
     @Mock
     private TaskContextFactory taskContextFactory;
 
+    @InjectMocks
     private VerificationEmailSenderImpl verificationEmailSender;
 
     @BeforeEach
@@ -42,18 +44,12 @@ class VerificationEmailSenderImplTest extends ComponentTest {
             action.execute();
             return null;
         }).when(taskContextFactory).startBackgroundTask(Mockito.any(), Mockito.any(), Mockito.any());
-        verificationEmailSender = VerificationEmailSenderImpl.builder()
-                .mailService(mailService)
-                .templateEngine(templateEngine)
-                .settingService(settingService)
-                .taskContextFactory(taskContextFactory)
-                .build();
     }
 
     @Test
     void testNoEmailTemplate() throws IOException {
         verificationEmailSender.sendVerificationCode(new PortalUserIdentifierVerification(), faker.code().asin());
-        String templateStr = StreamUtils.copyToString(getClass().getResourceAsStream("/email/email-verification-code.html"),
+        String templateStr = StreamUtils.copyToString(getClass().getResourceAsStream("/email/email-verification-code.ftl.html"),
                 Charset.forName("utf-8"));
         Mockito.verify(templateEngine, Mockito.times(1))
                 .getAsString(Mockito.eq(templateStr), Mockito.any());
