@@ -31,7 +31,7 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
     @Transactional
     @Override
     public PortalUserAuthentication getAuthenticationResponse(LoginApiRequest requestDto, RequestMetadata requestMetadata) {
-        Optional<PortalUserIdentifier> optionalUserIdentifier = portalUserIdentifierRepository.findByIdentifier(requestDto.getIdentifier());
+        Optional<PortalUserIdentifier> optionalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(requestDto.getIdentifier());
         if (!optionalUserIdentifier.isPresent()) {
             return createUnknownAccountResponse(requestDto, requestMetadata);
         }

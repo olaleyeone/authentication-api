@@ -39,7 +39,7 @@ public class UserIdentifierVerificationController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/user-emails/{email}/verification-code")
     public void requestEmailVerificationCode(@PathVariable @Email String email) {
-        Optional<PortalUserIdentifier> optionalPortalUserIdentifier = portalUserIdentifierRepository.findByIdentifier(email);
+        Optional<PortalUserIdentifier> optionalPortalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(email);
         if (optionalPortalUserIdentifier.isPresent() && BooleanUtils.isTrue(optionalPortalUserIdentifier.get().getVerified())) {
             throw new ErrorResponse(HttpStatus.CONFLICT, ApiResponse.builder()
                     .message(String.format("Email %s already verified by user", email))

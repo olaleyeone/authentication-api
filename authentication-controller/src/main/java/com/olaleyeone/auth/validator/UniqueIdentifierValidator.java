@@ -36,6 +36,6 @@ public class UniqueIdentifierValidator implements UniqueIdentifier.Validator {
         if (identifierType == UserIdentifierType.PHONE_NUMBER) {
             phoneNumber = phoneNumberService.formatPhoneNumber(phoneNumber);
         }
-        return !portalUserIdentifierRepository.findByIdentifier(phoneNumber).isPresent();
+        return !portalUserIdentifierRepository.findActiveByIdentifier(phoneNumber).isPresent();
     }
 }

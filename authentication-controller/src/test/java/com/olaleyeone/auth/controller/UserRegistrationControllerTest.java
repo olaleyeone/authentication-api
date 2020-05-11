@@ -10,6 +10,7 @@ import com.olaleyeone.auth.validator.UniqueIdentifierValidator;
 import com.olaleyeone.auth.validator.ValidEmailRegistrationCodeValidator;
 import com.olaleyeone.auth.validator.ValidPhoneNumberValidator;
 import com.olaleyeone.web.exception.ErrorResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class UserRegistrationControllerTest extends ControllerTest {
@@ -58,12 +60,13 @@ class UserRegistrationControllerTest extends ControllerTest {
                 .when(validEmailRegistrationCodeValidator).isValid(Mockito.any(), Mockito.any());
 
         accessTokenApiResponse = new AccessTokenApiResponse();
-        Mockito.when(accessTokenApiResponseHandler.getAccessToken(Mockito.any(PortalUserAuthentication.class)))
-                .then(invocation -> ResponseEntity.ok(accessTokenApiResponse));
     }
 
     @Test
     void registerUser() throws Exception {
+
+        Mockito.when(accessTokenApiResponseHandler.getAccessToken(Mockito.any(PortalUserAuthentication.class)))
+                .then(invocation -> ResponseEntity.ok(accessTokenApiResponse));
 
         PortalUserAuthentication userAuthentication = new PortalUserAuthentication();
 
@@ -84,6 +87,8 @@ class UserRegistrationControllerTest extends ControllerTest {
     @Test
     void shouldValidateRequest() throws Exception {
 
+        Mockito.when(accessTokenApiResponseHandler.getAccessToken(Mockito.any(PortalUserAuthentication.class)))
+                .then(invocation -> ResponseEntity.ok(accessTokenApiResponse));
         Mockito.doThrow(new ErrorResponse(HttpStatus.BAD_REQUEST))
                 .when(userRegistrationService).registerUser(Mockito.any(), Mockito.any());
 
@@ -101,5 +106,25 @@ class UserRegistrationControllerTest extends ControllerTest {
                 .isValid(Mockito.eq(userRegistrationApiRequest.getEmail()), Mockito.any());
         Mockito.verify(uniqueIdentifierValidator, Mockito.times(1))
                 .isValid(Mockito.eq(userRegistrationApiRequest.getPhoneNumber()), Mockito.any());
+    }
+
+    @Test
+    void shouldNotAutoLoginUserWithoutPassword() throws Exception {
+
+        PortalUserAuthentication userAuthentication = new PortalUserAuthentication();
+
+        Mockito.when(userRegistrationService.registerUser(Mockito.any(), Mockito.any()))
+                .then(invocation -> userAuthentication);
+
+        userRegistrationApiRequest.setPassword(null);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                .with(body(userRegistrationApiRequest)))
+                .andExpect(status().isCreated())
+                .andExpect(result -> assertTrue(StringUtils.isBlank(result.getResponse().getContentAsString())));
+        Mockito.verify(userRegistrationService, Mockito.times(1))
+                .registerUser(Mockito.eq(userRegistrationApiRequest), Mockito.any());
+        Mockito.verify(accessTokenApiResponseHandler, Mockito.never())
+                .getAccessToken(Mockito.any(PortalUserAuthentication.class));
     }
 }

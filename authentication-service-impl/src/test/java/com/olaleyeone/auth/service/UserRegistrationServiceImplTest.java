@@ -6,6 +6,7 @@ import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
+import com.olaleyeone.auth.dto.data.UserDataApiRequest;
 import com.olaleyeone.auth.integration.etc.HashService;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import com.olaleyeone.data.RequestMetadata;
@@ -17,10 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -58,6 +56,10 @@ class UserRegistrationServiceImplTest extends ServiceTest {
 
     @Test
     public void registerUser() {
+        dto.setData(Collections.singletonList(UserDataApiRequest.builder()
+                .name(faker.name().name())
+                .value(faker.lordOfTheRings().character())
+                .build()));
         PortalUserAuthentication userAuthentication = userRegistrationService.registerUser(dto, requestMetadata);
         assertNotNull(userAuthentication);
         assertNotNull(userAuthentication.getId());
@@ -72,6 +74,16 @@ class UserRegistrationServiceImplTest extends ServiceTest {
         assertEquals(dto.getOtherName(), portalUser.getOtherName());
         assertNotNull(portalUser.getId());
         assertNotNull(portalUser.getCreatedOn());
+    }
+
+    @Test
+    public void shouldIgnoreBlankPassword() {
+        dto.setPassword("");
+        PortalUserAuthentication userAuthentication = userRegistrationService.registerUser(dto, requestMetadata);
+        PortalUser portalUser = userAuthentication.getPortalUser();
+        assertNull(portalUser.getPassword());
+        Mockito.verify(hashService, Mockito.never())
+                .generateHash(dto.getPassword());
     }
 
     @Test
@@ -94,7 +106,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
         PortalUserAuthentication userAuthentication = userRegistrationService.registerUser(dto, requestMetadata);
         PortalUser portalUser = userAuthentication.getPortalUser();
 
-        Optional<PortalUserIdentifier> optionalPortalUserIdentifier = portalUserIdentifierRepository.findByIdentifier(phoneNumber);
+        Optional<PortalUserIdentifier> optionalPortalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(phoneNumber);
         assertTrue(optionalPortalUserIdentifier.isPresent());
 
         PortalUserIdentifier portalUserIdentifier = optionalPortalUserIdentifier.get();
@@ -110,7 +122,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
         PortalUserAuthentication userAuthentication = userRegistrationService.registerUser(dto, requestMetadata);
         PortalUser portalUser = userAuthentication.getPortalUser();
 
-        Optional<PortalUserIdentifier> optionalPortalUserIdentifier = portalUserIdentifierRepository.findByIdentifier(dto.getEmail());
+        Optional<PortalUserIdentifier> optionalPortalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(dto.getEmail());
         assertTrue(optionalPortalUserIdentifier.isPresent());
 
         PortalUserIdentifier portalUserIdentifier = optionalPortalUserIdentifier.get();
@@ -131,7 +143,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
 
         userRegistrationService.registerUser(dto, requestMetadata);
 
-        Optional<PortalUserIdentifier> optionalPortalUserIdentifier = portalUserIdentifierRepository.findByIdentifier(dto.getEmail());
+        Optional<PortalUserIdentifier> optionalPortalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(dto.getEmail());
         assertTrue(optionalPortalUserIdentifier.isPresent());
         PortalUserIdentifier portalUserIdentifier = optionalPortalUserIdentifier.get();
         assertEquals(portalUserIdentifier.getVerification(), verification);
