@@ -2,10 +2,7 @@ package com.olaleyeone.auth.service;
 
 import com.olaleyeone.audittrail.api.Activity;
 import com.olaleyeone.audittrail.context.TaskContext;
-import com.olaleyeone.auth.data.entity.PortalUser;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
-import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
-import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
+import com.olaleyeone.auth.data.entity.*;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.dto.data.UserRegistrationApiRequest;
 import com.olaleyeone.auth.integration.etc.HashService;
@@ -37,6 +34,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     private final ImplicitAuthenticationService implicitAuthenticationService;
     private final Provider<TaskContext> taskContextProvider;
     private final PortalUserIdentifierVerificationRepository portalUserIdentifierVerificationRepository;
+    private final PortalUserDataService portalUserDataService;
 
     @Activity("USER REGISTRATION")
     @Transactional
@@ -47,7 +45,9 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         portalUser.setFirstName(StringUtils.normalizeSpace(dto.getFirstName()));
         portalUser.setLastName(getNonEmptyString(dto.getLastName()));
         portalUser.setOtherName(getNonEmptyString(dto.getOtherName()));
-        portalUser.setPassword(hashService.generateHash(dto.getPassword()));
+        if (StringUtils.isNotBlank(dto.getPassword())) {
+            portalUser.setPassword(hashService.generateHash(dto.getPassword()));
+        }
 
         portalUserRepository.save(portalUser);
 
@@ -63,6 +63,13 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
         if (userIdentifiers.isEmpty()) {
             throw new IllegalArgumentException();
+        }
+
+        if (dto.getData() != null) {
+            dto.getData().forEach(it -> {
+                PortalUserData portalUserData = portalUserDataService.addData(portalUser, it);
+                portalUserData.setCreatedBy(portalUser.getId().toString());
+            });
         }
 
         return implicitAuthenticationService.createSignUpAuthentication(portalUser, requestMetadata);

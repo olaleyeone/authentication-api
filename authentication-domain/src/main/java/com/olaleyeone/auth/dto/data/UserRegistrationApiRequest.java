@@ -8,12 +8,12 @@ import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Data
 @ValidEmailVerificationCode
 public class UserRegistrationApiRequest {
 
-    @NotBlank
     private String password;
 
     @NotBlank
@@ -33,4 +33,6 @@ public class UserRegistrationApiRequest {
     private String email;
 
     private String emailVerificationCode;
+
+    private List<UserDataApiRequest> data;
 }

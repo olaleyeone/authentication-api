@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface PortalUserIdentifierRepository extends JpaRepository<PortalUserIdentifier, Long> {
 
     @Query("SELECT i FROM PortalUserIdentifier i JOIN FETCH i.portalUser WHERE lower(i.identifier)=lower(?1)")
-    Optional<PortalUserIdentifier> findByIdentifier(String identifier);
+    Optional<PortalUserIdentifier> findActiveByIdentifier(String identifier);
 }

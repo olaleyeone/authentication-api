@@ -8,6 +8,7 @@ import com.olaleyeone.auth.security.annotations.Public;
 import com.olaleyeone.auth.service.UserRegistrationService;
 import com.olaleyeone.data.RequestMetadata;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,9 @@ public class UserRegistrationController {
     @PostMapping("/users")
     public HttpEntity<AccessTokenApiResponse> registerUser(@Valid @RequestBody UserRegistrationApiRequest dto) {
         PortalUserAuthentication portalUserAuthentication = userRegistrationService.registerUser(dto, requestMetadata.get());
+        if (StringUtils.isBlank(dto.getPassword())) {
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        }
         HttpEntity<AccessTokenApiResponse> httpEntity = accessTokenApiResponseHandler.getAccessToken(portalUserAuthentication);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .headers(httpEntity.getHeaders())
