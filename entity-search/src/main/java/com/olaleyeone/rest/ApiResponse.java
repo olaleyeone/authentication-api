@@ -1,4 +1,4 @@
-package com.olaleyeone.web;
+package com.olaleyeone.rest;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

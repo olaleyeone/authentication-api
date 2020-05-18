@@ -1,6 +1,7 @@
 package com.olaleyeone.auth.controller;
 
 import com.olaleyeone.auth.controllertest.ControllerTest;
+import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.dto.data.UserRegistrationApiRequest;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
@@ -9,7 +10,7 @@ import com.olaleyeone.auth.service.UserRegistrationService;
 import com.olaleyeone.auth.validator.UniqueIdentifierValidator;
 import com.olaleyeone.auth.validator.ValidEmailRegistrationCodeValidator;
 import com.olaleyeone.auth.validator.ValidPhoneNumberValidator;
-import com.olaleyeone.web.exception.ErrorResponse;
+import com.olaleyeone.rest.exception.ErrorResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -112,16 +113,17 @@ class UserRegistrationControllerTest extends ControllerTest {
     void shouldNotAutoLoginUserWithoutPassword() throws Exception {
 
         PortalUserAuthentication userAuthentication = new PortalUserAuthentication();
+        userAuthentication.setPortalUser(new PortalUser());
 
-        Mockito.when(userRegistrationService.registerUser(Mockito.any(), Mockito.any()))
-                .then(invocation -> userAuthentication);
+        Mockito.doReturn(userAuthentication).when(userRegistrationService).registerUser(Mockito.any(), Mockito.any());
 
         userRegistrationApiRequest.setPassword(null);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
                 .with(body(userRegistrationApiRequest)))
                 .andExpect(status().isCreated())
-                .andExpect(result -> assertTrue(StringUtils.isBlank(result.getResponse().getContentAsString())));
+                .andExpect(result -> assertTrue(StringUtils.isNotBlank(result.getResponse().getContentAsString())));
+
         Mockito.verify(userRegistrationService, Mockito.times(1))
                 .registerUser(Mockito.eq(userRegistrationApiRequest), Mockito.any());
         Mockito.verify(accessTokenApiResponseHandler, Mockito.never())

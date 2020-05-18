@@ -2,6 +2,8 @@ package com.olaleyeone.auth.response.pojo;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class JsonWebKey {
 
@@ -13,4 +15,6 @@ public class JsonWebKey {
     private String use = SIGNATURE_USE;
     private String modulus;
     private String exponent;
+
+    private LocalDateTime createdOn;
 }

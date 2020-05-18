@@ -12,9 +12,11 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
 
 @Configuration
+//@Import({KafkaProducerConfig.class, KafkaTopicConfig.class})
 public class IntegrationConfiguration {
 
     @Bean
@@ -37,6 +39,7 @@ public class IntegrationConfiguration {
         return beanFactory.createBean(VerificationEmailSenderImpl.class);
     }
 
+    @Scope(DefaultListableBeanFactory.SCOPE_PROTOTYPE)
     @Bean
     public BaseJwtService baseJwtService(AutowireCapableBeanFactory beanFactory) {
         return beanFactory.createBean(BaseJwtService.class);
@@ -44,7 +47,7 @@ public class IntegrationConfiguration {
 
     @Scope(DefaultListableBeanFactory.SCOPE_PROTOTYPE)
     @Bean
-    public SigningKeyResolverImpl SigningKeyResolverImpl(AutowireCapableBeanFactory beanFactory) {
+    public SigningKeyResolverImpl signingKeyResolverImpl(AutowireCapableBeanFactory beanFactory) {
         return beanFactory.createBean(SigningKeyResolverImpl.class);
     }
 

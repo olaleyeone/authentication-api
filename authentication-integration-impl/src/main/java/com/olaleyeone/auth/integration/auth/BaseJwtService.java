@@ -6,6 +6,7 @@ import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.entity.SignatureKey;
 import com.olaleyeone.auth.security.data.AccessClaims;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +61,11 @@ public class BaseJwtService {
     }
 
     public AccessClaims parseAccessToken(String jws) {
-        Claims claims = jwtParser.parseClaimsJws(jws).getBody();
+        Jws<Claims> parsedJws = jwtParser.parseClaimsJws(jws);
+        if (parsedJws.getHeader().getAlgorithm() == "none") {
+            return null;
+        }
+        Claims claims = parsedJws.getBody();
         return new SimpleAccessClaims(claims, gson);
     }
 

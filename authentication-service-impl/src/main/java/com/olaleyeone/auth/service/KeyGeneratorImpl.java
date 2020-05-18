@@ -5,7 +5,6 @@ import com.olaleyeone.auth.data.entity.SignatureKey;
 import com.olaleyeone.auth.repository.SignatureKeyRepository;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.transaction.Transactional;
@@ -21,8 +20,7 @@ public class KeyGeneratorImpl implements KeyGenerator {
     @Inject
     private SignatureKeyRepository signatureKeyRepository;
 
-    @PostConstruct
-    public void init() throws NoSuchAlgorithmException {
+    public KeyGeneratorImpl() throws NoSuchAlgorithmException {
         kpg = KeyPairGenerator.getInstance("RSA");
         kpg.initialize(2048);
     }

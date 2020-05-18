@@ -9,7 +9,7 @@ import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.security.annotations.Public;
 import com.olaleyeone.auth.security.data.AccessClaims;
-import com.olaleyeone.web.exception.ErrorResponse;
+import com.olaleyeone.rest.exception.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -39,10 +39,7 @@ public class AccessTokenController {
 
         Optional<String> optionalToken = Arrays.asList(httpServletRequest.getCookies())
                 .stream()
-                .filter(cookie -> cookie.getName().equals(AccessTokenApiResponseHandler.REFRESH_TOKEN_COOKIE_NAME)
-//                        && cookie.isHttpOnly()
-//                        && (!httpServletRequest.isSecure() || cookie.getSecure())
-                )
+                .filter(cookie -> cookie.getName().equals(AccessTokenApiResponseHandler.REFRESH_TOKEN_COOKIE_NAME))
                 .findFirst()
                 .map(Cookie::getValue);
         if (!optionalToken.isPresent()) {
@@ -56,6 +53,7 @@ public class AccessTokenController {
                     .orElseThrow(() -> new ErrorResponse(HttpStatus.UNAUTHORIZED));
             return accessTokenApiResponseHandler.getAccessToken(refreshToken);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ErrorResponse(HttpStatus.UNAUTHORIZED);
         }
     }

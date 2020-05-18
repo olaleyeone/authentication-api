@@ -1,4 +1,4 @@
-package com.olaleyeone.web.exception;
+package com.olaleyeone.rest.exception;
 
 public class NotFoundException extends RuntimeException {
 

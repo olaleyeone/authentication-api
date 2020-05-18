@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Delegate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -32,4 +33,6 @@ public class PortalUser implements Audited {
     @Embedded
     @Setter(AccessLevel.NONE)
     private Audit audit = new Audit();
+
+    private LocalDateTime publishedOn;
 }

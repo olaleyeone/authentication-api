@@ -1,6 +1,5 @@
-package com.olaleyeone.web.exception;
+package com.olaleyeone.rest.exception;
 
-import com.olaleyeone.web.ApiResponse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.http.HttpStatus;
@@ -10,13 +9,13 @@ import org.springframework.http.HttpStatus;
 public class ErrorResponse extends RuntimeException {
 
     private final HttpStatus httpStatus;
-    private ApiResponse<?> response;
+    private Object response;
 
     public ErrorResponse(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
     }
 
-    public ErrorResponse(HttpStatus httpStatus, ApiResponse<?> response) {
+    public ErrorResponse(HttpStatus httpStatus, Object response) {
         this.httpStatus = httpStatus;
         this.response = response;
     }

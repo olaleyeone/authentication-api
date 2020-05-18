@@ -7,6 +7,8 @@ import com.olaleyeone.auth.security.data.AccessClaims;
 import com.olaleyeone.auth.service.KeyGenerator;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 
@@ -14,15 +16,22 @@ import javax.annotation.PostConstruct;
 @Builder
 public class AccessTokenJwtServiceImpl implements JwtService {
 
+    final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private final KeyGenerator keyGenerator;
     private final TaskContextFactory taskContextFactory;
     private final BaseJwtService baseJwtService;
 
     @PostConstruct
     public void init() {
-        taskContextFactory.startBackgroundTask("INITIALIZE ACCESS TOKEN KEY", null, ()->{
-            baseJwtService.updateKey(keyGenerator.generateKey());
-        });
+        if (baseJwtService.hasKey()) {
+            logger.warn("Prevented duplicate initialization");
+            return;
+        }
+        taskContextFactory.startBackgroundTask(
+                "INITIALIZE ACCESS TOKEN KEY",
+                null,
+                () -> baseJwtService.updateKey(keyGenerator.generateKey()));
     }
 
     @Override

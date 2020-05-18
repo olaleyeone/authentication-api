@@ -8,5 +8,5 @@ include "${projectName}-domain",
         "${projectName}-infrastructure",
         "${projectName}-web-infrastructure",
         "${projectName}-controller",
-        "authorization",
+//        "authorization",
         "entity-search"

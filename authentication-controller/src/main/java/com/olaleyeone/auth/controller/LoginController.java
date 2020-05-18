@@ -4,7 +4,7 @@ import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.dto.data.LoginApiRequest;
 import com.olaleyeone.data.RequestMetadata;
-import com.olaleyeone.web.exception.ErrorResponse;
+import com.olaleyeone.rest.exception.ErrorResponse;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.security.annotations.Public;

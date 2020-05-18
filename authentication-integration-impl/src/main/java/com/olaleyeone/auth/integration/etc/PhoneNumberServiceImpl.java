@@ -33,7 +33,7 @@ public class PhoneNumberServiceImpl implements PhoneNumberService {
 
         Phonenumber.PhoneNumber swissNumberProto;
         try {
-            swissNumberProto = phoneNumberUtil.parse(value.trim(), "US");
+            swissNumberProto = phoneNumberUtil.parse(value.trim(), defaultRegion);
         } catch (NumberParseException e) {
             return false;
         }

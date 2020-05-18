@@ -9,12 +9,13 @@ import com.olaleyeone.auth.qualifier.JwtTokenType;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 
 @RequiredArgsConstructor
 @Named
@@ -24,13 +25,18 @@ public class AccessTokenApiResponseHandler {
     public static final String ACCESS_TOKEN_COOKIE_NAME = "access_token";
     public static final String TOKEN_ENDPOINT = "/oauth2/token";
 
-    private final HttpServletRequest httpServletRequest;
     private final RefreshTokenService refreshTokenService;
 
     @JwtToken(JwtTokenType.ACCESS)
     private final JwtService accessTokenJwtService;
     @JwtToken(JwtTokenType.REFRESH)
     private final JwtService refreshTokenJwtService;
+
+    @Value("${context.path}")
+    private final String contextPath;
+
+    @Value("${cookie.flags}")
+    private final String cookieFlags;
 
     public HttpEntity<AccessTokenApiResponse> getAccessToken(PortalUserAuthentication portalUserAuthentication) {
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(portalUserAuthentication);
@@ -49,8 +55,8 @@ public class AccessTokenApiResponseHandler {
         JwtDto refreshTokenJwt = refreshTokenJwtService.generateJwt(refreshToken);
         JwtDto accessTokenJwt = accessTokenJwtService.generateJwt(refreshToken);
 
-//        accessTokenApiResponse.setRefreshToken(refreshTokenJwt);
-//        accessTokenApiResponse.setAccessToken(accessTokenJwt.getToken());
+        accessTokenApiResponse.setRefreshToken(refreshTokenJwt.getToken());
+        accessTokenApiResponse.setAccessToken(accessTokenJwt.getToken());
 
         accessTokenApiResponse.setExpiresAt(refreshToken.getAccessExpiresAt());
         accessTokenApiResponse.setSecondsTillExpiry(accessTokenJwt.getSecondsTillExpiry());
@@ -59,30 +65,20 @@ public class AccessTokenApiResponseHandler {
         httpHeaders.setCacheControl(CacheControl.noStore());
         httpHeaders.setPragma("no-cache");
 
-        if (httpServletRequest.isSecure()) {
-            httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("%s=%s; Max-Age=%d; Path=%s; Secure; HttpOnly",
-                    REFRESH_TOKEN_COOKIE_NAME,
-                    refreshTokenJwt.getToken(),
-                    refreshToken.getSecondsTillExpiry(),
-                    "/"));//httpServletRequest.getContextPath() + TOKEN_ENDPOINT
+        String refreshTokenPath = StringUtils.isBlank(contextPath) ? "/" : (contextPath + TOKEN_ENDPOINT);
+        httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("%s=%s; Max-Age=%d; Path=%s;%s",
+                REFRESH_TOKEN_COOKIE_NAME,
+                refreshTokenJwt.getToken(),
+                refreshToken.getSecondsTillExpiry(),
+                refreshTokenPath,
+                StringUtils.defaultString(cookieFlags)));
 
-            httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("%s=%s; Max-Age=%d; Path=/; Secure; HttpOnly",
-                    ACCESS_TOKEN_COOKIE_NAME,
-                    accessTokenJwt.getToken(),
-                    accessTokenJwt.getSecondsTillExpiry()
-            ));
-        } else {
-            httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("%s=%s; Max-Age=%d; Path=/; HttpOnly",
-                    REFRESH_TOKEN_COOKIE_NAME,
-                    refreshTokenJwt.getToken(),
-                    refreshToken.getSecondsTillExpiry()));
-
-            httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("%s=%s; Max-Age=%d; Path=/; HttpOnly",
-                    ACCESS_TOKEN_COOKIE_NAME,
-                    accessTokenJwt.getToken(),
-                    accessTokenJwt.getSecondsTillExpiry()
-            ));
-        }
+        httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("%s=%s; Max-Age=%d; Path=/;%s",
+                ACCESS_TOKEN_COOKIE_NAME,
+                accessTokenJwt.getToken(),
+                accessTokenJwt.getSecondsTillExpiry(),
+                StringUtils.defaultString(cookieFlags)
+        ));
         return new HttpEntity(accessTokenApiResponse, httpHeaders);
     }
 }

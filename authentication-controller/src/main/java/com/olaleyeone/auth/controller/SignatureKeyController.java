@@ -3,7 +3,7 @@ package com.olaleyeone.auth.controller;
 import com.olaleyeone.auth.repository.SignatureKeyRepository;
 import com.olaleyeone.auth.response.pojo.JsonWebKey;
 import com.olaleyeone.auth.security.annotations.Public;
-import com.olaleyeone.web.exception.NotFoundException;
+import com.olaleyeone.rest.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +32,8 @@ public class SignatureKeyController {
                     Base64.Encoder encoder = Base64.getEncoder();
                     jsonWebKey.setExponent(encoder.encodeToString(rsaPublicKey.getPublicExponent().toByteArray()));
                     jsonWebKey.setModulus(encoder.encodeToString(rsaPublicKey.getModulus().toByteArray()));
+
+                    jsonWebKey.setCreatedOn(signatureKey.getCreatedOn());
                     return jsonWebKey;
                 }).orElseThrow(NotFoundException::new);
     }

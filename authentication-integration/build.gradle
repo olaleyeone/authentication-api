@@ -1,7 +1,7 @@
 dependencies {
-
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     api(project(":${projectName}-domain"))
-    implementation(project(":authorization"))
+//    implementation(project(":authorization"))
 
     compileOnly "javax.activation:javax.activation-api:1.2.0"
 }

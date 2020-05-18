@@ -20,12 +20,12 @@ public class TestDataFactoryConfiguration extends FactoryConfiguration {
     @Override
     public ModelFactory entityFactory(Faker faker, EntityManager entityManager) {
         ModelFactory modelFactory = super.entityFactory(faker, this.entityManager);
-        register(modelFactory);
+        registerFactories(modelFactory);
         return modelFactory;
     }
 
     @SneakyThrows
-    public void register(ModelFactory modelFactory) {
+    public void registerFactories(ModelFactory modelFactory) {
         String className = getClass().getName();
         String packageName = className.substring(0, className.length() - (getClass().getSimpleName().length() + 1));
         ClassPath.from(this.getClass().getClassLoader()).getTopLevelClassesRecursive(packageName)

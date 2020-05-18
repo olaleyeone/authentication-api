@@ -18,7 +18,6 @@ import org.mockito.Mockito;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.HttpCookie;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,9 +33,6 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
 
     @Mock
     private JwtService jwtService;
-
-    @Mock
-    private HttpServletRequest httpServletRequest;
 
     @InjectMocks
     private AccessTokenApiResponseHandler handler;
@@ -89,8 +85,8 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
         assertNotNull(accessTokenApiResponse);
         assertEquals(user.getFirstName(), accessTokenApiResponse.getFirstName());
         assertEquals(user.getLastName(), accessTokenApiResponse.getLastName());
-        assertNull(accessTokenApiResponse.getRefreshToken());
-        assertNull(accessTokenApiResponse.getAccessToken());
+        assertNotNull(accessTokenApiResponse.getRefreshToken());
+        assertNotNull(accessTokenApiResponse.getAccessToken());
     }
 
     @Test
@@ -100,8 +96,8 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
         assertNotNull(accessTokenApiResponse);
         assertEquals(user.getFirstName(), accessTokenApiResponse.getFirstName());
         assertEquals(user.getLastName(), accessTokenApiResponse.getLastName());
-        assertNull(accessTokenApiResponse.getRefreshToken());
-        assertNull(accessTokenApiResponse.getAccessToken());
+        assertNotNull(accessTokenApiResponse.getRefreshToken());
+        assertNotNull(accessTokenApiResponse.getAccessToken());
     }
 
     @Test
@@ -122,20 +118,21 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
         assertEquals(accessJwt.getSecondsTillExpiry(), httpCookie.getMaxAge());
         assertEquals("/", httpCookie.getPath());
         assertFalse(httpCookie.getSecure());
-        assertTrue(httpCookie.isHttpOnly());
+        assertFalse(httpCookie.isHttpOnly());
     }
 
     @Test
     public void shouldReturnRefreshTokenCookies() {
 
-        Mockito.doReturn(true).when(httpServletRequest).isSecure();
+        String contextPath = "/" + faker.internet().slug();
+        handler = new AccessTokenApiResponseHandler(refreshTokenService, jwtService, jwtService, contextPath, "Secure; HttpOnly");
         HttpEntity<AccessTokenApiResponse> responseEntity = handler.getAccessToken(userAuthentication);
 
         List<HttpCookie> httpCookies = getCookiesByName(responseEntity, "refresh_token");
         assertEquals(1, httpCookies.size());
         HttpCookie httpCookie = httpCookies.iterator().next();
         assertTrue((refreshToken.getSecondsTillExpiry() - httpCookie.getMaxAge()) <= 1);
-        assertEquals("/", httpCookie.getPath());
+        assertEquals(String.format("%s%s", contextPath, AccessTokenApiResponseHandler.TOKEN_ENDPOINT), httpCookie.getPath());
         assertTrue(httpCookie.getSecure());
         assertTrue(httpCookie.isHttpOnly());
     }

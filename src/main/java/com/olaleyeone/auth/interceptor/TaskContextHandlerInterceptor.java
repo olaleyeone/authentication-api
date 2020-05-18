@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.configuration;
+package com.olaleyeone.auth.interceptor;
 
 import com.olaleyeone.audittrail.embeddable.Duration;
 import com.olaleyeone.audittrail.entity.Task;
