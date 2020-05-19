@@ -4,7 +4,7 @@ import com.olaleyeone.auth.repository.RefreshTokenRepository;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.security.constraint.NotClientToken;
 import com.olaleyeone.auth.service.LogoutService;
-import com.olaleyeone.data.RequestMetadata;
+import com.olaleyeone.data.dto.RequestMetadata;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

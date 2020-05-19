@@ -32,7 +32,7 @@ check.dependsOn jacocoTestCoverageVerification
 dependencies {
     implementation(project(":${projectName}-domain"))
     implementation fileTree(dir: project(":${projectName}-domain").file('libs'), include: ['*.jar'])
-    implementation fileTree(dir: project(":${projectName}-integration").file('libs'), include: ['*.jar'])
+    implementation fileTree(dir: project(":${projectName}-integration-impl").file('libs'), include: ['authorization*.jar'])
     implementation(project(":${projectName}-repository")) {
         exclude module: "hibernate-jpa-2.1-api"
         exclude module: "spring-tx"

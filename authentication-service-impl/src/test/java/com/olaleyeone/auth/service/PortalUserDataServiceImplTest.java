@@ -2,7 +2,7 @@ package com.olaleyeone.auth.service;
 
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserData;
-import com.olaleyeone.auth.dto.data.UserDataApiRequest;
+import com.olaleyeone.auth.dto.UserDataApiRequest;
 import com.olaleyeone.auth.servicetest.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

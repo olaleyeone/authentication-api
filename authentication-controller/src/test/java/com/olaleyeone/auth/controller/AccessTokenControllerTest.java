@@ -1,14 +1,12 @@
 package com.olaleyeone.auth.controller;
 
+import com.github.olaleyeone.auth.access.AccessStatus;
+import com.github.olaleyeone.auth.data.AccessClaimsExtractor;
 import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.data.entity.RefreshToken;
-import com.olaleyeone.auth.integration.auth.JwtService;
-import com.olaleyeone.auth.qualifier.JwtToken;
-import com.olaleyeone.auth.qualifier.JwtTokenType;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
-import com.olaleyeone.auth.security.access.AccessStatus;
 import com.olaleyeone.auth.security.authorizer.NotClientTokenAuthorizer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,8 +35,7 @@ class AccessTokenControllerTest extends ControllerTest {
     private RefreshTokenRepository refreshTokenRepository;
 
     @Autowired
-    @JwtToken(JwtTokenType.REFRESH)
-    private JwtService jwtService;
+    private AccessClaimsExtractor accessClaimsExtractor;
 
     @BeforeEach
     public void setUp() {
@@ -55,7 +52,7 @@ class AccessTokenControllerTest extends ControllerTest {
         accessTokenApiResponse.setId(faker.number().randomNumber());
 
         RefreshToken refreshToken = new RefreshToken();
-        Mockito.doReturn(accessClaims).when(jwtService).parseToken(Mockito.any());
+        Mockito.doReturn(accessClaims).when(accessClaimsExtractor).getClaims(Mockito.any());
         Mockito.doReturn(Optional.of(refreshToken)).when(refreshTokenRepository).findActiveToken(Mockito.any());
         Mockito.doReturn(new HttpEntity<>(accessTokenApiResponse)).when(accessTokenApiResponseHandler).getAccessToken(Mockito.any(RefreshToken.class));
 
@@ -72,8 +69,8 @@ class AccessTokenControllerTest extends ControllerTest {
                 .findActiveToken(Long.valueOf(accessClaims.getId()));
         Mockito.verify(accessTokenApiResponseHandler, Mockito.times(1))
                 .getAccessToken(refreshToken);
-        Mockito.verify(jwtService, Mockito.times(1))
-                .parseToken(token);
+        Mockito.verify(accessClaimsExtractor, Mockito.times(1))
+                .getClaims(token);
     }
 
     @Test
@@ -85,7 +82,7 @@ class AccessTokenControllerTest extends ControllerTest {
     @Test
     void shouldReturnUnauthorizedForInactiveUser() throws Exception {
         String token = UUID.randomUUID().toString();
-        Mockito.doReturn(accessClaims).when(jwtService).parseToken(Mockito.any());
+        Mockito.doReturn(accessClaims).when(accessClaimsExtractor).getClaims(Mockito.any());
         Mockito.doReturn(Optional.empty()).when(refreshTokenRepository).findActiveToken(Mockito.any());
 
         mockMvc.perform(MockMvcRequestBuilders.post(AccessTokenApiResponseHandler.TOKEN_ENDPOINT)
@@ -93,15 +90,15 @@ class AccessTokenControllerTest extends ControllerTest {
                 .andExpect(status().isUnauthorized());
         Mockito.verify(refreshTokenRepository, Mockito.times(1))
                 .findActiveToken(Long.valueOf(accessClaims.getId()));
-        Mockito.verify(jwtService, Mockito.times(1))
-                .parseToken(token);
+        Mockito.verify(accessClaimsExtractor, Mockito.times(1))
+                .getClaims(token);
     }
 
     @Test
     void shouldValidateToken() throws Exception {
         String token = UUID.randomUUID().toString();
         RefreshToken refreshToken = new RefreshToken();
-        Mockito.doReturn(accessClaims).when(jwtService).parseToken(Mockito.any());
+        Mockito.doReturn(accessClaims).when(accessClaimsExtractor).getClaims(Mockito.any());
         Mockito.doReturn(Optional.of(refreshToken)).when(refreshTokenRepository).findActiveToken(Mockito.any());
 
         mockMvc.perform(MockMvcRequestBuilders.post(AccessTokenApiResponseHandler.TOKEN_ENDPOINT)
@@ -109,8 +106,8 @@ class AccessTokenControllerTest extends ControllerTest {
                 .andExpect(status().isOk());
         Mockito.verify(refreshTokenRepository, Mockito.times(1))
                 .findActiveToken(Long.valueOf(accessClaims.getId()));
-        Mockito.verify(jwtService, Mockito.times(1))
-                .parseToken(token);
+        Mockito.verify(accessClaimsExtractor, Mockito.times(1))
+                .getClaims(token);
     }
 
     @Test
@@ -121,8 +118,8 @@ class AccessTokenControllerTest extends ControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post(AccessTokenApiResponseHandler.TOKEN_ENDPOINT)
                 .cookie(getCookie(token)))
                 .andExpect(status().isUnauthorized());
-        Mockito.verify(jwtService, Mockito.times(1))
-                .parseToken(token);
+        Mockito.verify(accessClaimsExtractor, Mockito.times(1))
+                .getClaims(token);
     }
 
     @Test
@@ -134,8 +131,8 @@ class AccessTokenControllerTest extends ControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post(AccessTokenApiResponseHandler.TOKEN_ENDPOINT)
                 .cookie(cookie))
                 .andExpect(status().isUnauthorized());
-        Mockito.verify(jwtService, Mockito.never())
-                .parseToken(Mockito.any());
+        Mockito.verify(accessClaimsExtractor, Mockito.never())
+                .getClaims(Mockito.any());
     }
 
     @Test
@@ -147,8 +144,8 @@ class AccessTokenControllerTest extends ControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post(AccessTokenApiResponseHandler.TOKEN_ENDPOINT)
                 .cookie(cookie))
                 .andExpect(status().isUnauthorized());
-        Mockito.verify(jwtService, Mockito.never())
-                .parseToken(Mockito.any());
+        Mockito.verify(accessClaimsExtractor, Mockito.never())
+                .getClaims(Mockito.any());
     }
 
     private Cookie getCookie(String token) {

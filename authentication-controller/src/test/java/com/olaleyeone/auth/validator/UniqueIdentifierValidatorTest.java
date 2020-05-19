@@ -2,7 +2,7 @@ package com.olaleyeone.auth.validator;
 
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
-import com.olaleyeone.auth.dto.constraints.UniqueIdentifier;
+import com.olaleyeone.auth.constraints.UniqueIdentifier;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import com.olaleyeone.auth.test.ComponentTest;

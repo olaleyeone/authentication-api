@@ -1,8 +1,8 @@
 package com.olaleyeone.auth.advice;
 
-import com.olaleyeone.rest.exception.ErrorResponse;
-import com.olaleyeone.rest.exception.NotFoundException;
-import com.olaleyeone.rest.ApiResponse;
+import com.github.olaleyeone.rest.exception.ErrorResponse;
+import com.github.olaleyeone.rest.exception.NotFoundException;
+import com.github.olaleyeone.rest.ApiResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

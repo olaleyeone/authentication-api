@@ -6,11 +6,11 @@ import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
-import com.olaleyeone.auth.dto.data.LoginApiRequest;
+import com.olaleyeone.auth.dto.LoginApiRequest;
 import com.olaleyeone.auth.integration.etc.HashService;
 import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
-import com.olaleyeone.data.RequestMetadata;
+import com.olaleyeone.data.dto.RequestMetadata;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Named;

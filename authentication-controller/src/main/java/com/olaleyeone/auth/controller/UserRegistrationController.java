@@ -1,14 +1,14 @@
 package com.olaleyeone.auth.controller;
 
+import com.github.olaleyeone.auth.annotations.Public;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
-import com.olaleyeone.auth.dto.data.UserRegistrationApiRequest;
+import com.olaleyeone.auth.dto.UserRegistrationApiRequest;
 import com.olaleyeone.auth.integration.events.NewUserEvent;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
-import com.olaleyeone.auth.security.annotations.Public;
 import com.olaleyeone.auth.service.UserRegistrationService;
-import com.olaleyeone.data.RequestMetadata;
+import com.olaleyeone.data.dto.RequestMetadata;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

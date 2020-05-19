@@ -1,6 +1,6 @@
 package com.olaleyeone.entitysearchtest;
 
-import com.olaleyeone.entitysearch.configuration.SearchConfiguration;
+import com.github.olaleyeone.entitysearch.configuration.SearchConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;

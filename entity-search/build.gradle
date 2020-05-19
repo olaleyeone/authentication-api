@@ -20,7 +20,7 @@ jacocoTestCoverageVerification {
                 minimum = 0.95
             }
             excludes = [
-                    "com.olaleyeone.web.exception.*"
+                    "com.github.olaleyeone.rest.exception.*"
             ]
         }
     }

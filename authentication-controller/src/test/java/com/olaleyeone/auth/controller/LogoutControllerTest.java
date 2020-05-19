@@ -1,11 +1,11 @@
 package com.olaleyeone.auth.controller;
 
+import com.github.olaleyeone.auth.access.AccessStatus;
 import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
-import com.olaleyeone.auth.security.access.AccessStatus;
 import com.olaleyeone.auth.security.authorizer.NotClientTokenAuthorizer;
 import com.olaleyeone.auth.service.LogoutService;
 import org.junit.jupiter.api.BeforeEach;

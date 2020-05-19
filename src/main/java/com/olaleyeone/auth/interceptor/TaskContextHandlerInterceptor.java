@@ -7,7 +7,7 @@ import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.audittrail.impl.TaskContextHolder;
 import com.olaleyeone.audittrail.impl.TaskContextImpl;
 import com.olaleyeone.audittrail.impl.TaskContextSaver;
-import com.olaleyeone.data.RequestMetadata;
+import com.olaleyeone.data.dto.RequestMetadata;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

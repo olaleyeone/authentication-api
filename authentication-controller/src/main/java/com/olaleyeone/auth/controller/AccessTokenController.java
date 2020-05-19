@@ -1,15 +1,15 @@
 package com.olaleyeone.auth.controller;
 
+import com.github.olaleyeone.auth.annotations.Public;
+import com.github.olaleyeone.auth.data.AccessClaims;
+import com.github.olaleyeone.auth.data.AccessClaimsExtractor;
 import com.olaleyeone.auth.data.entity.RefreshToken;
-import com.olaleyeone.auth.integration.auth.JwtService;
 import com.olaleyeone.auth.qualifier.JwtToken;
 import com.olaleyeone.auth.qualifier.JwtTokenType;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
-import com.olaleyeone.auth.security.annotations.Public;
-import com.olaleyeone.auth.security.data.AccessClaims;
-import com.olaleyeone.rest.exception.ErrorResponse;
+import com.github.olaleyeone.rest.exception.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ public class AccessTokenController {
     private final RefreshTokenRepository refreshTokenRepository;
     private final AccessTokenApiResponseHandler accessTokenApiResponseHandler;
     @JwtToken(JwtTokenType.REFRESH)
-    private final JwtService jwtService;
+    private final AccessClaimsExtractor jwtService;
 
     @Public
     @PostMapping("/oauth2/token")
@@ -47,7 +47,7 @@ public class AccessTokenController {
         }
 
         try {
-            AccessClaims accessClaims = jwtService.parseToken(optionalToken.get());
+            AccessClaims accessClaims = jwtService.getClaims(optionalToken.get());
 
             RefreshToken refreshToken = refreshTokenRepository.findActiveToken(Long.valueOf(accessClaims.getId()))
                     .orElseThrow(() -> new ErrorResponse(HttpStatus.UNAUTHORIZED));

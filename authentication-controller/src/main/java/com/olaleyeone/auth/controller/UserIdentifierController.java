@@ -1,7 +1,7 @@
 package com.olaleyeone.auth.controller;
 
+import com.github.olaleyeone.auth.annotations.Public;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
-import com.olaleyeone.auth.security.annotations.Public;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

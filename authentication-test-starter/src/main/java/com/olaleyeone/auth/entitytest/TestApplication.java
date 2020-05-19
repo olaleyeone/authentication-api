@@ -1,7 +1,7 @@
 package com.olaleyeone.auth.entitytest;
 
-import com.olaleyeone.data.RequestMetadata;
-import com.olaleyeone.entitysearch.JpaQuerySource;
+import com.olaleyeone.data.dto.RequestMetadata;
+import com.github.olaleyeone.entitysearch.JpaQuerySource;
 import org.mockito.Mockito;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

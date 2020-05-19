@@ -1,8 +1,8 @@
 package com.olaleyeone.auth.service;
 
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
-import com.olaleyeone.data.RequestMetadata;
-import com.olaleyeone.auth.dto.data.UserRegistrationApiRequest;
+import com.olaleyeone.data.dto.RequestMetadata;
+import com.olaleyeone.auth.dto.UserRegistrationApiRequest;
 
 public interface UserRegistrationService {
 

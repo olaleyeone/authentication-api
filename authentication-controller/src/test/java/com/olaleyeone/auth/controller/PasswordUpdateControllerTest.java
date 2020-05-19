@@ -1,12 +1,12 @@
 package com.olaleyeone.auth.controller;
 
+import com.github.olaleyeone.auth.access.AccessStatus;
+import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.data.entity.RefreshToken;
-import com.olaleyeone.auth.dto.data.PasswordUpdateApiRequest;
+import com.olaleyeone.auth.dto.PasswordUpdateApiRequest;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
-import com.olaleyeone.auth.security.access.AccessStatus;
 import com.olaleyeone.auth.security.authorizer.NotClientTokenAuthorizer;
 import com.olaleyeone.auth.service.PasswordUpdateService;
-import com.olaleyeone.auth.controllertest.ControllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -45,7 +45,9 @@ class PasswordUpdateControllerTest extends ControllerTest {
         PasswordUpdateApiRequest apiRequest = new PasswordUpdateApiRequest();
         apiRequest.setPassword(faker.internet().password());
         apiRequest.setInvalidateOtherSessions(faker.bool().bool());
-        mockMvc.perform(MockMvcRequestBuilders.post("/password").with(loggedInUser).with(body(apiRequest)))
+        mockMvc.perform(MockMvcRequestBuilders.post("/password")
+                .with(loggedInUser)
+                .with(body(apiRequest)))
                 .andExpect(status().isOk());
         Mockito.verify(refreshTokenRepository, Mockito.times(1))
                 .findById(Long.valueOf(accessClaims.getId()));

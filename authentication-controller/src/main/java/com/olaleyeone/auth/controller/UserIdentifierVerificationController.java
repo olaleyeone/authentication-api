@@ -1,14 +1,14 @@
 package com.olaleyeone.auth.controller;
 
+import com.github.olaleyeone.auth.annotations.Public;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.integration.email.VerificationEmailSender;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
-import com.olaleyeone.auth.security.annotations.Public;
 import com.olaleyeone.auth.service.PortalUserIdentifierVerificationService;
-import com.olaleyeone.rest.ApiResponse;
-import com.olaleyeone.rest.exception.ErrorResponse;
+import com.github.olaleyeone.rest.ApiResponse;
+import com.github.olaleyeone.rest.exception.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;

@@ -3,7 +3,7 @@ package com.olaleyeone.auth.service;
 import com.olaleyeone.audittrail.api.Activity;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserData;
-import com.olaleyeone.auth.dto.data.UserDataApiRequest;
+import com.olaleyeone.auth.dto.UserDataApiRequest;
 import com.olaleyeone.auth.repository.PortalUserDataRepository;
 import lombok.RequiredArgsConstructor;
 

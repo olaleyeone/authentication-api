@@ -1,9 +1,9 @@
 package com.olaleyeone.auth.security.authorizer;
 
-import com.olaleyeone.auth.security.access.AccessStatus;
-import com.olaleyeone.auth.security.access.Authorizer;
+import com.github.olaleyeone.auth.access.AccessStatus;
+import com.github.olaleyeone.auth.access.Authorizer;
+import com.github.olaleyeone.auth.data.AccessClaims;
 import com.olaleyeone.auth.security.constraint.NotClientToken;
-import com.olaleyeone.auth.security.data.AccessClaims;
 
 import javax.inject.Named;
 

@@ -4,13 +4,13 @@ import com.olaleyeone.audittrail.api.Activity;
 import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.auth.data.entity.*;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
-import com.olaleyeone.auth.dto.data.UserRegistrationApiRequest;
+import com.olaleyeone.auth.dto.UserRegistrationApiRequest;
 import com.olaleyeone.auth.integration.etc.HashService;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.repository.PortalUserIdentifierVerificationRepository;
 import com.olaleyeone.auth.repository.PortalUserRepository;
-import com.olaleyeone.data.RequestMetadata;
+import com.olaleyeone.data.dto.RequestMetadata;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 

@@ -1,9 +1,6 @@
 package com.olaleyeone.auth.bootstrap;
 
-import com.olaleyeone.auth.configuration.AuditTrailConfiguration;
-import com.olaleyeone.auth.configuration.IntegrationConfiguration;
-import com.olaleyeone.auth.configuration.OpenApiConfiguration;
-import com.olaleyeone.auth.configuration.WebConfiguration;
+import com.olaleyeone.auth.configuration.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -15,9 +12,10 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication
 @Import({
         AuditTrailConfiguration.class,
+        IntegrationConfiguration.class,
         WebConfiguration.class,
         OpenApiConfiguration.class,
-        IntegrationConfiguration.class
+        SecurityConfiguration.class
 })
 @EnableJpaRepositories({
         "com.olaleyeone.auth.repository",

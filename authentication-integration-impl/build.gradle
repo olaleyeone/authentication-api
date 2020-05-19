@@ -19,6 +19,9 @@ jacocoTestCoverageVerification {
             limit {
                 minimum = 0.95
             }
+            excludes = [
+                    'com.olaleyeone.auth.integration.listeners.*'
+            ]
         }
     }
 }
@@ -28,7 +31,6 @@ check.dependsOn jacocoTestCoverageVerification
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation fileTree(dir: project(":${projectName}-domain").file('libs'), include: ['*.jar'])
-    implementation fileTree(dir: project(":${projectName}-integration").file('libs'), include: ['*.jar'])
     implementation(project(":${projectName}-repository"))
     api(project(":${projectName}-service"))
     api(project(":${projectName}-integration"))
@@ -37,7 +39,9 @@ dependencies {
     implementation "javax.inject:javax.inject:1"
     compileOnly "javax.annotation:javax.annotation-api:1.3.2"
     implementation "javax.transaction:javax.transaction-api:1.2"
+
     implementation "javax.servlet:javax.servlet-api:$servletVersion"
+    implementation "org.springframework:spring-web:$springVersion"
 
     implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
 
@@ -59,5 +63,4 @@ dependencies {
     implementation "org.springframework.kafka:spring-kafka:$springKafkaVersion"
 
     testImplementation(project(":${projectName}-test-starter"))
-    testImplementation "org.springframework:spring-web:$springVersion"
 }

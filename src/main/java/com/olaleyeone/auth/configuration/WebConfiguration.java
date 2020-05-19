@@ -10,11 +10,10 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.olaleyeone.auth.constant.TimeFormatConstants;
+import com.github.olaleyeone.auth.interceptors.AccessConstraintHandlerInterceptor;
+import com.github.olaleyeone.auth.interceptors.RemoteAddressConstraintHandlerInterceptor;
 import com.olaleyeone.auth.interceptor.TaskContextHandlerInterceptor;
-import com.olaleyeone.auth.security.interceptors.AccessConstraintHandlerInterceptor;
-import com.olaleyeone.auth.security.interceptors.RemoteAddressConstraintHandlerInterceptor;
-import com.olaleyeone.entitysearch.configuration.SearchConfiguration;
+import com.github.olaleyeone.entitysearch.configuration.SearchConfiguration;
 import org.springdoc.webmvc.api.OpenApiResource;
 import org.springdoc.webmvc.ui.SwaggerWelcome;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +47,11 @@ import java.util.Arrays;
 @Import({
         AdditionalComponentsConfiguration.class,
         BeanValidationConfiguration.class,
-        SecurityConfiguration.class,
         SearchConfiguration.class
 })
 public class WebConfiguration implements WebMvcConfigurer {
+
+    public static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -78,7 +78,7 @@ public class WebConfiguration implements WebMvcConfigurer {
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        objectMapper.setDateFormat(new SimpleDateFormat(TimeFormatConstants.DEFAULT_DATE_TIME_FORMAT));
+        objectMapper.setDateFormat(new SimpleDateFormat(DEFAULT_DATE_TIME_FORMAT));
 
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.registerModule(new Jdk8Module());

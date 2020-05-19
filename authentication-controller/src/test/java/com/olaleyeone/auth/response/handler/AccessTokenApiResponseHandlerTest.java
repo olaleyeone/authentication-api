@@ -6,7 +6,7 @@ import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.dto.JwtDto;
-import com.olaleyeone.auth.integration.auth.JwtService;
+import com.olaleyeone.auth.integration.security.TokenGenerator;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.RefreshTokenService;
 import com.olaleyeone.auth.test.ComponentTest;
@@ -32,7 +32,7 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
     private RefreshTokenService refreshTokenService;
 
     @Mock
-    private JwtService jwtService;
+    private TokenGenerator tokenGenerator;
 
     @InjectMocks
     private AccessTokenApiResponseHandler handler;
@@ -72,9 +72,9 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
 
         Mockito.when(refreshTokenService.createRefreshToken(Mockito.any(PortalUserAuthentication.class)))
                 .then(invocation -> refreshToken);
-        Mockito.when(jwtService.generateJwt(Mockito.any()))
+        Mockito.when(tokenGenerator.generateJwt(Mockito.any()))
                 .then(invocation -> refreshJwt);
-        Mockito.when(jwtService.generateJwt(Mockito.any()))
+        Mockito.when(tokenGenerator.generateJwt(Mockito.any()))
                 .then(invocation -> accessJwt);
     }
 
@@ -125,7 +125,7 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
     public void shouldReturnRefreshTokenCookies() {
 
         String contextPath = "/" + faker.internet().slug();
-        handler = new AccessTokenApiResponseHandler(refreshTokenService, jwtService, jwtService, contextPath, "Secure; HttpOnly");
+        handler = new AccessTokenApiResponseHandler(refreshTokenService, tokenGenerator, tokenGenerator, contextPath, "Secure; HttpOnly");
         HttpEntity<AccessTokenApiResponse> responseEntity = handler.getAccessToken(userAuthentication);
 
         List<HttpCookie> httpCookies = getCookiesByName(responseEntity, "refresh_token");
