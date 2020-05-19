@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.qualifier;
+package com.olaleyeone.auth.data.enums;
 
 public enum JwtTokenType {
     ACCESS, REFRESH

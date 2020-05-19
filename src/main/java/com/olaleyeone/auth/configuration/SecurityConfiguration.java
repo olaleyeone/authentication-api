@@ -6,11 +6,12 @@ import com.github.olaleyeone.auth.data.AccessClaimsExtractor;
 import com.github.olaleyeone.auth.data.AuthorizedRequestFactory;
 import com.google.gson.Gson;
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
-import com.olaleyeone.auth.integration.security.*;
+import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.integration.etc.HashService;
 import com.olaleyeone.auth.integration.etc.HashServiceImpl;
+import com.olaleyeone.auth.integration.security.*;
 import com.olaleyeone.auth.qualifier.JwtToken;
-import com.olaleyeone.auth.qualifier.JwtTokenType;
+import com.olaleyeone.auth.repository.SignatureKeyRepository;
 import com.olaleyeone.auth.service.KeyGenerator;
 import com.olaleyeone.auth.service.SettingService;
 import lombok.RequiredArgsConstructor;
@@ -64,9 +65,9 @@ public class SecurityConfiguration {
     @Bean
     public TokenGenerator accessTokenGenerator(KeyGenerator keyGenerator, TaskContextFactory taskContextFactory) {
         return AccessTokenGenerator.builder()
-                .jwsGenerator(simpleJwsGenerator())
+                .jwsGenerator(new SimpleJwsGenerator())
                 .keyGenerator(keyGenerator)
-                .signingKeyResolver(accessTokenKeyResolver())
+                .signingKeyResolver(accessTokenKeyResolver(null))
                 .taskContextFactory(taskContextFactory)
                 .build();
     }
@@ -74,22 +75,22 @@ public class SecurityConfiguration {
     @JwtToken(JwtTokenType.ACCESS)
     @Bean
     public AccessClaimsExtractor accessClaimsExtractor(Gson gson) {
-        return new AccessClaimsExtractorImpl(accessTokenKeyResolver(), gson);
+        return new AccessClaimsExtractorImpl(accessTokenKeyResolver(null), gson);
     }
 
     @JwtToken(JwtTokenType.ACCESS)
     @Bean
-    public SimpleSigningKeyResolver accessTokenKeyResolver() {
-        return beanFactory.createBean(SimpleSigningKeyResolver.class);
+    public SimpleSigningKeyResolver accessTokenKeyResolver(SignatureKeyRepository signatureKeyRepository) {
+        return new SimpleSigningKeyResolver(signatureKeyRepository, JwtTokenType.ACCESS);
     }
 
     @JwtToken(JwtTokenType.REFRESH)
     @Bean
     public TokenGenerator refreshTokenGenerator(KeyGenerator keyGenerator, TaskContextFactory taskContextFactory) {
-        return AccessTokenGenerator.builder()
-                .jwsGenerator(simpleJwsGenerator())
+        return RefreshTokenGenerator.builder()
+                .jwsGenerator(new SimpleJwsGenerator())
                 .keyGenerator(keyGenerator)
-                .signingKeyResolver(refreshTokenKeyResolver())
+                .signingKeyResolver(refreshTokenKeyResolver(null))
                 .taskContextFactory(taskContextFactory)
                 .build();
     }
@@ -97,17 +98,12 @@ public class SecurityConfiguration {
     @JwtToken(JwtTokenType.REFRESH)
     @Bean
     public AccessClaimsExtractor refreshTokenClaimsExtractor(Gson gson) {
-        return new AccessClaimsExtractorImpl(refreshTokenKeyResolver(), gson);
+        return new AccessClaimsExtractorImpl(refreshTokenKeyResolver(null), gson);
     }
 
     @JwtToken(JwtTokenType.REFRESH)
     @Bean
-    public SimpleSigningKeyResolver refreshTokenKeyResolver() {
-        return beanFactory.createBean(SimpleSigningKeyResolver.class);
-    }
-
-    @Bean
-    public SimpleJwsGenerator simpleJwsGenerator() {
-        return beanFactory.createBean(SimpleJwsGenerator.class);
+    public SimpleSigningKeyResolver refreshTokenKeyResolver(SignatureKeyRepository signatureKeyRepository) {
+        return new SimpleSigningKeyResolver(signatureKeyRepository, JwtTokenType.REFRESH);
     }
 }

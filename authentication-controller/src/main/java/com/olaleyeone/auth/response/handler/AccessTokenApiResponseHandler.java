@@ -5,7 +5,7 @@ import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.dto.JwtDto;
 import com.olaleyeone.auth.integration.security.TokenGenerator;
 import com.olaleyeone.auth.qualifier.JwtToken;
-import com.olaleyeone.auth.qualifier.JwtTokenType;
+import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +29,7 @@ public class AccessTokenApiResponseHandler {
 
     @JwtToken(JwtTokenType.ACCESS)
     private final TokenGenerator accessTokenJwtService;
+
     @JwtToken(JwtTokenType.REFRESH)
     private final TokenGenerator refreshTokenJwtService;
 

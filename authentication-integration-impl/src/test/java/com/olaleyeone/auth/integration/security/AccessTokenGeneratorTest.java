@@ -4,6 +4,7 @@ import com.olaleyeone.audittrail.context.Action;
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.entity.SignatureKey;
+import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.service.KeyGenerator;
 import com.olaleyeone.auth.test.ComponentTest;
 import org.apache.commons.lang3.tuple.Pair;
@@ -55,10 +56,10 @@ class AccessTokenGeneratorTest extends ComponentTest {
         Pair<Key, SignatureKey> key = Pair.of(null, null);
         Mockito.doReturn(key)
                 .when(keyGenerator)
-                .generateKey();
+                .generateKey(Mockito.any());
         accessTokenGenerator.init();
         Mockito.verify(keyGenerator, Mockito.times(1))
-                .generateKey();
+                .generateKey(JwtTokenType.ACCESS);
         Mockito.verify(jwsGenerator, Mockito.times(1))
                 .updateKey(key);
         Mockito.verify(signingKeyResolver, Mockito.times(1))
@@ -72,7 +73,7 @@ class AccessTokenGeneratorTest extends ComponentTest {
         Mockito.doReturn(true).when(jwsGenerator).hasKey();
         accessTokenGenerator.init();
         Mockito.verify(keyGenerator, Mockito.never())
-                .generateKey();
+                .generateKey(Mockito.any());
         Mockito.verify(taskContextFactory, Mockito.never())
                 .startBackgroundTask(Mockito.any(), Mockito.any(), Mockito.any());
     }

@@ -1,6 +1,7 @@
 package com.olaleyeone.auth.service;
 
 import com.olaleyeone.auth.data.entity.SignatureKey;
+import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.servicetest.ServiceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,10 @@ class KeyGeneratorImplTest extends ServiceTest {
 
     @Test
     void generateKey() {
-        Map.Entry<Key, SignatureKey> keyEntry = keyGenerator.generateKey();
+        Map.Entry<Key, SignatureKey> keyEntry = keyGenerator.generateKey(JwtTokenType.ACCESS);
         assertNotNull(keyEntry);
         assertNotNull(keyEntry.getValue().getId());
+        assertEquals(JwtTokenType.ACCESS, keyEntry.getValue().getType());
         assertEquals(keyEntry.getKey().getAlgorithm(), keyEntry.getValue().getAlgorithm());
         assertNotEquals(keyEntry.getKey().getEncoded().length, keyEntry.getValue().getEncodedKey().length);
     }

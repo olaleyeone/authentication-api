@@ -2,6 +2,7 @@ package com.olaleyeone.auth.controller;
 
 import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.data.entity.SignatureKey;
+import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.repository.SignatureKeyRepository;
 import com.olaleyeone.auth.response.pojo.JsonWebKey;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +47,7 @@ class SignatureKeyControllerTest extends ControllerTest {
 
     @Test
     void getJsonWebKey() throws Exception {
-        Mockito.doReturn(Optional.of(signatureKey)).when(signatureKeyRepository).findByKeyId(Mockito.any());
+        Mockito.doReturn(Optional.of(signatureKey)).when(signatureKeyRepository).findByKeyIdAndType(Mockito.any(), Mockito.any());
         mockMvc.perform(MockMvcRequestBuilders.get("/keys/{kid}", signatureKey.getKeyId()))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
@@ -61,6 +62,6 @@ class SignatureKeyControllerTest extends ControllerTest {
                     assertEquals(encoder.encodeToString(rsaPublicKey.getPublicExponent().toByteArray()), response.getExponent());
                 });
         Mockito.verify(signatureKeyRepository, Mockito.times(1))
-                .findByKeyId(signatureKey.getKeyId());
+                .findByKeyIdAndType(signatureKey.getKeyId(), JwtTokenType.ACCESS);
     }
 }

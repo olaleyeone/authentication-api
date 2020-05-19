@@ -1,6 +1,7 @@
 package com.olaleyeone.auth.controller;
 
 import com.github.olaleyeone.auth.annotations.Public;
+import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.response.pojo.JsonWebKey;
 import com.olaleyeone.auth.repository.SignatureKeyRepository;
 import com.github.olaleyeone.rest.exception.NotFoundException;
@@ -18,7 +19,7 @@ public class SignatureKeyController {
     @Public
     @GetMapping("/keys/{kid}")
     public JsonWebKey getJsonWebKey(@PathVariable("kid") String kid) {
-        return signatureKeyRepository.findByKeyId(kid)
+        return signatureKeyRepository.findByKeyIdAndType(kid, JwtTokenType.ACCESS)
                 .map(signatureKey -> new JsonWebKey(signatureKey)).orElseThrow(NotFoundException::new);
     }
 }

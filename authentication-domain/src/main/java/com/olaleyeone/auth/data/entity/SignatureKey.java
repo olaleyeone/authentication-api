@@ -1,6 +1,7 @@
 package com.olaleyeone.auth.data.entity;
 
 import com.olaleyeone.audittrail.api.IgnoreData;
+import com.olaleyeone.auth.data.enums.JwtTokenType;
 import lombok.Data;
 import lombok.SneakyThrows;
 
@@ -34,6 +35,9 @@ public class SignatureKey {
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdOn;
+
+    @Column(nullable = false, updatable = false)
+    private JwtTokenType type;
 
     @PrePersist
     public void prePersist() {

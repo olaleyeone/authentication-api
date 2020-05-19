@@ -6,7 +6,7 @@ import com.github.olaleyeone.auth.data.AccessClaimsExtractor;
 import com.github.olaleyeone.auth.data.AuthorizedRequest;
 import com.olaleyeone.auth.integration.security.TokenGenerator;
 import com.olaleyeone.auth.qualifier.JwtToken;
-import com.olaleyeone.auth.qualifier.JwtTokenType;
+import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.security.authorizer.NotClientTokenAuthorizer;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;

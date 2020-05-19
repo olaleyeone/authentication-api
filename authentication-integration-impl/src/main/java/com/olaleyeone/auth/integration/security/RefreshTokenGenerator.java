@@ -3,6 +3,7 @@ package com.olaleyeone.auth.integration.security;
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.entity.SignatureKey;
+import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.dto.JwtDto;
 import com.olaleyeone.auth.service.KeyGenerator;
 import lombok.Builder;
@@ -35,7 +36,7 @@ public class RefreshTokenGenerator implements TokenGenerator {
                 "INITIALIZE REFRESH TOKEN KEY",
                 null,
                 () -> {
-                    Map.Entry<Key, SignatureKey> keyEntry = keyGenerator.generateKey();
+                    Map.Entry<Key, SignatureKey> keyEntry = keyGenerator.generateKey(JwtTokenType.REFRESH);
                     jwsGenerator.updateKey(keyEntry);
                     signingKeyResolver.addKey(keyEntry.getValue());
                 });

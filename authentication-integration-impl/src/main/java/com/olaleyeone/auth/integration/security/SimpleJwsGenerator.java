@@ -3,14 +3,12 @@ package com.olaleyeone.auth.integration.security;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.entity.SignatureKey;
 import io.jsonwebtoken.Jwts;
-import lombok.RequiredArgsConstructor;
 
 import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
 
-@RequiredArgsConstructor
 public class SimpleJwsGenerator {
 
     private Key key;

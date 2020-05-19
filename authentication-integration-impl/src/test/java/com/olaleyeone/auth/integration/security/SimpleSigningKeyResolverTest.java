@@ -1,6 +1,7 @@
 package com.olaleyeone.auth.integration.security;
 
 import com.olaleyeone.auth.data.entity.SignatureKey;
+import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.repository.SignatureKeyRepository;
 import com.olaleyeone.auth.test.ComponentTest;
 import io.jsonwebtoken.Claims;
@@ -30,9 +31,11 @@ class SimpleSigningKeyResolverTest extends ComponentTest {
     private KeyPair keyPair;
     private SignatureKey signatureKey;
 
+    private JwtTokenType jwtTokenType = JwtTokenType.ACCESS;
+
     @BeforeEach
     void setUp() throws NoSuchAlgorithmException {
-        signingKeyResolver = new SimpleSigningKeyResolver(signatureKeyRepository);
+        signingKeyResolver = new SimpleSigningKeyResolver(signatureKeyRepository, jwtTokenType);
 
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
         kpg.initialize(2048);
@@ -60,7 +63,7 @@ class SimpleSigningKeyResolverTest extends ComponentTest {
         assertNotNull(key);
         assertArrayEquals(signatureKey.getEncodedKey(), key.getEncoded());
         Mockito.verify(signatureKeyRepository, Mockito.never())
-                .findByKeyId(signatureKey.getKeyId());
+                .findByKeyIdAndType(Mockito.any(), Mockito.any());
     }
 
     @Test
@@ -68,7 +71,7 @@ class SimpleSigningKeyResolverTest extends ComponentTest {
 
         Mockito.doReturn(Optional.of(signatureKey))
                 .when(signatureKeyRepository)
-                .findByKeyId(Mockito.any());
+                .findByKeyIdAndType(Mockito.any(), Mockito.any());
 
         JwsHeader jwsHeader = Jwts.jwsHeader();
         jwsHeader.setKeyId(signatureKey.getKeyId());
@@ -76,7 +79,7 @@ class SimpleSigningKeyResolverTest extends ComponentTest {
         assertNotNull(key);
         assertArrayEquals(signatureKey.getEncodedKey(), key.getEncoded());
         Mockito.verify(signatureKeyRepository, Mockito.times(1))
-                .findByKeyId(signatureKey.getKeyId());
+                .findByKeyIdAndType(signatureKey.getKeyId(), jwtTokenType);
     }
 
     @Test
@@ -84,14 +87,14 @@ class SimpleSigningKeyResolverTest extends ComponentTest {
 
         Mockito.doReturn(Optional.of(signatureKey))
                 .when(signatureKeyRepository)
-                .findByKeyId(Mockito.any());
+                .findByKeyIdAndType(Mockito.any(), Mockito.any());
 
         JwsHeader jwsHeader = Jwts.jwsHeader();
         jwsHeader.setKeyId(signatureKey.getKeyId());
         signingKeyResolver.resolveSigningKey(jwsHeader, Mockito.mock(Claims.class));
         signingKeyResolver.resolveSigningKey(jwsHeader, Mockito.mock(Claims.class));
         Mockito.verify(signatureKeyRepository, Mockito.times(1))
-                .findByKeyId(signatureKey.getKeyId());
+                .findByKeyIdAndType(signatureKey.getKeyId(), jwtTokenType);
     }
 
     @Test
@@ -103,7 +106,7 @@ class SimpleSigningKeyResolverTest extends ComponentTest {
             signatureKey.setCreatedOn(LocalDateTime.now().plusDays(i + 1));
             Mockito.doReturn(Optional.of(signatureKey))
                     .when(signatureKeyRepository)
-                    .findByKeyId(Mockito.any());
+                    .findByKeyIdAndType(Mockito.any(), Mockito.any());
             JwsHeader jwsHeader = Jwts.jwsHeader();
             jwsHeader.setKeyId(signatureKey.getKeyId());
             signingKeyResolver.resolveSigningKey(jwsHeader, Mockito.mock(Claims.class));
@@ -112,13 +115,13 @@ class SimpleSigningKeyResolverTest extends ComponentTest {
         Mockito.reset(signatureKeyRepository);
         Mockito.doReturn(Optional.of(signatureKey))
                 .when(signatureKeyRepository)
-                .findByKeyId(Mockito.any());
+                .findByKeyIdAndType(Mockito.any(), Mockito.any());
         JwsHeader jwsHeader = Jwts.jwsHeader();
         jwsHeader.setKeyId(signatureKey.getKeyId());
         signingKeyResolver.resolveSigningKey(jwsHeader, Mockito.mock(Claims.class));
         signingKeyResolver.resolveSigningKey(jwsHeader, Mockito.mock(Claims.class));
         Mockito.verify(signatureKeyRepository, Mockito.times(2))
-                .findByKeyId(signatureKey.getKeyId());
+                .findByKeyIdAndType(signatureKey.getKeyId(), jwtTokenType);
     }
 
     @Test
@@ -130,7 +133,7 @@ class SimpleSigningKeyResolverTest extends ComponentTest {
             signatureKey.setCreatedOn(LocalDateTime.now().minusDays(i + 1));
             Mockito.doReturn(Optional.of(signatureKey))
                     .when(signatureKeyRepository)
-                    .findByKeyId(Mockito.any());
+                    .findByKeyIdAndType(Mockito.any(), Mockito.any());
             JwsHeader jwsHeader = Jwts.jwsHeader();
             jwsHeader.setKeyId(signatureKey.getKeyId());
             signingKeyResolver.resolveSigningKey(jwsHeader, Mockito.mock(Claims.class));
@@ -139,12 +142,12 @@ class SimpleSigningKeyResolverTest extends ComponentTest {
         Mockito.reset(signatureKeyRepository);
         Mockito.doReturn(Optional.of(signatureKey))
                 .when(signatureKeyRepository)
-                .findByKeyId(Mockito.any());
+                .findByKeyIdAndType(Mockito.any(), Mockito.any());
         JwsHeader jwsHeader = Jwts.jwsHeader();
         jwsHeader.setKeyId(signatureKey.getKeyId());
         signingKeyResolver.resolveSigningKey(jwsHeader, Mockito.mock(Claims.class));
         signingKeyResolver.resolveSigningKey(jwsHeader, Mockito.mock(Claims.class));
         Mockito.verify(signatureKeyRepository, Mockito.times(1))
-                .findByKeyId(signatureKey.getKeyId());
+                .findByKeyIdAndType(signatureKey.getKeyId(), jwtTokenType);
     }
 }

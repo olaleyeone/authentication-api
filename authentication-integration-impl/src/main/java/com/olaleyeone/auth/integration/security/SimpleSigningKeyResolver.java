@@ -1,6 +1,7 @@
 package com.olaleyeone.auth.integration.security;
 
 import com.olaleyeone.auth.data.entity.SignatureKey;
+import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.repository.SignatureKeyRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwsHeader;
@@ -25,6 +26,7 @@ import static java.util.Comparator.comparing;
 public class SimpleSigningKeyResolver extends SigningKeyResolverAdapter {
 
     private final SignatureKeyRepository signatureKeyRepository;
+    private final JwtTokenType jwtTokenType;
 
     @Setter
     @Getter
@@ -60,7 +62,7 @@ public class SimpleSigningKeyResolver extends SigningKeyResolverAdapter {
         if (key != null) {
             return key;
         }
-        return signatureKeyRepository.findByKeyId(header.getKeyId())
+        return signatureKeyRepository.findByKeyIdAndType(header.getKeyId(), jwtTokenType)
                 .map(signatureKey -> {
                     addKey(signatureKey);
                     return signatureKey.getRsaPublicKey();
