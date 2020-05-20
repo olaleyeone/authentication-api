@@ -4,7 +4,7 @@ import com.olaleyeone.audittrail.api.Activity;
 import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
-import com.olaleyeone.auth.integration.etc.HashService;
+import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import com.olaleyeone.auth.repository.PortalUserIdentifierVerificationRepository;
 import lombok.RequiredArgsConstructor;

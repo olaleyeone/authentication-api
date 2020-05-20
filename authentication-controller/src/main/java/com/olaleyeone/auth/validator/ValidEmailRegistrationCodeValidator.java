@@ -3,7 +3,7 @@ package com.olaleyeone.auth.validator;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.constraints.ValidEmailVerificationCode;
 import com.olaleyeone.auth.dto.UserRegistrationApiRequest;
-import com.olaleyeone.auth.integration.etc.HashService;
+import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.repository.PortalUserIdentifierVerificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;

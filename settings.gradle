@@ -5,8 +5,5 @@ include "${projectName}-domain",
         "${projectName}-service-impl",
         "${projectName}-integration",
         "${projectName}-integration-impl",
-        "${projectName}-infrastructure",
-        "${projectName}-web-infrastructure",
         "${projectName}-controller",
-//        "authorization",
         "entity-search"

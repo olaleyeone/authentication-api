@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.integration.etc;
+package com.olaleyeone.auth.integration.security;
 
 public interface HashService {
 

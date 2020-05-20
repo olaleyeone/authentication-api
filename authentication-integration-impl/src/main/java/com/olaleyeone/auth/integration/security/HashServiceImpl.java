@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.integration.etc;
+package com.olaleyeone.auth.integration.security;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 

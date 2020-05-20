@@ -4,6 +4,7 @@ import com.github.olaleyeone.auth.access.AccessStatus;
 import com.github.olaleyeone.auth.data.AccessClaimsExtractor;
 import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.data.entity.RefreshToken;
+import com.olaleyeone.auth.dto.AccessTokenApiRequest;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
@@ -103,6 +104,22 @@ class AccessTokenControllerTest extends ControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post(AccessTokenApiResponseHandler.TOKEN_ENDPOINT)
                 .cookie(getCookie(token)))
+                .andExpect(status().isOk());
+        Mockito.verify(refreshTokenRepository, Mockito.times(1))
+                .findActiveToken(Long.valueOf(accessClaims.getId()));
+        Mockito.verify(accessClaimsExtractor, Mockito.times(1))
+                .getClaims(token);
+    }
+
+    @Test
+    void shouldValidateTokenInBody() throws Exception {
+        String token = UUID.randomUUID().toString();
+        RefreshToken refreshToken = new RefreshToken();
+        Mockito.doReturn(accessClaims).when(accessClaimsExtractor).getClaims(Mockito.any());
+        Mockito.doReturn(Optional.of(refreshToken)).when(refreshTokenRepository).findActiveToken(Mockito.any());
+
+        mockMvc.perform(MockMvcRequestBuilders.post(AccessTokenApiResponseHandler.TOKEN_ENDPOINT)
+                .with(body(AccessTokenApiRequest.builder().refreshToken(token).build())))
                 .andExpect(status().isOk());
         Mockito.verify(refreshTokenRepository, Mockito.times(1))
                 .findActiveToken(Long.valueOf(accessClaims.getId()));

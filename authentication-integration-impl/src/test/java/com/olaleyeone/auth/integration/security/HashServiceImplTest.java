@@ -1,6 +1,5 @@
-package com.olaleyeone.auth.integration.etc;
+package com.olaleyeone.auth.integration.security;
 
-import com.olaleyeone.auth.integration.etc.HashServiceImpl;
 import com.olaleyeone.auth.test.ComponentTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.Spy;

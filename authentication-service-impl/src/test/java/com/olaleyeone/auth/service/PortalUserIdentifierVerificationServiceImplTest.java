@@ -2,7 +2,7 @@ package com.olaleyeone.auth.service;
 
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
-import com.olaleyeone.auth.integration.etc.HashService;
+import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import com.olaleyeone.auth.servicetest.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;

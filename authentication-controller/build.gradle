@@ -33,15 +33,13 @@ dependencies {
     implementation(project(":${projectName}-domain"))
     implementation fileTree(dir: project(":${projectName}-domain").file('libs'), include: ['*.jar'])
     implementation fileTree(dir: project(":${projectName}-integration-impl").file('libs'), include: ['authorization*.jar'])
+
     implementation(project(":${projectName}-repository")) {
         exclude module: "hibernate-jpa-2.1-api"
         exclude module: "spring-tx"
     }
-
     implementation(project(":${projectName}-service"))
     implementation(project(":${projectName}-integration"))
-
-//    implementation(project(":authorization"))
 
     implementation "org.springframework:spring-webmvc:$springVersion"
 

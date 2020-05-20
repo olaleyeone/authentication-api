@@ -7,7 +7,7 @@ import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.dto.UserDataApiRequest;
-import com.olaleyeone.auth.integration.etc.HashService;
+import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import com.olaleyeone.data.dto.RequestMetadata;
 import com.olaleyeone.auth.dto.UserRegistrationApiRequest;
