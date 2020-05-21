@@ -1,11 +1,13 @@
-package com.olaleyeone.auth.integration.listeners;
+package com.olaleyeone.auth.listeners;
 
 import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.integration.events.NewUserEvent;
 import com.olaleyeone.auth.repository.PortalUserRepository;
+import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +29,7 @@ public class NewUserPublisher {
 
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final KafkaTemplate<String, PortalUser> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     private final PortalUserRepository portalUserRepository;
 
@@ -36,13 +38,15 @@ public class NewUserPublisher {
     private final Provider<TaskContext> taskContextProvider;
     private final TaskContextFactory taskContextFactory;
 
+    private final UserApiResponseHandler userApiResponseHandler;
+
     @Value("${new_user.topic.name}")
-    private String newUserTopic;
+    private final String newUserTopic;
 
     @EventListener(NewUserEvent.class)
     @Async
     public void newUserCreated(NewUserEvent newUserEvent) {
-        logger.info("Event: User created");
+        logger.info("Event: User {} created", newUserEvent.getPortalUser().getId());
         PortalUser portalUser = newUserEvent.getPortalUser();
         taskContextFactory.startBackgroundTask(
                 "PUBLISH NEW USER",
@@ -51,7 +55,7 @@ public class NewUserPublisher {
     }
 
     private void sendUser(PortalUser portalUser) {
-        sendMessage(portalUser).addCallback(new ListenableFutureCallback<SendResult<String, PortalUser>>() {
+        sendMessage(portalUser).addCallback(new ListenableFutureCallback<SendResult<String, Object>>() {
 
             @Override
             public void onFailure(Throwable ex) {
@@ -60,8 +64,8 @@ public class NewUserPublisher {
             }
 
             @Override
-            public void onSuccess(SendResult<String, PortalUser> result) {
-                logger.info("User published");
+            public void onSuccess(SendResult<String, Object> result) {
+                logger.info("User {} published", portalUser.getId());
                 taskContextProvider.get().execute(
                         "UPDATE PUBLISHED USER",
                         () -> transactionTemplate.execute(status -> {
@@ -73,7 +77,8 @@ public class NewUserPublisher {
         });
     }
 
-    public ListenableFuture<SendResult<String, PortalUser>> sendMessage(PortalUser msg) {
-        return kafkaTemplate.send(newUserTopic, msg);
+    @SneakyThrows
+    public ListenableFuture<SendResult<String, Object>> sendMessage(PortalUser msg) {
+        return kafkaTemplate.send(newUserTopic, msg.getId().toString(), userApiResponseHandler.toUserApiResponse(msg));
     }
 }

@@ -1,6 +1,5 @@
 package com.olaleyeone.auth.configuration;
 
-import com.olaleyeone.auth.data.entity.PortalUser;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,14 +15,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@ComponentScan("com.olaleyeone.auth.integration.listeners")
+@ComponentScan("com.olaleyeone.auth.listeners")
 public class KafkaProducerConfig {
 
     @Value(value = "${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;
 
-    @Bean
-    public <E> ProducerFactory<String, E> producerFactory() {
+//    @Bean
+    public <E> ProducerFactory<String, E> objectProducerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(
                 ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
@@ -38,7 +37,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, PortalUser> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+    public KafkaTemplate<String, Object> kafkaTemplate() {
+        return new KafkaTemplate<>(objectProducerFactory());
     }
 }

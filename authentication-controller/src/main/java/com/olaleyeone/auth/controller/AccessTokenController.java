@@ -31,7 +31,7 @@ public class AccessTokenController {
     private final RefreshTokenRepository refreshTokenRepository;
     private final AccessTokenApiResponseHandler accessTokenApiResponseHandler;
     @JwtToken(JwtTokenType.REFRESH)
-    private final AccessClaimsExtractor jwtService;
+    private final AccessClaimsExtractor accessClaimsExtractor;
 
     private final HttpServletRequest httpServletRequest;
 
@@ -52,7 +52,7 @@ public class AccessTokenController {
         }
 
         try {
-            AccessClaims accessClaims = jwtService.getClaims(token);
+            AccessClaims accessClaims = accessClaimsExtractor.getClaims(token);
 
             RefreshToken refreshToken = refreshTokenRepository.findActiveToken(Long.valueOf(accessClaims.getId()))
                     .orElseThrow(() -> new ErrorResponse(HttpStatus.UNAUTHORIZED));

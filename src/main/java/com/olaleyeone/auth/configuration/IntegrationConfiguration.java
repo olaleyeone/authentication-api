@@ -11,9 +11,10 @@ import com.olaleyeone.auth.integration.etc.TemplateEngineImpl;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 @Configuration
-//@Import({KafkaProducerConfig.class, KafkaTopicConfig.class})
+@Import({KafkaProducerConfig.class, KafkaTopicConfig.class})
 public class IntegrationConfiguration {
 
     @Bean
