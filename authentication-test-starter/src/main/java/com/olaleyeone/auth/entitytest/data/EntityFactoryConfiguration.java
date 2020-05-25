@@ -12,7 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 @Configuration
-public class TestDataFactoryConfiguration extends FactoryConfiguration {
+public class EntityFactoryConfiguration extends FactoryConfiguration {
 
     @PersistenceContext
     private EntityManager entityManager;

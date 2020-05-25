@@ -23,6 +23,6 @@ class KeyGeneratorImplTest extends ServiceTest {
         assertNotNull(keyEntry.getValue().getId());
         assertEquals(JwtTokenType.ACCESS, keyEntry.getValue().getType());
         assertEquals(keyEntry.getKey().getAlgorithm(), keyEntry.getValue().getAlgorithm());
-        assertNotEquals(keyEntry.getKey().getEncoded().length, keyEntry.getValue().getEncodedKey().length);
+        assertNotEquals(keyEntry.getKey().getEncoded().length, keyEntry.getValue().getRawEncodedKey().length);
     }
 }

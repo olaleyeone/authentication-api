@@ -10,6 +10,7 @@ import java.security.KeyFactory;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.LocalDateTime;
+import java.util.Base64;
 
 @Data
 @Entity
@@ -23,9 +24,8 @@ public class SignatureKey {
     private String keyId;
 
     @IgnoreData
-    @Lob
-    @Column(nullable = false)
-    private byte[] encodedKey;
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String encodedKey;
 
     @Column(nullable = false)
     private String algorithm;
@@ -44,10 +44,18 @@ public class SignatureKey {
         createdOn = LocalDateTime.now();
     }
 
+    public void setEncodedKey(byte[] data) {
+        encodedKey = Base64.getEncoder().encodeToString(data);
+    }
+
+    public byte[] getRawEncodedKey() {
+        return Base64.getDecoder().decode(encodedKey);
+    }
+
     @SneakyThrows
     public RSAPublicKey getRsaPublicKey() {
         KeyFactory kf = KeyFactory.getInstance(algorithm);
-        X509EncodedKeySpec pubKs = new X509EncodedKeySpec(encodedKey);
+        X509EncodedKeySpec pubKs = new X509EncodedKeySpec(getRawEncodedKey());
         return (RSAPublicKey) kf.generatePublic(pubKs);
     }
 }

@@ -20,6 +20,7 @@ class SignatureKeyTest extends EntityTest {
 
     @BeforeEach
     void setUp() throws NoSuchAlgorithmException {
+
         signatureKey = new SignatureKey();
         signatureKey.setFormat(faker.animal().name());
         signatureKey.setKeyId(UUID.randomUUID().toString());
@@ -35,6 +36,7 @@ class SignatureKeyTest extends EntityTest {
 
     @Test
     void prePersist() {
+
         saveAndFlush(signatureKey);
         assertNotNull(signatureKey.getCreatedOn());
     }

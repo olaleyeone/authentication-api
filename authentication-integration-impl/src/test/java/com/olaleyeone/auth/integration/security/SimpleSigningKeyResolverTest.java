@@ -61,7 +61,7 @@ class SimpleSigningKeyResolverTest extends ComponentTest {
         jwsHeader.setKeyId(signatureKey.getKeyId());
         Key key = signingKeyResolver.resolveSigningKey(jwsHeader, Mockito.mock(Claims.class));
         assertNotNull(key);
-        assertArrayEquals(signatureKey.getEncodedKey(), key.getEncoded());
+        assertArrayEquals(signatureKey.getRawEncodedKey(), key.getEncoded());
         Mockito.verify(signatureKeyRepository, Mockito.never())
                 .findByKeyIdAndType(Mockito.any(), Mockito.any());
     }
@@ -77,7 +77,7 @@ class SimpleSigningKeyResolverTest extends ComponentTest {
         jwsHeader.setKeyId(signatureKey.getKeyId());
         Key key = signingKeyResolver.resolveSigningKey(jwsHeader, Mockito.mock(Claims.class));
         assertNotNull(key);
-        assertArrayEquals(signatureKey.getEncodedKey(), key.getEncoded());
+        assertArrayEquals(signatureKey.getRawEncodedKey(), key.getEncoded());
         Mockito.verify(signatureKeyRepository, Mockito.times(1))
                 .findByKeyIdAndType(signatureKey.getKeyId(), jwtTokenType);
     }
