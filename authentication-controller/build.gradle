@@ -51,6 +51,8 @@ dependencies {
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "org.springdoc:springdoc-openapi-ui:$springdocOpenapiVersion"
 
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion"
+
     implementation(project(":entity-search"))
 
     testImplementation(project(":${projectName}-test-starter"))
