@@ -6,7 +6,7 @@ import com.olaleyeone.audittrail.impl.TaskContextHolder;
 import com.olaleyeone.audittrail.impl.TaskContextImpl;
 import com.olaleyeone.audittrail.impl.TaskTransactionContextFactory;
 import com.olaleyeone.auth.entitytest.EntityTest;
-import com.olaleyeone.auth.integration.etc.HashService;
+import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;

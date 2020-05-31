@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.1"
+                 xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <package>com.olaleyeone.auth.data.entity</package>
+
+    <entity class="com.olaleyeone.audittrail.entity.WebRequest">
+        <table name="trail_web_request"/>
+    </entity>
+    <entity class="com.olaleyeone.audittrail.entity.Task">
+        <table name="trail_task"/>
+    </entity>
+    <entity class="com.olaleyeone.audittrail.entity.TaskActivity">
+        <table name="trail_task_activity"/>
+    </entity>
+    <entity class="com.olaleyeone.audittrail.entity.TaskTransaction">
+        <table name="trail_task_transaction"/>
+    </entity>
+    <entity class="com.olaleyeone.audittrail.entity.EntityState">
+        <table name="trail_entity_state"/>
+    </entity>
+    <entity class="com.olaleyeone.audittrail.entity.EntityStateAttribute">
+        <table name="trail_entity_state_attribute"/>
+    </entity>
+    <entity class="com.olaleyeone.audittrail.entity.CodeContext">
+        <table name="trail_code_context"/>
+    </entity>
+
+</entity-mappings>

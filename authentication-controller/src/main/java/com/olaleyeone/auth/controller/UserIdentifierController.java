@@ -1,7 +1,7 @@
 package com.olaleyeone.auth.controller;
 
+import com.github.olaleyeone.auth.annotations.Public;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
-import com.olaleyeone.auth.security.annotations.Public;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ public class UserIdentifierController {
     @Public
     @RequestMapping(value = "/user-emails/{email}", method = RequestMethod.HEAD)
     public ResponseEntity<Void> checkEmailExistence(@PathVariable @Email String email) {
-        if (portalUserIdentifierRepository.findByIdentifier(email).isPresent()) {
+        if (portalUserIdentifierRepository.findActiveByIdentifier(email).isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).build();
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

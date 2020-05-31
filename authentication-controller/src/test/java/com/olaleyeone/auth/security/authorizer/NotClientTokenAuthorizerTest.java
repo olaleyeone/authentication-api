@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.security.authorizer;
 
-import com.olaleyeone.auth.security.data.AccessClaims;
+import com.github.olaleyeone.auth.data.AccessClaims;
 import com.olaleyeone.auth.test.ComponentTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

@@ -39,4 +39,9 @@ class ServiceMockConfig {
     public VerificationEmailSender verificationEmailSender() {
         return Mockito.mock(VerificationEmailSender.class);
     }
+
+    @Bean
+    public LogoutService logoutService() {
+        return Mockito.mock(LogoutService.class);
+    }
 }

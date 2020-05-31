@@ -4,15 +4,12 @@ package com.olaleyeone.auth.controllertest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
+import com.github.olaleyeone.auth.data.AccessClaims;
+import com.github.olaleyeone.auth.interceptors.AccessConstraintHandlerInterceptor;
 import com.olaleyeone.auth.configuration.AdditionalComponentsConfiguration;
 import com.olaleyeone.auth.configuration.BeanValidationConfiguration;
-import com.olaleyeone.auth.configuration.SecurityConfiguration;
-import com.olaleyeone.auth.security.data.AccessClaims;
-import com.olaleyeone.auth.security.data.AccessClaimsExtractor;
-import com.olaleyeone.auth.security.interceptors.AccessConstraintHandlerInterceptor;
-import com.olaleyeone.auth.security.interceptors.RemoteAddressConstraintHandlerInterceptor;
-import com.olaleyeone.entitysearch.util.PredicateExtractor;
-import com.olaleyeone.entitysearch.util.SearchFilterPredicateExtractor;
+import com.github.olaleyeone.entitysearch.util.PredicateExtractor;
+import com.github.olaleyeone.entitysearch.util.SearchFilterPredicateExtractor;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.mockito.internal.creation.bytebuddy.MockAccess;
@@ -51,8 +48,6 @@ public class ControllerTest {
     private ApplicationContext applicationContext;
 
     @Autowired
-    protected AccessClaimsExtractor accessClaimsExtractor;
-
     protected AccessClaims accessClaims;
 
     protected final Faker faker = Faker.instance(new Random());
@@ -78,8 +73,6 @@ public class ControllerTest {
     public void resetMocks() {
         applicationContext.getBeansOfType(MockAccess.class)
                 .values().forEach(Mockito::reset);
-        accessClaims = Mockito.mock(AccessClaims.class);
-        Mockito.doReturn(accessClaims).when(accessClaimsExtractor).getClaims(Mockito.any());
     }
 
     @Configuration
@@ -90,7 +83,6 @@ public class ControllerTest {
     @Import({
             AdditionalComponentsConfiguration.class,
             BeanValidationConfiguration.class,
-            SecurityConfiguration.class,
             SecurityMockConfig.class,
             ValidatorMockConfig.class,
             ServiceMockConfig.class,
@@ -106,7 +98,6 @@ public class ControllerTest {
         @Override
         public void addInterceptors(InterceptorRegistry registry) {
             AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
-            registry.addInterceptor(beanFactory.createBean(RemoteAddressConstraintHandlerInterceptor.class));
             AccessConstraintHandlerInterceptor accessConstraintHandlerInterceptor = new AccessConstraintHandlerInterceptor(
                     applicationContext,
                     Collections.emptyList()

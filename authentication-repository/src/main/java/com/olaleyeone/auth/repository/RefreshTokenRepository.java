@@ -7,8 +7,18 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
+
+    @Query("SELECT t FROM RefreshToken t JOIN FETCH t.actualAuthentication auth" +
+            " WHERE t.id=?1" +
+            " AND t.timeDeactivated IS NULL" +
+            " AND t.expiresAt>CURRENT_TIMESTAMP" +
+            " AND auth.loggedOutAt IS NULL" +
+            " AND auth.deactivatedAt IS NULL" +
+            " AND auth.autoLogoutAt>CURRENT_TIMESTAMP")
+    Optional<RefreshToken> findActiveToken(Long id);
 
     @Query("SELECT t FROM RefreshToken t WHERE t.timeDeactivated IS NULL AND t.actualAuthentication=?1 AND t.expiresAt>CURRENT_TIMESTAMP")
     List<RefreshToken> findActiveTokens(PortalUserAuthentication authenticationResponse);

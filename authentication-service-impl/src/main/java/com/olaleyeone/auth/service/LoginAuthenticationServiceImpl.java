@@ -6,11 +6,11 @@ import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
-import com.olaleyeone.auth.dto.data.LoginApiRequest;
-import com.olaleyeone.auth.integration.etc.HashService;
+import com.olaleyeone.auth.dto.LoginApiRequest;
+import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
-import com.olaleyeone.data.RequestMetadata;
+import com.olaleyeone.data.dto.RequestMetadata;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Named;
@@ -31,7 +31,7 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
     @Transactional
     @Override
     public PortalUserAuthentication getAuthenticationResponse(LoginApiRequest requestDto, RequestMetadata requestMetadata) {
-        Optional<PortalUserIdentifier> optionalUserIdentifier = portalUserIdentifierRepository.findByIdentifier(requestDto.getIdentifier());
+        Optional<PortalUserIdentifier> optionalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(requestDto.getIdentifier());
         if (!optionalUserIdentifier.isPresent()) {
             return createUnknownAccountResponse(requestDto, requestMetadata);
         }
@@ -43,7 +43,7 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
     }
 
     private PortalUserAuthentication createUnknownAccountResponse(LoginApiRequest requestDto, RequestMetadata requestMetadata) {
-        return taskContextProvider.get().execute("FAILED LOGIN",
+        return taskContextProvider.get().executeAndReturn("FAILED LOGIN",
                 "Unknown account " + requestDto.getIdentifier(),
                 () -> {
                     PortalUserAuthentication userAuthentication = makeAuthenticationResponse(
@@ -54,7 +54,7 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
 
     private PortalUserAuthentication createInvalidCredentialResponse(
             PortalUserIdentifier userIdentifier, LoginApiRequest requestDto, RequestMetadata requestMetadata) {
-        return taskContextProvider.get().execute("FAILED LOGIN",
+        return taskContextProvider.get().executeAndReturn("FAILED LOGIN",
                 "Invalid credentials for account " + requestDto.getIdentifier(),
                 () -> {
                     PortalUserAuthentication userAuthentication = makeAuthenticationResponse(
@@ -66,7 +66,7 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
 
     private PortalUserAuthentication createSuccessfulAuthenticationResponse(
             PortalUserIdentifier userIdentifier, LoginApiRequest requestDto, RequestMetadata requestMetadata) {
-        return taskContextProvider.get().execute("SUCCESSFUL LOGIN",
+        return taskContextProvider.get().executeAndReturn("SUCCESSFUL LOGIN",
                 requestDto.getIdentifier() + " logged in",
                 () -> {
                     PortalUserAuthentication userAuthentication = makeAuthenticationResponse(

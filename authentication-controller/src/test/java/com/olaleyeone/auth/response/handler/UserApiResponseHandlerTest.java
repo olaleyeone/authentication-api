@@ -1,8 +1,11 @@
 package com.olaleyeone.auth.response.handler;
 
 import com.olaleyeone.auth.data.entity.PortalUser;
-import com.olaleyeone.web.exception.NotFoundException;
-import com.olaleyeone.auth.repository.PortalUserRepository;
+import com.olaleyeone.auth.data.entity.PortalUserData;
+import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
+import com.olaleyeone.auth.data.enums.UserIdentifierType;
+import com.olaleyeone.auth.repository.PortalUserDataRepository;
+import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
 import com.olaleyeone.auth.test.ComponentTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,44 +14,59 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import java.util.Optional;
+import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class UserApiResponseHandlerTest extends ComponentTest {
 
     @Mock
-    private PortalUserRepository portalUserRepository;
+    private PortalUserIdentifierRepository portalUserIdentifierRepository;
+    @Mock
+    private PortalUserDataRepository portalUserDataRepository;
 
     @InjectMocks
     private UserApiResponseHandler userApiResponseHandler;
 
-    private PortalUser user;
-
-    @BeforeEach
-    void setUp() {
-
-        user = new PortalUser();
-        user.setId(faker.number().randomNumber());
-        user.setFirstName(faker.name().firstName());
-        user.setLastName(faker.name().lastName());
-    }
-
     @Test
-    void getUserApiResponse() {
-        Mockito.doReturn(Optional.of(user)).when(portalUserRepository).findById(Mockito.any());
-        UserApiResponse userApiResponse = userApiResponseHandler.getUserApiResponse(user.getId());
+    void toUserApiResponse() {
+        PortalUser portalUser = getPortalUser();
+
+        Mockito.doReturn(Arrays.asList(getPortalUserData())).when(portalUserDataRepository).findByPortalUser(Mockito.any());
+        Mockito.doReturn(Arrays.asList(getPortalUserIdentifier())).when(portalUserIdentifierRepository).findByPortalUser(Mockito.any());
+
+        UserApiResponse userApiResponse = userApiResponseHandler.toUserApiResponse(portalUser);
         assertNotNull(userApiResponse);
-        assertEquals(user.getId(), userApiResponse.getId());
-        assertEquals(user.getFirstName(), userApiResponse.getFirstName());
-        assertEquals(user.getLastName(), userApiResponse.getLastName());
-        Mockito.verify(portalUserRepository, Mockito.times(1))
-                .findById(user.getId());
+        assertEquals(portalUser.getId(), userApiResponse.getId());
+        assertEquals(portalUser.getFirstName(), userApiResponse.getFirstName());
+        assertEquals(portalUser.getLastName(), userApiResponse.getLastName());
+
+        assertEquals(1, userApiResponse.getIdentifiers().size());
+        assertEquals(1, userApiResponse.getData().size());
     }
 
-    @Test
-    void shouldFailIfUserIsNotFound() {
-        Mockito.doReturn(Optional.empty()).when(portalUserRepository).findById(Mockito.any());
-        assertThrows(NotFoundException.class, () -> userApiResponseHandler.getUserApiResponse(user.getId()));
+    PortalUser getPortalUser() {
+        PortalUser portalUser = new PortalUser();
+        portalUser.setId(faker.number().randomNumber());
+        portalUser.setFirstName(faker.name().firstName());
+        portalUser.setLastName(faker.name().lastName());
+        return portalUser;
+    }
+
+    PortalUserData getPortalUserData() {
+        PortalUserData portalUser = new PortalUserData();
+        portalUser.setId(faker.number().randomNumber());
+        portalUser.setName(faker.name().firstName());
+        portalUser.setValue(faker.name().lastName());
+        return portalUser;
+    }
+
+    PortalUserIdentifier getPortalUserIdentifier() {
+        PortalUserIdentifier portalUser = new PortalUserIdentifier();
+        portalUser.setId(faker.number().randomNumber());
+        portalUser.setIdentifierType(UserIdentifierType.EMAIL);
+        portalUser.setIdentifier(faker.name().username());
+        return portalUser;
     }
 }

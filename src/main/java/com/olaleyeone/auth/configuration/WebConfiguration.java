@@ -1,8 +1,9 @@
 package com.olaleyeone.auth.configuration;
 
-import com.olaleyeone.auth.security.interceptors.AccessConstraintHandlerInterceptor;
-import com.olaleyeone.auth.security.interceptors.RemoteAddressConstraintHandlerInterceptor;
-import com.olaleyeone.entitysearch.configuration.SearchConfiguration;
+import com.github.olaleyeone.auth.interceptors.AccessConstraintHandlerInterceptor;
+import com.github.olaleyeone.auth.interceptors.RemoteAddressConstraintHandlerInterceptor;
+import com.github.olaleyeone.entitysearch.configuration.SearchConfiguration;
+import com.olaleyeone.auth.interceptor.TaskContextHandlerInterceptor;
 import org.springdoc.webmvc.api.OpenApiResource;
 import org.springdoc.webmvc.ui.SwaggerWelcome;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,6 @@ import java.util.Arrays;
 @Import({
         AdditionalComponentsConfiguration.class,
         BeanValidationConfiguration.class,
-        SecurityConfiguration.class,
         SearchConfiguration.class
 })
 public class WebConfiguration implements WebMvcConfigurer {

@@ -1,27 +1,34 @@
 package com.olaleyeone.auth.response.handler;
 
 import com.olaleyeone.auth.data.entity.PortalUser;
-import com.olaleyeone.web.exception.NotFoundException;
-import com.olaleyeone.auth.repository.PortalUserRepository;
+import com.olaleyeone.auth.repository.PortalUserDataRepository;
+import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
+import com.olaleyeone.auth.response.pojo.UserIdentifierApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.stereotype.Component;
 
-import javax.inject.Named;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-@Named
+@Component
 public class UserApiResponseHandler {
 
-    private final PortalUserRepository portalUserRepository;
+    private final PortalUserIdentifierRepository portalUserIdentifierRepository;
+    private final PortalUserDataRepository portalUserDataRepository;
 
-    public UserApiResponse getUserApiResponse(Long userId) {
-        Optional<PortalUser> optionalPortalUser = portalUserRepository.findById(userId);
-        if (!optionalPortalUser.isPresent()) {
-            throw new NotFoundException();
-        }
-        PortalUser portalUser = optionalPortalUser.get();
+    public UserApiResponse toUserApiResponse(PortalUser portalUser) {
+        UserApiResponse userApiResponse = new UserApiResponse(portalUser);
+        userApiResponse.setIdentifiers(portalUserIdentifierRepository.findByPortalUser(portalUser)
+                .stream().map(UserIdentifierApiResponse::new)
+                .collect(Collectors.toList()));
 
-        return new UserApiResponse(portalUser);
+        userApiResponse.setData(portalUserDataRepository.findByPortalUser(portalUser)
+                .stream()
+                .map(portalUserData -> Pair.of(portalUserData.getName(), portalUserData.getValue()))
+                .collect(Collectors.toList()));
+
+        return userApiResponse;
     }
 }

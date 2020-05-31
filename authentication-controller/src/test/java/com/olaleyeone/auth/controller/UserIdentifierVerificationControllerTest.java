@@ -45,7 +45,7 @@ class UserIdentifierVerificationControllerTest extends ControllerTest {
                 emailAddress))
                 .andExpect(status().isCreated());
         Mockito.verify(portalUserIdentifierRepository, Mockito.times(1))
-                .findByIdentifier(emailAddress);
+                .findActiveByIdentifier(emailAddress);
         Mockito.verify(portalUserIdentifierVerificationService, Mockito.times(1))
                 .createVerification(emailAddress, UserIdentifierType.EMAIL);
         Mockito.verify(verificationEmailSender, Mockito.times(1))
@@ -63,7 +63,7 @@ class UserIdentifierVerificationControllerTest extends ControllerTest {
     void requestEmailVerificationCodeWithVerifiedEmail() throws Exception {
         PortalUserIdentifier portalUserIdentifier = new PortalUserIdentifier();
         portalUserIdentifier.setVerified(true);
-        Mockito.doReturn(Optional.of(portalUserIdentifier)).when(portalUserIdentifierRepository).findByIdentifier(Mockito.any());
+        Mockito.doReturn(Optional.of(portalUserIdentifier)).when(portalUserIdentifierRepository).findActiveByIdentifier(Mockito.any());
         mockMvc.perform(MockMvcRequestBuilders.post("/user-emails/{identifier}/verification-code",
                 faker.internet().emailAddress()))
                 .andExpect(status().isConflict());
@@ -73,7 +73,7 @@ class UserIdentifierVerificationControllerTest extends ControllerTest {
     void requestEmailVerificationCodeWithUnverifiedEmail() throws Exception {
         PortalUserIdentifier portalUserIdentifier = new PortalUserIdentifier();
         portalUserIdentifier.setVerified(false);
-        Mockito.doReturn(Optional.of(portalUserIdentifier)).when(portalUserIdentifierRepository).findByIdentifier(Mockito.any());
+        Mockito.doReturn(Optional.of(portalUserIdentifier)).when(portalUserIdentifierRepository).findActiveByIdentifier(Mockito.any());
         mockMvc.perform(MockMvcRequestBuilders.post("/user-emails/{identifier}/verification-code",
                 faker.internet().emailAddress()))
                 .andExpect(status().isCreated());

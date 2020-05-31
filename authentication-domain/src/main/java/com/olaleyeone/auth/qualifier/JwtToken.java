@@ -1,5 +1,7 @@
 package com.olaleyeone.auth.qualifier;
 
+import com.olaleyeone.auth.data.enums.JwtTokenType;
+
 import javax.inject.Qualifier;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

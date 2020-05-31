@@ -1,8 +1,8 @@
 package com.olaleyeone.auth.data;
 
+import com.github.olaleyeone.auth.data.AccessClaims;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.olaleyeone.auth.security.data.AccessClaims;
 import io.jsonwebtoken.Claims;
 
 import java.lang.reflect.Type;

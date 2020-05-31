@@ -2,7 +2,7 @@ package com.olaleyeone.auth.entitytest;
 
 import com.github.heywhy.springentityfactory.contracts.ModelFactory;
 import com.github.javafaker.Faker;
-import com.olaleyeone.auth.entitytest.data.TestDataFactoryConfiguration;
+import com.olaleyeone.auth.entitytest.data.EntityFactoryConfiguration;
 import org.hibernate.engine.spi.EntityEntry;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.engine.spi.Status;
@@ -19,7 +19,7 @@ import java.util.Map;
 
 @Transactional
 @SpringBootTest(classes = TestApplication.class)
-@Import({TestDataFactoryConfiguration.class})
+@Import({EntityFactoryConfiguration.class})
 public class EntityTest {
 
     @Autowired

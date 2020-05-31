@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.data.entity;
 
+import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.entitytest.EntityTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,11 +20,13 @@ class SignatureKeyTest extends EntityTest {
 
     @BeforeEach
     void setUp() throws NoSuchAlgorithmException {
+
         signatureKey = new SignatureKey();
         signatureKey.setFormat(faker.animal().name());
         signatureKey.setKeyId(UUID.randomUUID().toString());
         signatureKey.setAlgorithm(faker.book().genre());
         signatureKey.setEncodedKey(faker.leagueOfLegends().quote().getBytes());
+        signatureKey.setType(JwtTokenType.ACCESS);
 
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
         kpg.initialize(1024);
@@ -33,6 +36,7 @@ class SignatureKeyTest extends EntityTest {
 
     @Test
     void prePersist() {
+
         saveAndFlush(signatureKey);
         assertNotNull(signatureKey.getCreatedOn());
     }

@@ -16,9 +16,9 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
-    public static String REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES = "REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES";
-    public static String ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS = "ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS";
-    private final int REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES_VALUE = 30;
+    public static final String REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES = "REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES";
+    public static final String ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS = "ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS";
+    private static final int REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES_VALUE = 30;
 
     private final SettingService settingService;
     private final RefreshTokenRepository refreshTokenRepository;

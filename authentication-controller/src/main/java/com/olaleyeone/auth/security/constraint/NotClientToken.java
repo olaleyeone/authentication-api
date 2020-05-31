@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.security.constraint;
 
-import com.olaleyeone.auth.security.annotations.AccessConstraint;
+import com.github.olaleyeone.auth.annotations.AccessConstraint;
 import com.olaleyeone.auth.security.authorizer.NotClientTokenAuthorizer;
 
 import java.lang.annotation.Documented;

@@ -1,8 +1,8 @@
 package com.olaleyeone.auth.advice;
 
-import com.olaleyeone.web.exception.ErrorResponse;
-import com.olaleyeone.web.exception.NotFoundException;
-import com.olaleyeone.web.ApiResponse;
+import com.github.olaleyeone.rest.exception.ErrorResponse;
+import com.github.olaleyeone.rest.exception.NotFoundException;
+import com.github.olaleyeone.rest.ApiResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +41,7 @@ public class ErrorAdvice {
             errors.add(violation.getPropertyPath() + " : " + violation.getMessage());
         }
         ApiResponse<List<String>> apiResponse = new ApiResponse<>();
-        apiResponse.setMessage(errors.size() > 0 ? errors.get(0) : "Invalid request");
+        apiResponse.setMessage(!errors.isEmpty() ? errors.get(0) : "Invalid request");
         apiResponse.setData(errors);
         return new ResponseEntity<>(apiResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }

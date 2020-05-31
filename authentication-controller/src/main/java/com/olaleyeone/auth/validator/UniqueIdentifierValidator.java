@@ -1,7 +1,7 @@
 package com.olaleyeone.auth.validator;
 
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
-import com.olaleyeone.auth.dto.constraints.UniqueIdentifier;
+import com.olaleyeone.auth.constraints.UniqueIdentifier;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +36,6 @@ public class UniqueIdentifierValidator implements UniqueIdentifier.Validator {
         if (identifierType == UserIdentifierType.PHONE_NUMBER) {
             phoneNumber = phoneNumberService.formatPhoneNumber(phoneNumber);
         }
-        return !portalUserIdentifierRepository.findByIdentifier(phoneNumber).isPresent();
+        return !portalUserIdentifierRepository.findActiveByIdentifier(phoneNumber).isPresent();
     }
 }

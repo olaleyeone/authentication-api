@@ -40,8 +40,14 @@ public class RefreshToken implements Audited {
     @Column(nullable = false, updatable = false)
     private LocalDateTime expiresAt;
 
-    private LocalDateTime lastUsedAt;
     private LocalDateTime timeDeactivated;
+
+    public void setActualAuthentication(PortalUserAuthentication actualAuthentication) {
+        this.actualAuthentication = actualAuthentication;
+        this.portalUser = Optional.ofNullable(this.actualAuthentication)
+                .map(PortalUserAuthentication::getPortalUser)
+                .orElse(null);
+    }
 
     @Transient
     public Instant getExpiryInstant() {
@@ -68,7 +74,7 @@ public class RefreshToken implements Audited {
     }
 
     @PrePersist
-    public void setPortalUser() {
+    public void beforePersist() {
         portalUser = Optional.ofNullable(actualAuthentication)
                 .map(PortalUserAuthentication::getPortalUser)
                 .orElse(null);

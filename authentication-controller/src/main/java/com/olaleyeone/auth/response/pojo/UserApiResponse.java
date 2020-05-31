@@ -4,6 +4,9 @@ import com.olaleyeone.auth.data.entity.PortalUser;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.Map;
+
 @Data
 @NoArgsConstructor
 public class UserApiResponse {
@@ -12,9 +15,13 @@ public class UserApiResponse {
     private String firstName;
     private String lastName;
 
-    public UserApiResponse(PortalUser user) {
-        this.id = user.getId();
-        this.firstName = user.getFirstName();
-        this.lastName = user.getLastName();
+    private List<UserIdentifierApiResponse> identifiers;
+
+    private List<Map.Entry<String, String>> data;
+
+    public UserApiResponse(PortalUser portalUser) {
+        this.id = portalUser.getId();
+        this.firstName = portalUser.getFirstName();
+        this.lastName = portalUser.getLastName();
     }
 }

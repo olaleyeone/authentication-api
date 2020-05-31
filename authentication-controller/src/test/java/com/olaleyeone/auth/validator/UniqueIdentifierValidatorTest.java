@@ -2,7 +2,7 @@ package com.olaleyeone.auth.validator;
 
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
-import com.olaleyeone.auth.dto.constraints.UniqueIdentifier;
+import com.olaleyeone.auth.constraints.UniqueIdentifier;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import com.olaleyeone.auth.test.ComponentTest;
@@ -42,7 +42,7 @@ class UniqueIdentifierValidatorTest extends ComponentTest {
 
     @Test
     void shouldFormatPhoneNumber() {
-        Mockito.when(portalUserIdentifierRepository.findByIdentifier(Mockito.anyString())).thenReturn(Optional.empty());
+        Mockito.when(portalUserIdentifierRepository.findActiveByIdentifier(Mockito.anyString())).thenReturn(Optional.empty());
         Mockito.when(uniqueIdentifier.value()).thenReturn(UserIdentifierType.PHONE_NUMBER);
         validator.initialize(uniqueIdentifier);
 
@@ -56,12 +56,12 @@ class UniqueIdentifierValidatorTest extends ComponentTest {
         Mockito.verify(phoneNumberService, Mockito.times(1))
                 .formatPhoneNumber(value1);
         Mockito.verify(portalUserIdentifierRepository, Mockito.times(1))
-                .findByIdentifier(value2);
+                .findActiveByIdentifier(value2);
     }
 
     @Test
     void shouldNotFormatUsername() {
-        Mockito.when(portalUserIdentifierRepository.findByIdentifier(Mockito.anyString())).thenReturn(Optional.empty());
+        Mockito.when(portalUserIdentifierRepository.findActiveByIdentifier(Mockito.anyString())).thenReturn(Optional.empty());
 
         Mockito.when(uniqueIdentifier.value()).thenReturn(UserIdentifierType.USERNAME);
         validator.initialize(uniqueIdentifier);
@@ -71,26 +71,26 @@ class UniqueIdentifierValidatorTest extends ComponentTest {
 
         Mockito.verify(phoneNumberService, Mockito.never()).formatPhoneNumber(Mockito.anyString());
         Mockito.verify(portalUserIdentifierRepository, Mockito.times(1))
-                .findByIdentifier(value1);
+                .findActiveByIdentifier(value1);
     }
 
     @Test
     void shouldBeValid() {
-        Mockito.when(portalUserIdentifierRepository.findByIdentifier(Mockito.anyString())).thenReturn(Optional.empty());
+        Mockito.when(portalUserIdentifierRepository.findActiveByIdentifier(Mockito.anyString())).thenReturn(Optional.empty());
 
         String value1 = "1234";
         assertTrue(validator.isValid(value1, null));
         Mockito.verify(portalUserIdentifierRepository, Mockito.times(1))
-                .findByIdentifier(value1);
+                .findActiveByIdentifier(value1);
     }
 
     @Test
     void shouldBeInValid() {
-        Mockito.when(portalUserIdentifierRepository.findByIdentifier(Mockito.anyString())).thenReturn(Optional.of(new PortalUserIdentifier()));
+        Mockito.when(portalUserIdentifierRepository.findActiveByIdentifier(Mockito.anyString())).thenReturn(Optional.of(new PortalUserIdentifier()));
 
         String value1 = "1234";
         assertFalse(validator.isValid(value1, null));
         Mockito.verify(portalUserIdentifierRepository, Mockito.times(1))
-                .findByIdentifier(value1);
+                .findActiveByIdentifier(value1);
     }
 }

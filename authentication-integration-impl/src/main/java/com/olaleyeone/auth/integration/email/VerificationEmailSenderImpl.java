@@ -60,7 +60,7 @@ public class VerificationEmailSenderImpl implements VerificationEmailSender {
         if (defaultTemplate != null) {
             return defaultTemplate;
         }
-        return defaultTemplate = StreamUtils.copyToString(getClass().getResourceAsStream("/email/email-verification-code.html"),
+        return defaultTemplate = StreamUtils.copyToString(getClass().getResourceAsStream("/email/email-verification-code.ftl.html"),
                 Charset.forName("utf-8"));
     }
 }
