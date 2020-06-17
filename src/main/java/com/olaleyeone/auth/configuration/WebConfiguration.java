@@ -1,7 +1,6 @@
 package com.olaleyeone.auth.configuration;
 
 import com.github.olaleyeone.auth.interceptors.AccessConstraintHandlerInterceptor;
-import com.github.olaleyeone.auth.interceptors.RemoteAddressConstraintHandlerInterceptor;
 import com.github.olaleyeone.entitysearch.configuration.SearchConfiguration;
 import com.olaleyeone.auth.interceptor.TaskContextHandlerInterceptor;
 import org.springdoc.webmvc.api.OpenApiResource;
@@ -41,7 +40,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
         registry.addInterceptor(beanFactory.createBean(TaskContextHandlerInterceptor.class));
-        registry.addInterceptor(beanFactory.createBean(RemoteAddressConstraintHandlerInterceptor.class));
+//        registry.addInterceptor(beanFactory.createBean(RemoteAddressConstraintHandlerInterceptor.class));
         AccessConstraintHandlerInterceptor accessConstraintHandlerInterceptor = new AccessConstraintHandlerInterceptor(
                 applicationContext,
                 Arrays.asList(BasicErrorController.class,

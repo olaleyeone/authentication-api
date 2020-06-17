@@ -15,13 +15,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@ComponentScan("com.olaleyeone.auth.listeners")
+@ComponentScan({
+        "com.olaleyeone.auth.messaging"
+})
 public class KafkaProducerConfig {
 
     @Value(value = "${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;
 
-//    @Bean
+    //    @Bean
     public <E> ProducerFactory<String, E> objectProducerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(

@@ -4,5 +4,5 @@
 
 # authentication-api
 
-###Docker build
+### Docker build
 ```docker build . -t authentication-api```

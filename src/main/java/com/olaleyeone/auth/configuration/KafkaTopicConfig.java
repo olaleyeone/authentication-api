@@ -16,8 +16,8 @@ public class KafkaTopicConfig {
     @Value(value = "${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;
 
-    @Value("${new_user.topic.name}")
-    private String newUserTopic;
+    @Value("${user.topic.name}")
+    private String userTopic;
 
     @Bean
     public KafkaAdmin kafkaAdmin() {
@@ -28,6 +28,6 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic topic1() {
-        return new NewTopic(newUserTopic, 1, (short) 1);
+        return new NewTopic(userTopic, 1, (short) 1);
     }
 }

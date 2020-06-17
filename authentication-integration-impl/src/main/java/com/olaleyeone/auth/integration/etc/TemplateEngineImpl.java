@@ -1,5 +1,7 @@
 package com.olaleyeone.auth.integration.etc;
 
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateExceptionHandler;
@@ -9,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringReader;
 import java.util.Map;
 
 public class TemplateEngineImpl implements TemplateEngine {
@@ -17,11 +18,14 @@ public class TemplateEngineImpl implements TemplateEngine {
     final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final Configuration configuration;
+    private final TemplateLoader templateLoader;
 
     public TemplateEngineImpl() {
         configuration = new Configuration(Configuration.VERSION_2_3_22);
         configuration.setDefaultEncoding("UTF-8");
         configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+        templateLoader = new ClassTemplateLoader(getClass().getClassLoader(), "/templates/email/");
+        configuration.setTemplateLoader(templateLoader);
     }
 
     @Override
@@ -31,8 +35,8 @@ public class TemplateEngineImpl implements TemplateEngine {
 
     @SneakyThrows
     @Override
-    public byte[] getBytes(String templateStr, Map<String, Object> bindings) {
-        Template tpl = new Template(null, new StringReader(templateStr), configuration);
+    public byte[] getBytes(String template, Map<String, Object> bindings) {
+        Template tpl = configuration.getTemplate(template);
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         OutputStreamWriter writer = new OutputStreamWriter(bout);
         tpl.process(bindings, writer);

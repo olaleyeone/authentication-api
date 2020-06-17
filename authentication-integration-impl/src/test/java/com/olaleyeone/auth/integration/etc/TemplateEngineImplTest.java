@@ -21,13 +21,13 @@ class TemplateEngineImplTest extends ComponentTest {
     @Test
     void getAsString() {
         String name = faker.funnyName().name();
-        String result = templateEngine.getAsString("Hello ${user}", Collections.singletonMap("user", name));
+        String result = templateEngine.getAsString("template.ftl.html", Collections.singletonMap("user", name));
         assertEquals(String.format("Hello %s", name), result);
     }
 
     @Test
     void testMissingParam() {
         assertThrows(InvalidReferenceException.class,
-                () -> templateEngine.getAsString("Hello ${user}", Collections.emptyMap()));
+                () -> templateEngine.getAsString("template.ftl.html", Collections.emptyMap()));
     }
 }
