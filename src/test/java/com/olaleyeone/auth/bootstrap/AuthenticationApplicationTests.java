@@ -1,6 +1,7 @@
 package com.olaleyeone.auth.bootstrap;
 
 import com.olaleyeone.auth.messaging.listeners.UserPublisherJob;
+import com.olaleyeone.auth.messaging.producers.UserPublisher;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
@@ -8,6 +9,7 @@ import org.hibernate.tool.schema.TargetType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.persistence.EntityManagerFactory;
@@ -27,10 +29,13 @@ class AuthenticationApplicationTests {
     private EntityManagerFactory entityManagerFactory;
 
     @Autowired
-    private UserPublisherJob userPublisherJob;
+    public ApplicationContext applicationContext;
 
     @Test
     void contextLoads() throws IOException {
+        applicationContext.getBean(UserPublisher.class);
+        applicationContext.getBean(UserPublisherJob.class);
+
         Map<String, String> settings = new HashMap<>();
         settings.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQL10Dialect");
         settings.put("hibernate.physical_naming_strategy", "org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy");
