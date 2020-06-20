@@ -1,10 +1,10 @@
 package com.olaleyeone.auth.configuration;
 
+import com.github.olaleyeone.advice.ErrorAdvice;
 import com.github.olaleyeone.auth.interceptors.AccessConstraintHandlerInterceptor;
 import com.github.olaleyeone.configuration.BeanValidationConfiguration;
 import com.github.olaleyeone.configuration.JacksonConfiguration;
 import com.github.olaleyeone.configuration.PredicateConfiguration;
-import com.github.olaleyeone.configuration.SearchConfiguration;
 import com.github.olaleyeone.interceptor.TaskContextHandlerInterceptor;
 import org.springdoc.webmvc.api.OpenApiResource;
 import org.springdoc.webmvc.ui.SwaggerWelcome;
@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -23,7 +24,6 @@ import java.util.Arrays;
 @Configuration
 @ComponentScan({
         "com.olaleyeone.auth.controller",
-        "com.olaleyeone.auth.advice",
         "com.olaleyeone.auth.validator",
         "com.olaleyeone.auth.response.handler",
         "com.olaleyeone.auth.security.authorizer",
@@ -33,8 +33,7 @@ import java.util.Arrays;
         RequestMetadataConfiguration.class,
         BeanValidationConfiguration.class,
         JacksonConfiguration.class,
-        PredicateConfiguration.class,
-        SearchConfiguration.class
+        PredicateConfiguration.class
 })
 public class WebConfiguration implements WebMvcConfigurer {
 
@@ -54,5 +53,10 @@ public class WebConfiguration implements WebMvcConfigurer {
         );
         beanFactory.autowireBean(accessConstraintHandlerInterceptor);
         registry.addInterceptor(accessConstraintHandlerInterceptor);
+    }
+
+    @Bean
+    public ErrorAdvice errorAdvice() {
+        return new ErrorAdvice();
     }
 }

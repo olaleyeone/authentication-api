@@ -1,7 +1,9 @@
 package com.olaleyeone.auth.configuration;
 
+import com.github.olaleyeone.configuration.EntitySearchConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
@@ -14,5 +16,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         "com.olaleyeone.auth.data",
         "com.olaleyeone.audittrail.entity"
 })
+@Import(EntitySearchConfiguration.class)
 public class DataConfiguration {
 }

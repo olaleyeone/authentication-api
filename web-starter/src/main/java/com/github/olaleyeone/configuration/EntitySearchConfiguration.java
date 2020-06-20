@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.persistence.EntityManager;
 
 @Configuration
-public class SearchConfiguration {
+public class EntitySearchConfiguration {
 
     @Bean
     public JpaQuerySource jpaQuerySource(EntityManager entityManager) {

@@ -6,12 +6,10 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.hibernate.tool.schema.TargetType;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.persistence.EntityManagerFactory;
@@ -25,10 +23,6 @@ import java.util.Map;
 
 @ActiveProfiles("test")
 @SpringBootTest
-@EmbeddedKafka(
-        bootstrapServersProperty = "spring.kafka.bootstrap-servers",
-        topics = {"${user.topic.name}", "${task.publish_users.topic.name}"})
-@Disabled
 class AuthenticationApplicationTests {
 
     @Autowired

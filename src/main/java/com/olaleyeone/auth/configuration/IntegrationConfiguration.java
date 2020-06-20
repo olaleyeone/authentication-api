@@ -10,11 +10,13 @@ import com.olaleyeone.auth.integration.etc.TemplateEngine;
 import com.olaleyeone.auth.integration.etc.TemplateEngineImpl;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
 @Import({KafkaProducerConfig.class, KafkaTopicConfig.class})
+@ComponentScan({"com.olaleyeone.auth.messaging"})
 public class IntegrationConfiguration {
 
     @Bean

@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.advice;
+package com.github.olaleyeone.advice;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.olaleyeone.rest.ApiResponse;

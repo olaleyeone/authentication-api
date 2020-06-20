@@ -8,8 +8,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @Import({
-        DataConfiguration.class,
-        ServiceConfiguration.class,
+        AppConfiguration.class,
         AuditTrailConfiguration.class,
         IntegrationConfiguration.class,
         WebConfiguration.class,

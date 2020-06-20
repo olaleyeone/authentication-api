@@ -4,6 +4,7 @@ package com.olaleyeone.auth.controllertest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
+import com.github.olaleyeone.advice.ErrorAdvice;
 import com.github.olaleyeone.auth.data.AccessClaims;
 import com.github.olaleyeone.auth.interceptors.AccessConstraintHandlerInterceptor;
 import com.github.olaleyeone.configuration.BeanValidationConfiguration;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -76,8 +78,7 @@ public class ControllerTest {
 
     @Configuration
     @ComponentScan({
-            "com.olaleyeone.auth.controller",
-            "com.olaleyeone.auth.advice"
+            "com.olaleyeone.auth.controller"
     })
     @Import({
             RequestMetadataConfiguration.class,
@@ -105,6 +106,11 @@ public class ControllerTest {
             );
             beanFactory.autowireBean(accessConstraintHandlerInterceptor);
             registry.addInterceptor(accessConstraintHandlerInterceptor);
+        }
+
+        @Bean
+        public ErrorAdvice errorAdvice() {
+            return new ErrorAdvice();
         }
     }
 }
