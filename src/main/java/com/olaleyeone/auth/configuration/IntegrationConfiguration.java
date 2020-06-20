@@ -19,7 +19,7 @@ public class IntegrationConfiguration {
 
     @Bean
     public PhoneNumberService phoneNumberService() {
-        return new PhoneNumberServiceImpl("US");
+        return new PhoneNumberServiceImpl("NG");
     }
 
     @Bean

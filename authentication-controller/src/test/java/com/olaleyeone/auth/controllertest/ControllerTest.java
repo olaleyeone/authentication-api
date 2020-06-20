@@ -6,10 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import com.github.olaleyeone.auth.data.AccessClaims;
 import com.github.olaleyeone.auth.interceptors.AccessConstraintHandlerInterceptor;
-import com.olaleyeone.auth.configuration.AdditionalComponentsConfiguration;
-import com.olaleyeone.auth.configuration.BeanValidationConfiguration;
-import com.github.olaleyeone.entitysearch.util.PredicateExtractor;
-import com.github.olaleyeone.entitysearch.util.SearchFilterPredicateExtractor;
+import com.github.olaleyeone.configuration.BeanValidationConfiguration;
+import com.github.olaleyeone.configuration.JacksonConfiguration;
+import com.github.olaleyeone.configuration.PredicateConfiguration;
+import com.olaleyeone.auth.configuration.RequestMetadataConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.mockito.internal.creation.bytebuddy.MockAccess;
@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -81,8 +80,10 @@ public class ControllerTest {
             "com.olaleyeone.auth.advice"
     })
     @Import({
-            AdditionalComponentsConfiguration.class,
+            RequestMetadataConfiguration.class,
             BeanValidationConfiguration.class,
+            JacksonConfiguration.class,
+            PredicateConfiguration.class,
             SecurityMockConfig.class,
             ValidatorMockConfig.class,
             ServiceMockConfig.class,
@@ -104,16 +105,6 @@ public class ControllerTest {
             );
             beanFactory.autowireBean(accessConstraintHandlerInterceptor);
             registry.addInterceptor(accessConstraintHandlerInterceptor);
-        }
-
-        @Bean
-        public PredicateExtractor predicateExtractor(ApplicationContext applicationContext) {
-            return applicationContext.getAutowireCapableBeanFactory().createBean(PredicateExtractor.class);
-        }
-
-        @Bean
-        public SearchFilterPredicateExtractor searchFilterPredicateExtractor(ApplicationContext applicationContext) {
-            return applicationContext.getAutowireCapableBeanFactory().createBean(SearchFilterPredicateExtractor.class);
         }
     }
 }

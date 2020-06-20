@@ -1,8 +1,11 @@
 package com.olaleyeone.auth.configuration;
 
 import com.github.olaleyeone.auth.interceptors.AccessConstraintHandlerInterceptor;
-import com.github.olaleyeone.entitysearch.configuration.SearchConfiguration;
-import com.olaleyeone.auth.interceptor.TaskContextHandlerInterceptor;
+import com.github.olaleyeone.configuration.BeanValidationConfiguration;
+import com.github.olaleyeone.configuration.JacksonConfiguration;
+import com.github.olaleyeone.configuration.PredicateConfiguration;
+import com.github.olaleyeone.configuration.SearchConfiguration;
+import com.github.olaleyeone.interceptor.TaskContextHandlerInterceptor;
 import org.springdoc.webmvc.api.OpenApiResource;
 import org.springdoc.webmvc.ui.SwaggerWelcome;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +30,10 @@ import java.util.Arrays;
         "com.olaleyeone.auth.search"
 })
 @Import({
-        AdditionalComponentsConfiguration.class,
+        RequestMetadataConfiguration.class,
         BeanValidationConfiguration.class,
+        JacksonConfiguration.class,
+        PredicateConfiguration.class,
         SearchConfiguration.class
 })
 public class WebConfiguration implements WebMvcConfigurer {
