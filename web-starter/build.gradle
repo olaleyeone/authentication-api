@@ -22,8 +22,8 @@ jacocoTestCoverageVerification {
             excludes = [
                     "com.github.olaleyeone.rest.exception.*",
                     "com.github.olaleyeone.configuration.*",
-                    "com.github.olaleyeone.converter.*",
-                    "com.github.olaleyeone.advice.*"
+                    "com.github.olaleyeone.advice.*",
+                    "com.github.olaleyeone.entitysearch.util.OffsetBasedPageRequest"
             ]
         }
     }

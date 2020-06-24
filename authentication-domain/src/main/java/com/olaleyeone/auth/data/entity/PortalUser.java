@@ -3,6 +3,7 @@ package com.olaleyeone.auth.data.entity;
 import com.olaleyeone.audittrail.Audited;
 import com.olaleyeone.audittrail.api.IgnoreData;
 import com.olaleyeone.audittrail.embeddable.Audit;
+import com.olaleyeone.auth.data.enums.Gender;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -22,12 +23,15 @@ public class PortalUser implements Audited {
     @IgnoreData
     private String password;
 
-    @Column(nullable = false)
+    private String displayName;
+
     private String firstName;
 
     private String lastName;
 
     private String otherName;
+
+    private Gender gender;
 
     @Delegate
     @Embedded

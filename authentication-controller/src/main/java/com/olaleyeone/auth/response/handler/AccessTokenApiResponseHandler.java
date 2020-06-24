@@ -33,7 +33,7 @@ public class AccessTokenApiResponseHandler {
     @JwtToken(JwtTokenType.REFRESH)
     private final TokenGenerator refreshTokenJwtService;
 
-    @Value("${context.path}")
+    @Value("${deployment.path}")
     private final String contextPath;
 
     @Value("${cookie.flags}")

@@ -32,8 +32,9 @@ import java.util.Arrays;
 @Import({
         RequestMetadataConfiguration.class,
         BeanValidationConfiguration.class,
+        PredicateConfiguration.class,
         JacksonConfiguration.class,
-        PredicateConfiguration.class
+        OpenApiConfiguration.class
 })
 public class WebConfiguration implements WebMvcConfigurer {
 

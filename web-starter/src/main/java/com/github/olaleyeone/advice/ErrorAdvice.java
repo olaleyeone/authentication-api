@@ -37,7 +37,7 @@ public class ErrorAdvice {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleInvalidMethodArgument(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiResponse<Map<String, List<ErrorMessage>>>> handleInvalidMethodArgument(MethodArgumentNotValidException ex) {
         BindingResult bindingResult = ex.getBindingResult();
 
         ApiResponse<Map<String, List<ErrorMessage>>> apiResponse = new ApiResponse<>();
@@ -62,7 +62,7 @@ public class ErrorAdvice {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
+    public ResponseEntity<ApiResponse<Map<String, List<ErrorMessage>>>> handleConstraintViolation(ConstraintViolationException ex) {
 
         ApiResponse<Map<String, List<ErrorMessage>>> apiResponse = new ApiResponse<>();
 
@@ -80,7 +80,7 @@ public class ErrorAdvice {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Object> handleConstraintViolation(
+    public ResponseEntity<ApiResponse<List<String>>> handleConstraintViolation(
             HttpMessageNotReadableException ex,
             HttpServletRequest request) {
         ApiResponse<List<String>> apiResponse = new ApiResponse<>();

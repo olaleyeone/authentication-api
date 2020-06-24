@@ -5,22 +5,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 
 @Data
 @NoArgsConstructor
 public class UserApiResponse {
 
     private Long id;
+    private String displayName;
     private String firstName;
     private String lastName;
 
     private List<UserIdentifierApiResponse> identifiers;
 
-    private List<Map.Entry<String, String>> data;
+    private List<UserDataApiResponse> data;
 
     public UserApiResponse(PortalUser portalUser) {
         this.id = portalUser.getId();
+        this.displayName = portalUser.getDisplayName();
         this.firstName = portalUser.getFirstName();
         this.lastName = portalUser.getLastName();
     }

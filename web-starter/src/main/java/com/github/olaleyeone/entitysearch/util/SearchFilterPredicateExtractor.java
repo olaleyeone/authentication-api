@@ -4,6 +4,7 @@ import com.github.olaleyeone.entitysearch.SearchFilter;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.util.MultiValueMap;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
@@ -15,6 +16,10 @@ public class SearchFilterPredicateExtractor {
 
     public <E, Q extends EntityPath<E>> Predicate getPredicate(SearchFilter<E, Q> binderCustomizer) {
         return predicateExtractor.getPredicate(binderCustomizer, getEntityType(binderCustomizer));
+    }
+
+    public <E, Q extends EntityPath<E>> Predicate getPredicate(SearchFilter<E, Q> binderCustomizer, MultiValueMap<String, String> parameters) {
+        return predicateExtractor.getPredicate(binderCustomizer, parameters, getEntityType(binderCustomizer));
     }
 
     private static <E, Q extends EntityPath<E>> Class<E> getEntityType(SearchFilter<E, Q> binderCustomizer) {

@@ -56,8 +56,8 @@ dependencies {
     implementation(project(":web-starter"))
 
     testImplementation(project(":${projectName}-test-starter"))
-    implementation "org.springframework:spring-test:$springVersion"
     testImplementation "javax.servlet:javax.servlet-api:$servletVersion"
+    testImplementation "org.springframework:spring-test:$springVersion"
     testRuntimeOnly "org.hibernate.validator:hibernate-validator:$hibernateValidator"
     testRuntimeOnly "org.apache.tomcat.embed:tomcat-embed-el:9.0.34"
 }

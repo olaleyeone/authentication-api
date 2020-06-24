@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.dto;
 
+import com.olaleyeone.auth.data.enums.Gender;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.constraints.UniqueIdentifier;
 import com.olaleyeone.auth.constraints.ValidEmailVerificationCode;
@@ -16,7 +17,8 @@ public class UserRegistrationApiRequest {
 
     private String password;
 
-    @NotBlank
+    private String displayName;
+
     private String firstName;
 
     private String lastName;
@@ -33,6 +35,8 @@ public class UserRegistrationApiRequest {
     private String email;
 
     private String emailVerificationCode;
+
+    private Gender gender;
 
     private List<UserDataApiRequest> data;
 }

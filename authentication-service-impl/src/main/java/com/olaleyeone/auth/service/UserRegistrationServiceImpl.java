@@ -5,8 +5,8 @@ import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.auth.data.entity.*;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.dto.UserRegistrationApiRequest;
-import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
+import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.repository.PortalUserIdentifierVerificationRepository;
 import com.olaleyeone.auth.repository.PortalUserRepository;
@@ -42,12 +42,14 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     public PortalUserAuthentication registerUser(UserRegistrationApiRequest dto, RequestMetadata requestMetadata) {
         taskContextProvider.get().setDescription(String.format("Register user with email %s", dto.getEmail()));
         PortalUser portalUser = new PortalUser();
+        portalUser.setDisplayName(StringUtils.normalizeSpace(dto.getDisplayName()));
         portalUser.setFirstName(StringUtils.normalizeSpace(dto.getFirstName()));
         portalUser.setLastName(getNonEmptyString(dto.getLastName()));
         portalUser.setOtherName(getNonEmptyString(dto.getOtherName()));
         if (StringUtils.isNotBlank(dto.getPassword())) {
             portalUser.setPassword(hashService.generateHash(dto.getPassword()));
         }
+        portalUser.setGender(dto.getGender());
 
         portalUserRepository.save(portalUser);
 

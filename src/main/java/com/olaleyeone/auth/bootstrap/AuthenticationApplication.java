@@ -12,7 +12,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
         AuditTrailConfiguration.class,
         IntegrationConfiguration.class,
         WebConfiguration.class,
-        OpenApiConfiguration.class,
         SecurityConfiguration.class
 })
 @EnableAsync

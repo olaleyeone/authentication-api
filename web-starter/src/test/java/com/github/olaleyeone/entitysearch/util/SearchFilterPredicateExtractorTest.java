@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 class SearchFilterPredicateExtractorTest extends EntityTest {
 
@@ -34,5 +36,13 @@ class SearchFilterPredicateExtractorTest extends EntityTest {
         searchFilterPredicateExtractor.getPredicate(binderCustomizer);
         Mockito.verify(predicateExtractor, Mockito.times(1))
                 .getPredicate(binderCustomizer, EntityRecord.class);
+    }
+
+    @Test
+    void getPredicateWithParams() {
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+        searchFilterPredicateExtractor.getPredicate(binderCustomizer, parameters);
+        Mockito.verify(predicateExtractor, Mockito.times(1))
+                .getPredicate(binderCustomizer, parameters, EntityRecord.class);
     }
 }
