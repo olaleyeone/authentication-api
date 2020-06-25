@@ -10,6 +10,7 @@ import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class LocalDateTimeTypeAdapter extends TypeAdapter<LocalDateTime> {
 
@@ -29,7 +30,7 @@ public class LocalDateTimeTypeAdapter extends TypeAdapter<LocalDateTime> {
             out.nullValue();
             return;
         }
-        out.value(value.toString());
+        out.value(value.format(DateTimeFormatter.ISO_DATE_TIME));
     }
 
     @Override

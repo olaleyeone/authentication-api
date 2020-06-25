@@ -30,7 +30,7 @@ public class OffsetDateTimeTypeAdapter extends TypeAdapter<OffsetDateTime> {
             out.nullValue();
             return;
         }
-        out.value(value.toString());
+        out.value(value.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
     }
 
     @Override
