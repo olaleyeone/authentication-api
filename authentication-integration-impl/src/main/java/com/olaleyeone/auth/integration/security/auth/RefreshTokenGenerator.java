@@ -1,10 +1,12 @@
-package com.olaleyeone.auth.integration.security;
+package com.olaleyeone.auth.integration.security.auth;
 
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.entity.SignatureKey;
 import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.data.dto.JwtDto;
+import com.olaleyeone.auth.integration.security.AuthTokenGenerator;
+import com.olaleyeone.auth.integration.security.SimpleSigningKeyResolver;
 import com.olaleyeone.auth.service.KeyGenerator;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -17,15 +19,14 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Builder
-public class AccessTokenGenerator implements TokenGenerator {
+public class RefreshTokenGenerator implements AuthTokenGenerator {
 
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final KeyGenerator keyGenerator;
     private final TaskContextFactory taskContextFactory;
-
     private final SimpleSigningKeyResolver signingKeyResolver;
-    private final SimpleJwsGenerator jwsGenerator;
+    private final AuthJwsGenerator jwsGenerator;
 
     @PostConstruct
     public void init() {
@@ -34,10 +35,10 @@ public class AccessTokenGenerator implements TokenGenerator {
             return;
         }
         taskContextFactory.startBackgroundTask(
-                "INITIALIZE ACCESS TOKEN KEY",
+                "INITIALIZE REFRESH TOKEN KEY",
                 null,
                 () -> {
-                    Map.Entry<Key, SignatureKey> keyEntry = keyGenerator.generateKey(JwtTokenType.ACCESS);
+                    Map.Entry<Key, SignatureKey> keyEntry = keyGenerator.generateKey(JwtTokenType.REFRESH);
                     jwsGenerator.updateKey(keyEntry);
                     signingKeyResolver.addKey(keyEntry.getValue());
                 });
@@ -46,8 +47,8 @@ public class AccessTokenGenerator implements TokenGenerator {
     @Override
     public JwtDto generateJwt(RefreshToken refreshToken) {
         JwtDto jwtDto = new JwtDto();
-        jwtDto.setSecondsTillExpiry(refreshToken.getSecondsTillAccessExpiry());
-        jwtDto.setToken(jwsGenerator.createJwt(refreshToken, refreshToken.getAccessExpiryInstant()));
+        jwtDto.setSecondsTillExpiry(refreshToken.getSecondsTillExpiry());
+        jwtDto.setToken(jwsGenerator.createJwt(refreshToken, refreshToken.getExpiryInstant()));
         return jwtDto;
     }
 

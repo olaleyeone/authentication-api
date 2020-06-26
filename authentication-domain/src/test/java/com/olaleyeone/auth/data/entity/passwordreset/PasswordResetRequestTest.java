@@ -5,11 +5,14 @@ import com.olaleyeone.auth.entitytest.EntityTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.persistence.PersistenceException;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PasswordResetRequestTest extends EntityTest {
 
@@ -39,5 +42,28 @@ class PasswordResetRequestTest extends EntityTest {
         saveAndFlush(passwordResetRequest);
         assertNotNull(passwordResetRequest);
         assertNotNull(passwordResetRequest.getCreatedOn());
+    }
+
+    @Test
+    void prePersistWithoutIdentifier() {
+        passwordResetRequest.setPortalUserIdentifier(null);
+        assertThrows(PersistenceException.class, ()->saveAndFlush(passwordResetRequest));
+    }
+
+    @Test
+    public void getExpiryInstant() {
+        PasswordResetRequest passwordResetRequest = new PasswordResetRequest();
+        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(20);
+        passwordResetRequest.setExpiresOn(expiresAt);
+        assertEquals(expiresAt.atZone(ZoneId.systemDefault()).toInstant(), passwordResetRequest.getExpiryInstant());
+    }
+
+    @Test
+    public void getSecondsTillExpiry() {
+        PasswordResetRequest passwordResetRequest = new PasswordResetRequest();
+        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(20);
+        passwordResetRequest.setExpiresOn(expiresAt);
+        long secondsTillExpiry = Instant.now().until(expiresAt.atZone(ZoneId.systemDefault()).toInstant(), ChronoUnit.SECONDS);
+        assertTrue((secondsTillExpiry - passwordResetRequest.getSecondsTillExpiry()) <= 1);
     }
 }

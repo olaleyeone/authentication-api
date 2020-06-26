@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.integration.security;
+package com.olaleyeone.auth.integration.security.auth;
 
 import com.github.olaleyeone.auth.data.AccessClaims;
 import com.github.olaleyeone.auth.data.AccessClaimsExtractor;

@@ -1,7 +1,8 @@
-package com.olaleyeone.auth.integration.security;
+package com.olaleyeone.auth.integration.security.auth;
 
 import com.github.olaleyeone.auth.data.AccessClaims;
 import com.google.gson.Gson;
+import com.olaleyeone.auth.integration.security.auth.AccessClaimsExtractorImpl;
 import com.olaleyeone.auth.test.ComponentTest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

@@ -1,10 +1,12 @@
-package com.olaleyeone.auth.integration.security;
+package com.olaleyeone.auth.integration.security.passwordreset;
 
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
-import com.olaleyeone.auth.data.entity.RefreshToken;
-import com.olaleyeone.auth.data.entity.SignatureKey;
-import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.data.dto.JwtDto;
+import com.olaleyeone.auth.data.entity.SignatureKey;
+import com.olaleyeone.auth.data.entity.passwordreset.PasswordResetRequest;
+import com.olaleyeone.auth.data.enums.JwtTokenType;
+import com.olaleyeone.auth.integration.security.PasswordResetTokenGenerator;
+import com.olaleyeone.auth.integration.security.SimpleSigningKeyResolver;
 import com.olaleyeone.auth.service.KeyGenerator;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +19,15 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Builder
-public class RefreshTokenGenerator implements TokenGenerator {
+public class PasswordResetTokenGeneratorImpl implements PasswordResetTokenGenerator {
 
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final KeyGenerator keyGenerator;
     private final TaskContextFactory taskContextFactory;
+
     private final SimpleSigningKeyResolver signingKeyResolver;
-    private final SimpleJwsGenerator jwsGenerator;
+    private final PasswordResetJwsGenerator jwsGenerator;
 
     @PostConstruct
     public void init() {
@@ -33,20 +36,20 @@ public class RefreshTokenGenerator implements TokenGenerator {
             return;
         }
         taskContextFactory.startBackgroundTask(
-                "INITIALIZE REFRESH TOKEN KEY",
+                "INITIALIZE PASSWORD RESET TOKEN KEY",
                 null,
                 () -> {
-                    Map.Entry<Key, SignatureKey> keyEntry = keyGenerator.generateKey(JwtTokenType.REFRESH);
+                    Map.Entry<Key, SignatureKey> keyEntry = keyGenerator.generateKey(JwtTokenType.PASSWORD_RESET);
                     jwsGenerator.updateKey(keyEntry);
                     signingKeyResolver.addKey(keyEntry.getValue());
                 });
     }
 
     @Override
-    public JwtDto generateJwt(RefreshToken refreshToken) {
+    public JwtDto generateJwt(PasswordResetRequest passwordResetRequest) {
         JwtDto jwtDto = new JwtDto();
-        jwtDto.setSecondsTillExpiry(refreshToken.getSecondsTillExpiry());
-        jwtDto.setToken(jwsGenerator.createJwt(refreshToken, refreshToken.getExpiryInstant()));
+        jwtDto.setSecondsTillExpiry(passwordResetRequest.getSecondsTillExpiry());
+        jwtDto.setToken(jwsGenerator.createJwt(passwordResetRequest, passwordResetRequest.getExpiryInstant()));
         return jwtDto;
     }
 

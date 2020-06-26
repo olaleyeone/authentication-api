@@ -1,7 +1,7 @@
-package com.olaleyeone.auth.integration.security;
+package com.olaleyeone.auth.integration.security.passwordreset;
 
-import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.entity.SignatureKey;
+import com.olaleyeone.auth.data.entity.passwordreset.PasswordResetRequest;
 import io.jsonwebtoken.Jwts;
 
 import java.security.Key;
@@ -9,7 +9,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
 
-public class SimpleJwsGenerator {
+public class PasswordResetJwsGenerator {
 
     private Key key;
     private String keyId;
@@ -23,12 +23,12 @@ public class SimpleJwsGenerator {
         keyId = keyEntry.getValue().getKeyId();
     }
 
-    public String createJwt(RefreshToken refreshToken, Instant expiryInstant) {
+    public String createJwt(PasswordResetRequest passwordResetRequest, Instant expiryInstant) {
         Instant now = Instant.now();
         return Jwts.builder()
                 .setHeaderParam("kid", keyId)
-                .setId(refreshToken.getId().toString())
-                .setSubject(refreshToken.getPortalUser().getId().toString())
+                .setId(passwordResetRequest.getId().toString())
+                .setSubject(passwordResetRequest.getPortalUser().getId().toString())
                 .setIssuer("doorbell")
 //                .setAudience("all")
                 .setIssuedAt(Date.from(now))

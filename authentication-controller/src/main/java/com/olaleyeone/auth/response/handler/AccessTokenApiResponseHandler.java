@@ -3,7 +3,7 @@ package com.olaleyeone.auth.response.handler;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.dto.JwtDto;
-import com.olaleyeone.auth.integration.security.TokenGenerator;
+import com.olaleyeone.auth.integration.security.AuthTokenGenerator;
 import com.olaleyeone.auth.qualifier.JwtToken;
 import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
@@ -28,10 +28,10 @@ public class AccessTokenApiResponseHandler {
     private final RefreshTokenService refreshTokenService;
 
     @JwtToken(JwtTokenType.ACCESS)
-    private final TokenGenerator accessTokenJwtService;
+    private final AuthTokenGenerator accessTokenJwtService;
 
     @JwtToken(JwtTokenType.REFRESH)
-    private final TokenGenerator refreshTokenJwtService;
+    private final AuthTokenGenerator refreshTokenJwtService;
 
     @Value("${deployment.path}")
     private final String contextPath;

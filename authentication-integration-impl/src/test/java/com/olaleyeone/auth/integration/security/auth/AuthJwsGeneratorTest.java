@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.integration.security;
+package com.olaleyeone.auth.integration.security.auth;
 
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.RefreshToken;
@@ -20,16 +20,16 @@ import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SimpleJwsGeneratorTest extends ComponentTest {
+class AuthJwsGeneratorTest extends ComponentTest {
 
-    private SimpleJwsGenerator jwsGenerator;
+    private AuthJwsGenerator jwsGenerator;
 
     private KeyPair keyPair;
     private SignatureKey signatureKey;
 
     @BeforeEach
     void setUp() throws NoSuchAlgorithmException {
-        jwsGenerator = new SimpleJwsGenerator();
+        jwsGenerator = new AuthJwsGenerator();
 
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
         kpg.initialize(2048);

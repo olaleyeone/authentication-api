@@ -4,7 +4,7 @@ import com.github.olaleyeone.auth.access.TrustedIpAddressAuthorizer;
 import com.github.olaleyeone.auth.data.AccessClaims;
 import com.github.olaleyeone.auth.data.AccessClaimsExtractor;
 import com.github.olaleyeone.auth.data.AuthorizedRequest;
-import com.olaleyeone.auth.integration.security.TokenGenerator;
+import com.olaleyeone.auth.integration.security.AuthTokenGenerator;
 import com.olaleyeone.auth.qualifier.JwtToken;
 import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.security.authorizer.NotClientTokenAuthorizer;
@@ -72,7 +72,7 @@ class SecurityMockConfig {
 
     @JwtToken(JwtTokenType.REFRESH)
     @Bean
-    public TokenGenerator jwtService() {
-        return Mockito.mock(TokenGenerator.class);
+    public AuthTokenGenerator jwtService() {
+        return Mockito.mock(AuthTokenGenerator.class);
     }
 }

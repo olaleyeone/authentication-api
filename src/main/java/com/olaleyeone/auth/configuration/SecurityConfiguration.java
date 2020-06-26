@@ -6,6 +6,12 @@ import com.google.gson.Gson;
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.integration.security.*;
+import com.olaleyeone.auth.integration.security.auth.AccessClaimsExtractorImpl;
+import com.olaleyeone.auth.integration.security.auth.AccessTokenGenerator;
+import com.olaleyeone.auth.integration.security.auth.RefreshTokenGenerator;
+import com.olaleyeone.auth.integration.security.auth.AuthJwsGenerator;
+import com.olaleyeone.auth.integration.security.passwordreset.PasswordResetJwsGenerator;
+import com.olaleyeone.auth.integration.security.passwordreset.PasswordResetTokenGeneratorImpl;
 import com.olaleyeone.auth.qualifier.JwtToken;
 import com.olaleyeone.auth.repository.SignatureKeyRepository;
 import com.olaleyeone.auth.service.KeyGenerator;
@@ -52,9 +58,9 @@ public class SecurityConfiguration {
 
     @JwtToken(JwtTokenType.ACCESS)
     @Bean
-    public TokenGenerator accessTokenGenerator(KeyGenerator keyGenerator, TaskContextFactory taskContextFactory) {
+    public AuthTokenGenerator accessTokenGenerator(KeyGenerator keyGenerator, TaskContextFactory taskContextFactory) {
         return AccessTokenGenerator.builder()
-                .jwsGenerator(new SimpleJwsGenerator())
+                .jwsGenerator(new AuthJwsGenerator())
                 .keyGenerator(keyGenerator)
                 .signingKeyResolver(accessTokenKeyResolver(null))
                 .taskContextFactory(taskContextFactory)
@@ -75,9 +81,9 @@ public class SecurityConfiguration {
 
     @JwtToken(JwtTokenType.REFRESH)
     @Bean
-    public TokenGenerator refreshTokenGenerator(KeyGenerator keyGenerator, TaskContextFactory taskContextFactory) {
+    public AuthTokenGenerator refreshTokenGenerator(KeyGenerator keyGenerator, TaskContextFactory taskContextFactory) {
         return RefreshTokenGenerator.builder()
-                .jwsGenerator(new SimpleJwsGenerator())
+                .jwsGenerator(new AuthJwsGenerator())
                 .keyGenerator(keyGenerator)
                 .signingKeyResolver(refreshTokenKeyResolver(null))
                 .taskContextFactory(taskContextFactory)
@@ -94,5 +100,28 @@ public class SecurityConfiguration {
     @Bean
     public SimpleSigningKeyResolver refreshTokenKeyResolver(SignatureKeyRepository signatureKeyRepository) {
         return new SimpleSigningKeyResolver(signatureKeyRepository, JwtTokenType.REFRESH);
+    }
+
+    @JwtToken(JwtTokenType.PASSWORD_RESET)
+    @Bean
+    public PasswordResetTokenGenerator passwordResetTokenGenerator(KeyGenerator keyGenerator, TaskContextFactory taskContextFactory) {
+        return PasswordResetTokenGeneratorImpl.builder()
+                .jwsGenerator(new PasswordResetJwsGenerator())
+                .keyGenerator(keyGenerator)
+                .signingKeyResolver(refreshTokenKeyResolver(null))
+                .taskContextFactory(taskContextFactory)
+                .build();
+    }
+
+    @JwtToken(JwtTokenType.PASSWORD_RESET)
+    @Bean
+    public AccessClaimsExtractor passwordResetTokenClaimsExtractor(Gson gson) {
+        return new AccessClaimsExtractorImpl(passwordResetTokenKeyResolver(null), gson);
+    }
+
+    @JwtToken(JwtTokenType.PASSWORD_RESET)
+    @Bean
+    public SimpleSigningKeyResolver passwordResetTokenKeyResolver(SignatureKeyRepository signatureKeyRepository) {
+        return new SimpleSigningKeyResolver(signatureKeyRepository, JwtTokenType.PASSWORD_RESET);
     }
 }
