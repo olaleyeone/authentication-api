@@ -36,6 +36,7 @@ class MailServiceImplTest extends ComponentTest {
         Mockito.doReturn(call).when(mailGunApi).sendMail(Mockito.any(), Mockito.any(), Mockito.any());
         Mockito.doReturn(Response.success(HttpStatus.OK.value(), null)).when(call).execute();
         HtmlEmailDto emailDto = new HtmlEmailDto();
+        emailDto.addRecipientEmails(faker.internet().emailAddress());
         mailService.sendEmail(emailDto);
     }
 
