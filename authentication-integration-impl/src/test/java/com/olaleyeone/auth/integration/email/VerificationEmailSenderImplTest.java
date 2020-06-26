@@ -3,6 +3,7 @@ package com.olaleyeone.auth.integration.email;
 import com.olaleyeone.audittrail.context.Action;
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
+import com.github.olaleyeone.mailsender.api.MailService;
 import com.olaleyeone.auth.integration.etc.TemplateEngine;
 import com.olaleyeone.auth.test.ComponentTest;
 import org.junit.jupiter.api.BeforeEach;

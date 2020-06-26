@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.integration.email;
+package com.github.olaleyeone.mailsender.api;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;

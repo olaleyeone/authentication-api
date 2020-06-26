@@ -4,7 +4,7 @@ import com.olaleyeone.audittrail.api.Activity;
 import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.RefreshToken;
-import com.olaleyeone.auth.dto.PasswordUpdateApiRequest;
+import com.olaleyeone.auth.data.dto.PasswordUpdateApiRequest;
 import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import com.olaleyeone.auth.repository.PortalUserRepository;

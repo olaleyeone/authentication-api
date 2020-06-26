@@ -1,14 +1,13 @@
-package com.olaleyeone.auth.integration.email;
+package com.github.olaleyeone.mailsender.impl;
 
-import com.olaleyeone.auth.dto.HtmlEmailDto;
-import com.olaleyeone.auth.test.ComponentTest;
+import com.github.olaleyeone.mailsender.api.HtmlEmailDto;
+import com.github.olaleyeone.mailsender.api.MailGunApiClient;
+import com.github.olaleyeone.mailsender.test.ComponentTest;
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.http.HttpStatus;
 import retrofit2.Call;
 import retrofit2.HttpException;
 import retrofit2.Response;
@@ -20,13 +19,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MailServiceImplTest extends ComponentTest {
 
-    @Mock
     private MailGunApiClient mailGunApi;
 
     private MailServiceImpl mailService;
 
     @BeforeEach
     void setUp() {
+        mailGunApi = Mockito.mock(MailGunApiClient.class);
         mailService = new MailServiceImpl(mailGunApi);
     }
 
@@ -34,7 +33,7 @@ class MailServiceImplTest extends ComponentTest {
     void sendEmailSuccessfully() throws IOException {
         Call<?> call = Mockito.mock(Call.class);
         Mockito.doReturn(call).when(mailGunApi).sendMail(Mockito.any(), Mockito.any(), Mockito.any());
-        Mockito.doReturn(Response.success(HttpStatus.OK.value(), null)).when(call).execute();
+        Mockito.doReturn(Response.success(200, null)).when(call).execute();
         HtmlEmailDto emailDto = new HtmlEmailDto();
         mailService.sendEmail(emailDto);
     }
@@ -43,7 +42,7 @@ class MailServiceImplTest extends ComponentTest {
     void sendEmailWithFailure() throws IOException {
         Call<?> call = Mockito.mock(Call.class);
         Mockito.doReturn(call).when(mailGunApi).sendMail(Mockito.any(), Mockito.any(), Mockito.any());
-        Mockito.doReturn(Response.error(HttpStatus.FORBIDDEN.value(), ResponseBody.create(
+        Mockito.doReturn(Response.error(403, ResponseBody.create(
                 MediaType.get("text/plain"),
                 faker.backToTheFuture().quote()
         ))).when(call).execute();

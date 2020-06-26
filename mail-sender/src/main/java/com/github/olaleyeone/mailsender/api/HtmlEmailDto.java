@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.dto;
+package com.github.olaleyeone.mailsender.api;
 
 import lombok.Data;
 

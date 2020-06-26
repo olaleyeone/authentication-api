@@ -4,7 +4,7 @@ import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.entity.SignatureKey;
 import com.olaleyeone.auth.data.enums.JwtTokenType;
-import com.olaleyeone.auth.dto.JwtDto;
+import com.olaleyeone.auth.data.dto.JwtDto;
 import com.olaleyeone.auth.service.KeyGenerator;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;

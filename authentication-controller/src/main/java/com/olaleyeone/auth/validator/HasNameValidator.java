@@ -1,7 +1,7 @@
 package com.olaleyeone.auth.validator;
 
 import com.olaleyeone.auth.constraints.HasName;
-import com.olaleyeone.auth.dto.UserRegistrationApiRequest;
+import com.olaleyeone.auth.data.dto.UserRegistrationApiRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 

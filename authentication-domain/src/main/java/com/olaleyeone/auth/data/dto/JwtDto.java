@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.dto;
+package com.olaleyeone.auth.data.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

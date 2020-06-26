@@ -3,7 +3,7 @@ package com.olaleyeone.auth.service;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
-import com.olaleyeone.auth.dto.LoginApiRequest;
+import com.olaleyeone.auth.data.dto.LoginApiRequest;
 import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.data.dto.RequestMetadata;
 import com.olaleyeone.auth.servicetest.ServiceTest;

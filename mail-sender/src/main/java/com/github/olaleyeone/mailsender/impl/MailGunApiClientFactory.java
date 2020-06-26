@@ -1,6 +1,6 @@
-package com.olaleyeone.auth.integration.email;
+package com.github.olaleyeone.mailsender.impl;
 
-import com.olaleyeone.auth.service.SettingService;
+import com.github.olaleyeone.mailsender.api.MailGunApiClient;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -12,7 +12,6 @@ import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.annotation.Value;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -27,28 +26,13 @@ public class MailGunApiClientFactory implements FactoryBean<MailGunApiClient> {
     @Getter(AccessLevel.NONE)
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final SettingService settingService;
-
-    @Value("${MAIL_GUN_MESSAGES_API_KEY}")
-    private String mailGunMessagesApiKey;
-
-    @Value("${MAIL_GUN_MESSAGES_URL}")
-    private String mailGunMessageBaseUrl;
-
-    @Value("${EMAIL_SENDER_ADDRESS}")
-    private String emailSenderAddress;
-
-    @Value("${EMAIL_SENDER_NAME}")
-    private String emailSenderName;
+    private final MailGunConfig mailGunConfig;
 
     private String bearerToken;
 
     @PostConstruct
     public void init() {
-        if (!mailGunMessageBaseUrl.endsWith("/")) {
-            mailGunMessageBaseUrl += "/";
-        }
-        bearerToken = Base64.getEncoder().encodeToString(("api:" + mailGunMessagesApiKey).getBytes());
+        bearerToken = Base64.getEncoder().encodeToString(("api:" + mailGunConfig.getMailGunMessagesApiKey()).getBytes());
     }
 
     @Override
@@ -64,7 +48,7 @@ public class MailGunApiClientFactory implements FactoryBean<MailGunApiClient> {
     @Override
     public MailGunApiClient getObject() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(mailGunMessageBaseUrl)
+                .baseUrl(mailGunConfig.getMailGunMessageBaseUrl())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(getOkHttpClient())
                 .validateEagerly(true)
@@ -83,7 +67,9 @@ public class MailGunApiClientFactory implements FactoryBean<MailGunApiClient> {
         Request.Builder newRequestBuilder = chain.request().newBuilder();
         newRequestBuilder.addHeader("Authorization", "Bearer " + bearerToken);
         newRequestBuilder.url(chain.request().url().newBuilder()
-                .addQueryParameter("from", String.format("%s <%s>", emailSenderName, emailSenderAddress))
+                .addQueryParameter("from", String.format("%s <%s>",
+                        mailGunConfig.getEmailSenderName(),
+                        mailGunConfig.getEmailSenderAddress()))
                 .build());
         return chain.proceed(newRequestBuilder.build());
     }

@@ -1,7 +1,8 @@
-package com.olaleyeone.auth.integration.email;
+package com.github.olaleyeone.mailsender.impl;
 
-import com.olaleyeone.audittrail.api.Activity;
-import com.olaleyeone.auth.dto.HtmlEmailDto;
+import com.github.olaleyeone.mailsender.api.HtmlEmailDto;
+import com.github.olaleyeone.mailsender.api.MailService;
+import com.github.olaleyeone.mailsender.api.MailGunApiClient;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import okhttp3.ResponseBody;
@@ -19,7 +20,7 @@ public class MailServiceImpl implements MailService {
 
     private final MailGunApiClient mailGunApi;
 
-    @Activity("SEND EMAIL")
+//    @Activity("SEND EMAIL")
     @SneakyThrows
     @Override
     public void sendEmail(HtmlEmailDto htmlEmailDto) {

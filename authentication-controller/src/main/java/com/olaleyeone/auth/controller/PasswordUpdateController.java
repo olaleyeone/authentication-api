@@ -1,7 +1,7 @@
 package com.olaleyeone.auth.controller;
 
 import com.olaleyeone.auth.data.entity.RefreshToken;
-import com.olaleyeone.auth.dto.PasswordUpdateApiRequest;
+import com.olaleyeone.auth.data.dto.PasswordUpdateApiRequest;
 import com.olaleyeone.data.dto.RequestMetadata;
 import com.github.olaleyeone.rest.exception.NotFoundException;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;

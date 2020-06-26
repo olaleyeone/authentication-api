@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.validator;
 
-import com.olaleyeone.auth.dto.UserRegistrationApiRequest;
+import com.olaleyeone.auth.data.dto.UserRegistrationApiRequest;
 import com.olaleyeone.auth.test.ComponentTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -2,7 +2,8 @@ package com.olaleyeone.auth.integration.email;
 
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
-import com.olaleyeone.auth.dto.HtmlEmailDto;
+import com.github.olaleyeone.mailsender.api.HtmlEmailDto;
+import com.github.olaleyeone.mailsender.api.MailService;
 import com.olaleyeone.auth.integration.etc.TemplateEngine;
 import com.olaleyeone.auth.service.SettingService;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.dto;
+package com.olaleyeone.auth.data.dto;
 
 import com.olaleyeone.auth.data.enums.Gender;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
@@ -8,7 +8,6 @@ import com.olaleyeone.auth.constraints.ValidPhoneNumber;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Data

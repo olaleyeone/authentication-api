@@ -32,10 +32,12 @@ dependencies {
     implementation(project(":${projectName}-repository"))
     api(project(":${projectName}-service"))
     api(project(":${projectName}-integration"))
+    implementation(project(":mail-sender"))
 
     implementation "javax.inject:javax.inject:1"
     compileOnly "javax.annotation:javax.annotation-api:1.3.2"
     implementation "javax.transaction:javax.transaction-api:1.2"
+    compileOnly "javax.activation:javax.activation-api:1.2.0"
 
     implementation "javax.servlet:javax.servlet-api:$servletVersion"
     implementation "org.springframework:spring-web:$springVersion"

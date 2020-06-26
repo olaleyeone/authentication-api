@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.olaleyeone.auth.dto;
+package com.olaleyeone.auth.data.dto;
 
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import lombok.Data;

@@ -1,15 +1,13 @@
-package com.olaleyeone.auth.integration.email;
+package com.github.olaleyeone.mailsender.impl;
 
-import com.olaleyeone.auth.service.SettingService;
-import com.olaleyeone.auth.test.ComponentTest;
+import com.github.olaleyeone.mailsender.api.MailGunApiClient;
+import com.github.olaleyeone.mailsender.test.ComponentTest;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.ResponseBody;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.http.HttpHeaders;
 import retrofit2.Call;
 
 import java.io.IOException;
@@ -20,39 +18,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MailGunApiClientFactoryTest extends ComponentTest {
 
+    private MailGunConfig mailGunConfig;
     private MailGunApiClientFactory mailGunApiClientFactory;
-
-    @Mock
-    private SettingService settingService;
 
     @BeforeEach
     void setUp() {
-        mailGunApiClientFactory = new MailGunApiClientFactory(settingService);
-        mailGunApiClientFactory.setMailGunMessageBaseUrl("http://domain.com/");
-    }
-
-    @Test
-    void testInitWithIncompleteUrl() {
-        mailGunApiClientFactory.setMailGunMessageBaseUrl("http://domain.com");
-        mailGunApiClientFactory.init();
-        assertEquals("http://domain.com/", mailGunApiClientFactory.getMailGunMessageBaseUrl());
-    }
-
-    @Test
-    void testInitWithCompleteUrl() {
-        mailGunApiClientFactory.setMailGunMessageBaseUrl("http://domain.com/");
-        mailGunApiClientFactory.init();
-        assertEquals("http://domain.com/", mailGunApiClientFactory.getMailGunMessageBaseUrl());
+        mailGunConfig = MailGunConfig.builder()
+                .mailGunMessageBaseUrl("http://domain.com")
+                .mailGunMessagesApiKey(faker.random().hex())
+                .emailSenderAddress(faker.internet().emailAddress())
+                .emailSenderName(faker.company().name())
+                .build();
+        mailGunApiClientFactory = new MailGunApiClientFactory(mailGunConfig);
     }
 
     @Test
     void testInitBearerToken() {
-        String apiKey = faker.internet().password();
-        mailGunApiClientFactory.setMailGunMessagesApiKey(apiKey);
         mailGunApiClientFactory.init();
         assertNotNull(mailGunApiClientFactory.getBearerToken());
 
-        String textToEncode = "api:" + apiKey;
+        String textToEncode = "api:" + mailGunConfig.getMailGunMessagesApiKey();
         assertEquals(Base64.getEncoder().encodeToString(textToEncode.getBytes()),
                 mailGunApiClientFactory.getBearerToken());
     }
@@ -69,7 +54,6 @@ class MailGunApiClientFactoryTest extends ComponentTest {
 
     @Test
     void getObject() {
-        mailGunApiClientFactory.setMailGunMessageBaseUrl("http://domain.com/");
         MailGunApiClient apiClient = mailGunApiClientFactory.getObject();
         String body = faker.backToTheFuture().quote();
         Call<ResponseBody> call = apiClient.sendMail(Collections.singletonList(faker.internet().emailAddress()),
@@ -81,8 +65,6 @@ class MailGunApiClientFactoryTest extends ComponentTest {
     @Test
     void getRequestInterceptor() throws IOException {
         mailGunApiClientFactory.setBearerToken(faker.crypto().md5());
-        mailGunApiClientFactory.setEmailSenderName(faker.funnyName().name());
-        mailGunApiClientFactory.setEmailSenderAddress(faker.internet().emailAddress());
 
         Interceptor.Chain chain = Mockito.mock(Interceptor.Chain.class);
 
@@ -96,10 +78,10 @@ class MailGunApiClientFactoryTest extends ComponentTest {
         Mockito.verify(chain, Mockito.times(1))
                 .proceed(Mockito.argThat(argument -> {
                     assertEquals(String.format("Bearer %s", mailGunApiClientFactory.getBearerToken()),
-                            argument.header(HttpHeaders.AUTHORIZATION));
+                            argument.header("Authorization"));
                     assertEquals(String.format("%s <%s>",
-                            mailGunApiClientFactory.getEmailSenderName(),
-                            mailGunApiClientFactory.getEmailSenderAddress()),
+                            mailGunConfig.getEmailSenderName(),
+                            mailGunConfig.getEmailSenderAddress()),
                             argument.url().queryParameter("from"));
                     return true;
                 }));

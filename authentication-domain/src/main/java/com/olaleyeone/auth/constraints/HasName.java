@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.constraints;
 
-import com.olaleyeone.auth.dto.UserRegistrationApiRequest;
+import com.olaleyeone.auth.data.dto.UserRegistrationApiRequest;
 
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
