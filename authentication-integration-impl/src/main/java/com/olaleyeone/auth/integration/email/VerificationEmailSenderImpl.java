@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Builder
+@Component
 public class VerificationEmailSenderImpl implements VerificationEmailSender {
 
     public static final String EMAIL_VERIFICATION_TEMPLATE = "EMAIL_VERIFICATION_TEMPLATE";

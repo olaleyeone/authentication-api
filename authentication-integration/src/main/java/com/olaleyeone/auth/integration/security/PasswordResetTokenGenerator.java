@@ -5,5 +5,5 @@ import com.olaleyeone.auth.data.entity.passwordreset.PasswordResetRequest;
 
 public interface PasswordResetTokenGenerator {
 
-    JwtDto generateJwt(PasswordResetRequest refreshToken);
+    JwtDto generateJwt(PasswordResetRequest passwordResetRequest);
 }

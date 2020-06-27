@@ -28,4 +28,13 @@ public interface PortalUserAuthenticationRepository extends JpaRepository<Portal
             "SELECT i.portalUser FROM PortalUserAuthentication i WHERE i=?1" +
             ") AND auth<>?1")
     int deactivateOtherSessions(PortalUserAuthentication portalUserAuthentication);
+
+    @Modifying
+    @Query("UPDATE PortalUserAuthentication auth SET auth.deactivatedAt=CURRENT_TIMESTAMP" +
+            " WHERE auth.responseType='SUCCESSFUL'" +
+            " AND auth.deactivatedAt IS NULL" +
+            " AND auth.loggedOutAt IS NULL" +
+            " AND (auth.autoLogoutAt IS NULL OR auth.autoLogoutAt>CURRENT_TIMESTAMP)" +
+            " AND auth.portalUser = ?1")
+    int deactivateOtherSessions(PortalUser portalUser);
 }

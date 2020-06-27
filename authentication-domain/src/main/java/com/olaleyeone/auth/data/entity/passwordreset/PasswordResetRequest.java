@@ -22,6 +22,12 @@ public class PasswordResetRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private String ipAddress;
+
+    @Column(nullable = false)
+    private String userAgent;
+
     @ManyToOne(optional = false)
     @JoinColumn(updatable = false)
     private PortalUserIdentifier portalUserIdentifier;
@@ -31,11 +37,11 @@ public class PasswordResetRequest {
     @JoinColumn(updatable = false)
     private PortalUser portalUser;
 
-    @Column(nullable = false)
+    @Column
     private String resetCode;
 
     @IgnoreData
-    @Column(updatable = false, nullable = false)
+    @Column(updatable = false)
     private String resetCodeHash;
 
     @Column(updatable = false, nullable = false)

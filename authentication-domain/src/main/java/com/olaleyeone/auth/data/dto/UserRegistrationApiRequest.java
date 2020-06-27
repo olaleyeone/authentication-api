@@ -8,6 +8,7 @@ import com.olaleyeone.auth.constraints.ValidPhoneNumber;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Data
@@ -16,6 +17,7 @@ public class UserRegistrationApiRequest {
 
     private String password;
 
+    @NotBlank
     private String displayName;
 
     private String firstName;

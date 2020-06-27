@@ -39,7 +39,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     @Activity("USER REGISTRATION")
     @Transactional
     @Override
-    public PortalUserAuthentication registerUser(UserRegistrationApiRequest dto, RequestMetadata requestMetadata) {
+    public PortalUserAuthentication registerUser(UserRegistrationApiRequest dto) {
         taskContextProvider.get().setDescription(String.format("Register user with email %s", dto.getEmail()));
         PortalUser portalUser = new PortalUser();
         portalUser.setDisplayName(StringUtils.normalizeSpace(dto.getDisplayName()));
@@ -74,7 +74,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
             });
         }
 
-        return implicitAuthenticationService.createSignUpAuthentication(portalUser, requestMetadata);
+        return implicitAuthenticationService.createSignUpAuthentication(portalUser);
     }
 
     private String getNonEmptyString(String value) {

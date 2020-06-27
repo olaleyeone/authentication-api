@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PasswordResetRequestRepository extends JpaRepository<PasswordResetRequest, Long> {
 
@@ -15,4 +16,10 @@ public interface PasswordResetRequestRepository extends JpaRepository<PasswordRe
             " AND v.deactivatedOn IS NULL" +
             " AND v.expiresOn>=CURRENT_TIMESTAMP")
     List<PasswordResetRequest> getAllActive(PortalUser portalUser);
+
+    @Query("SELECT p FROM PasswordResetRequest p" +
+            " JOIN FETCH p.portalUser" +
+            " JOIN FETCH p.portalUserIdentifier" +
+            " WHERE p.id=?1")
+    Optional<PasswordResetRequest> findById(Long id);
 }

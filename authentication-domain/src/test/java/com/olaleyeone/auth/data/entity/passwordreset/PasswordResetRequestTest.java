@@ -26,6 +26,8 @@ class PasswordResetRequestTest extends EntityTest {
         String digit = faker.number().digit();
         passwordResetRequest.setResetCode(digit);
         passwordResetRequest.setResetCodeHash(Base64.getEncoder().encodeToString(digit.getBytes()));
+        passwordResetRequest.setIpAddress(faker.internet().ipV4Address());
+        passwordResetRequest.setUserAgent(faker.internet().userAgentAny());
     }
 
     @Test

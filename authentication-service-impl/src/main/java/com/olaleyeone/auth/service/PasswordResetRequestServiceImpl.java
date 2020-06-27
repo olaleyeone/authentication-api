@@ -6,6 +6,7 @@ import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.passwordreset.PasswordResetRequest;
 import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.repository.PasswordResetRequestRepository;
+import com.olaleyeone.data.dto.RequestMetadata;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,7 @@ public class PasswordResetRequestServiceImpl implements PasswordResetRequestServ
     private final SettingService settingService;
     private final HashService hashService;
     private final Provider<TaskContext> taskContextProvider;
+    private final Provider<RequestMetadata> requestMetadataProvider;
 
     private final Random random = new Random();
 
@@ -34,13 +36,15 @@ public class PasswordResetRequestServiceImpl implements PasswordResetRequestServ
     @Transactional
     @Override
     public Map.Entry<PasswordResetRequest, String> createRequest(PortalUserIdentifier portalUserIdentifier) {
+        RequestMetadata requestMetadata = requestMetadataProvider.get();
         LocalDateTime now = LocalDateTime.now();
         taskContextProvider.get().setDescription(String.format("Generate password reset code for %s [%s]",
                 portalUserIdentifier.getIdentifier(), portalUserIdentifier.getIdentifierType()));
 
-
-        PasswordResetRequest portalUserIdentifierVerification = new PasswordResetRequest();
-        portalUserIdentifierVerification.setPortalUserIdentifier(portalUserIdentifier);
+        PasswordResetRequest passwordResetRequest = new PasswordResetRequest();
+        passwordResetRequest.setPortalUserIdentifier(portalUserIdentifier);
+        passwordResetRequest.setIpAddress(requestMetadata.getIpAddress());
+        passwordResetRequest.setUserAgent(requestMetadata.getUserAgent());
 
         taskContextProvider.get().execute(
                 "EXISTING VERIFICATION CODE DEACTIVATION",
@@ -55,17 +59,17 @@ public class PasswordResetRequestServiceImpl implements PasswordResetRequestServ
                     });
                 });
 
-        portalUserIdentifierVerification.setCreatedOn(now);
+        passwordResetRequest.setCreatedOn(now);
         int duration = settingService.getInteger("PASSWORD_RESET_CODE_EXPIRY_PERIOD_IN_MINUTES", 15);
-        portalUserIdentifierVerification.setExpiresOn(now.plusMinutes(duration));
+        passwordResetRequest.setExpiresOn(now.plusMinutes(duration));
 
         String verificationCode = generateVerificationCode();
         if (saveResetCode) {
-            portalUserIdentifierVerification.setResetCode(verificationCode);
+            passwordResetRequest.setResetCode(verificationCode);
         }
-        portalUserIdentifierVerification.setResetCodeHash(hashService.generateHash(verificationCode));
-        passwordResetRequestRepository.save(portalUserIdentifierVerification);
-        return Pair.of(portalUserIdentifierVerification, verificationCode);
+        passwordResetRequest.setResetCodeHash(hashService.generateHash(verificationCode));
+        passwordResetRequestRepository.save(passwordResetRequest);
+        return Pair.of(passwordResetRequest, verificationCode);
     }
 
     private String generateVerificationCode() {

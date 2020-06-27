@@ -4,6 +4,7 @@ import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.passwordreset.PasswordResetRequest;
 import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.servicetest.ServiceTest;
+import com.olaleyeone.data.dto.RequestMetadata;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -21,12 +22,18 @@ class PasswordResetRequestServiceImplTest extends ServiceTest {
     @Autowired
     private HashService hashService;
 
+    @Autowired
+    private RequestMetadata requestMetadata;
+
     private String hash;
 
     @BeforeEach
     public void setUp() {
         hash = faker.random().hex();
         Mockito.doReturn(hash).when(hashService).generateHash(Mockito.anyString());
+
+        Mockito.doReturn(faker.internet().ipV4Address()).when(requestMetadata).getIpAddress();
+        Mockito.doReturn(faker.internet().userAgentAny()).when(requestMetadata).getUserAgent();
     }
 
     @Test
