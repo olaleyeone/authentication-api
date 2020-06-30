@@ -38,6 +38,7 @@ public class PasswordUpdateServiceImpl implements PasswordUpdateService {
                 String.format("Updating password for logged in user %s", refreshToken.getPortalUser().getId()));
         PortalUser portalUser = refreshToken.getPortalUser();
         portalUser.setPassword(hashService.generateHash(passwordUpdateApiRequest.getPassword()));
+        portalUser.setPasswordUpdateRequired(false);
         portalUserRepository.save(portalUser);
         if (BooleanUtils.isTrue(passwordUpdateApiRequest.getInvalidateOtherSessions())) {
             portalUserAuthenticationRepository.deactivateOtherSessions(refreshToken.getActualAuthentication());

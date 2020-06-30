@@ -1,9 +1,6 @@
 package com.olaleyeone.auth.controllertest;
 
-import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
-import com.olaleyeone.auth.repository.PortalUserRepository;
-import com.olaleyeone.auth.repository.RefreshTokenRepository;
-import com.olaleyeone.auth.repository.SignatureKeyRepository;
+import com.olaleyeone.auth.repository.*;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,5 +26,10 @@ class RepositoryMockConfig {
     @Bean
     public PortalUserRepository portalUserRepository() {
         return Mockito.mock(PortalUserRepository.class);
+    }
+
+    @Bean
+    public PasswordResetRequestRepository passwordResetRequestRepository() {
+        return Mockito.mock(PasswordResetRequestRepository.class);
     }
 }

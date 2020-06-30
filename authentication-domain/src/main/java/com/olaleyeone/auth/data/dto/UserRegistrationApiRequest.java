@@ -16,6 +16,7 @@ import java.util.List;
 public class UserRegistrationApiRequest {
 
     private String password;
+    private Boolean passwordUpdateRequired;
 
     @NotBlank
     private String displayName;
@@ -29,6 +30,7 @@ public class UserRegistrationApiRequest {
     @ValidPhoneNumber
     @UniqueIdentifier(UserIdentifierType.PHONE_NUMBER)
     private String phoneNumber;
+
     private String phoneNumberVerificationCode;
 
     @Email

@@ -23,6 +23,8 @@ public class PortalUser implements Audited {
     @IgnoreData
     private String password;
 
+    private Boolean passwordUpdateRequired;
+
     private String displayName;
 
     private String firstName;

@@ -14,6 +14,7 @@ public class UserApiResponse {
     private String displayName;
     private String firstName;
     private String lastName;
+    private Boolean passwordUpdateRequired;
 
     private List<UserIdentifierApiResponse> identifiers;
 
@@ -24,5 +25,6 @@ public class UserApiResponse {
         this.displayName = portalUser.getDisplayName();
         this.firstName = portalUser.getFirstName();
         this.lastName = portalUser.getLastName();
+        this.passwordUpdateRequired = portalUser.getPasswordUpdateRequired();
     }
 }

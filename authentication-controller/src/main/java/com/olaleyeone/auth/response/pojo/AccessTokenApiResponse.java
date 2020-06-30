@@ -12,8 +12,11 @@ import java.time.LocalDateTime;
 public class AccessTokenApiResponse {
 
     private Long id;
+    private String displayName;
     private String firstName;
     private String lastName;
+
+    private Boolean passwordUpdateRequired;
 
     @JsonProperty("refresh_token")
     private String refreshToken;
@@ -30,7 +33,9 @@ public class AccessTokenApiResponse {
 
     public AccessTokenApiResponse(PortalUser user) {
         this.id = user.getId();
+        this.displayName = user.getDisplayName();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
+        this.passwordUpdateRequired = user.getPasswordUpdateRequired();
     }
 }

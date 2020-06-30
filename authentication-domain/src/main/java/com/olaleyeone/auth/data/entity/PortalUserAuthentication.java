@@ -41,6 +41,7 @@ public class PortalUserAuthentication {
     private PortalUser portalUser;
 
     @OneToOne
+    @JoinColumn(unique = true)
     private PasswordResetRequest passwordResetRequest;
 
     private LocalDateTime lastActiveAt;

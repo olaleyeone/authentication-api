@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.controllertest;
 
+import com.olaleyeone.auth.integration.email.PasswordResetTokenEmailSender;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import com.olaleyeone.auth.service.*;
 import com.olaleyeone.auth.integration.email.VerificationEmailSender;
@@ -41,7 +42,17 @@ class ServiceMockConfig {
     }
 
     @Bean
+    public PasswordResetTokenEmailSender passwordResetTokenEmailSender() {
+        return Mockito.mock(PasswordResetTokenEmailSender.class);
+    }
+
+    @Bean
     public LogoutService logoutService() {
         return Mockito.mock(LogoutService.class);
+    }
+
+    @Bean
+    public PasswordResetRequestService passwordResetRequestService() {
+        return Mockito.mock(PasswordResetRequestService.class);
     }
 }

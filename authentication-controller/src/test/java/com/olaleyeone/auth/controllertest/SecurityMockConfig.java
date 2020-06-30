@@ -66,13 +66,25 @@ class SecurityMockConfig {
 
     @JwtToken(JwtTokenType.REFRESH)
     @Bean
-    public AccessClaimsExtractor accessClaimsExtractor() {
+    public AccessClaimsExtractor refreshTokenAccessClaimsExtractor() {
         return Mockito.mock(AccessClaimsExtractor.class);
     }
 
     @JwtToken(JwtTokenType.REFRESH)
     @Bean
-    public AuthTokenGenerator jwtService() {
+    public AuthTokenGenerator refreshTokenGenerator() {
+        return Mockito.mock(AuthTokenGenerator.class);
+    }
+
+    @JwtToken(JwtTokenType.PASSWORD_RESET)
+    @Bean
+    public AccessClaimsExtractor passwordResetAccessClaimsExtractor() {
+        return Mockito.mock(AccessClaimsExtractor.class);
+    }
+
+    @JwtToken(JwtTokenType.PASSWORD_RESET)
+    @Bean
+    public AuthTokenGenerator passwordResetTokenGenerator() {
         return Mockito.mock(AuthTokenGenerator.class);
     }
 }
