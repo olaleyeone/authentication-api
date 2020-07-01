@@ -105,7 +105,8 @@ class TaskContextHandlerInterceptorTest extends ComponentTest {
     @Test
     void preHandleForProxy() {
         String ipV4Address = faker.internet().ipV4Address();
-        taskContextHandlerInterceptor.setIP_V4_LOCALHOST("127.0.0.1");
+        String ip_v4_localhost = faker.internet().ipV4Address();
+        taskContextHandlerInterceptor.setIP_V4_LOCALHOST(ip_v4_localhost);
         Mockito.doReturn(taskContextHandlerInterceptor.getIP_V4_LOCALHOST()).when(request).getRemoteAddr();
         Mockito.doReturn(ipV4Address).when(request).getHeader(Mockito.eq(taskContextHandlerInterceptor.getProxyIpHeader()));
 
