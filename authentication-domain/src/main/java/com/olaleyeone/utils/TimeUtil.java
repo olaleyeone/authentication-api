@@ -7,7 +7,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.Optional;
 
-public class TimeUtil {
+public final class TimeUtil {
 
     private TimeUtil() {
         //noop

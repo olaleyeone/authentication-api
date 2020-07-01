@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,7 +51,7 @@ public class PasswordResetController {
             claims = accessClaimsExtractor.getClaims(resetToken);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            throw new ErrorResponse(HttpStatus.FORBIDDEN);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         PasswordResetRequest passwordResetRequest = passwordResetRequestRepository.findById(Long.valueOf(claims.getId()))
                 .orElseThrow(() -> new ErrorResponse(HttpStatus.FORBIDDEN));

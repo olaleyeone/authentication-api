@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
@@ -43,6 +44,7 @@ class PasswordResetControllerTest extends ControllerTest {
 
     private String emailAddress;
     private String resetToken;
+    private MockHttpServletRequestBuilder requestBuilder;
 
     @BeforeEach
     public void setUp() {
@@ -56,16 +58,17 @@ class PasswordResetControllerTest extends ControllerTest {
 
         apiRequest = new PasswordUpdateApiRequest();
         apiRequest.setPassword(faker.internet().password());
+
+        requestBuilder = MockMvcRequestBuilders.put("/password")
+                .param("identifier", emailAddress)
+                .param("resetToken", resetToken)
+                .with(body(apiRequest));
     }
 
     @Test
     void resetPasswordWithInvalidResetToken() throws Exception {
         Mockito.doThrow(RuntimeException.class).when(accessClaimsExtractor).getClaims(Mockito.any());
-        mockMvc.perform(MockMvcRequestBuilders.put("/password")
-                .param("identifier", emailAddress)
-                .param("resetToken", resetToken)
-                .with(body(apiRequest)))
-                .andExpect(status().isForbidden());
+        mockMvc.perform(requestBuilder).andExpect(status().isForbidden());
         Mockito.verify(accessClaimsExtractor, Mockito.times(1))
                 .getClaims(resetToken);
     }
@@ -76,16 +79,9 @@ class PasswordResetControllerTest extends ControllerTest {
 
         Mockito.doReturn(Optional.empty()).when(passwordResetRequestRepository).findById(Mockito.any());
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/password")
-                .param("identifier", emailAddress)
-                .param("resetToken", resetToken)
-                .with(body(apiRequest)))
-                .andExpect(status().isForbidden());
+        mockMvc.perform(requestBuilder).andExpect(status().isForbidden());
 
-        Mockito.verify(accessClaimsExtractor, Mockito.times(1))
-                .getClaims(resetToken);
-        Mockito.verify(passwordResetRequestRepository, Mockito.times(1))
-                .findById(Long.valueOf(accessClaims.getId()));
+        assertDBCheck(accessClaims);
     }
 
     @Test
@@ -95,15 +91,9 @@ class PasswordResetControllerTest extends ControllerTest {
         Mockito.doReturn(Optional.of(passwordResetRequest)).when(passwordResetRequestRepository).findById(Mockito.any());
         passwordResetRequest.setExpiresOn(LocalDateTime.now());
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/password")
-                .param("identifier", emailAddress)
-                .param("resetToken", resetToken)
-                .with(body(apiRequest)))
-                .andExpect(status().isForbidden());
-        Mockito.verify(accessClaimsExtractor, Mockito.times(1))
-                .getClaims(resetToken);
-        Mockito.verify(passwordResetRequestRepository, Mockito.times(1))
-                .findById(Long.valueOf(accessClaims.getId()));
+        mockMvc.perform(requestBuilder).andExpect(status().isForbidden());
+
+        assertDBCheck(accessClaims);
     }
 
     @Test
@@ -113,16 +103,9 @@ class PasswordResetControllerTest extends ControllerTest {
         Mockito.doReturn(Optional.of(passwordResetRequest)).when(passwordResetRequestRepository).findById(Mockito.any());
         passwordResetRequest.setUsedOn(LocalDateTime.now());
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/password")
-                .param("identifier", emailAddress)
-                .param("resetToken", resetToken)
-                .with(body(apiRequest)))
-                .andExpect(status().isForbidden());
+        mockMvc.perform(requestBuilder).andExpect(status().isForbidden());
 
-        Mockito.verify(accessClaimsExtractor, Mockito.times(1))
-                .getClaims(resetToken);
-        Mockito.verify(passwordResetRequestRepository, Mockito.times(1))
-                .findById(Long.valueOf(accessClaims.getId()));
+        assertDBCheck(accessClaims);
     }
 
     @Test
@@ -139,16 +122,9 @@ class PasswordResetControllerTest extends ControllerTest {
 
         portalUserIdentifier.setIdentifier(emailAddress);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/password")
-                .param("identifier", emailAddress)
-                .param("resetToken", resetToken)
-                .with(body(apiRequest)))
-                .andExpect(status().isOk());
+        mockMvc.perform(requestBuilder).andExpect(status().isOk());
 
-        Mockito.verify(accessClaimsExtractor, Mockito.times(1))
-                .getClaims(resetToken);
-        Mockito.verify(passwordResetRequestRepository, Mockito.times(1))
-                .findById(Long.valueOf(accessClaims.getId()));
+        assertDBCheck(accessClaims);
 
         Mockito.verify(passwordUpdateService, Mockito.times(1)).updatePassword(passwordResetRequest, apiRequest);
         Mockito.verify(accessTokenApiResponseHandler, Mockito.times(1)).getAccessToken(userAuthentication);
@@ -163,11 +139,12 @@ class PasswordResetControllerTest extends ControllerTest {
 
         portalUserIdentifier.setIdentifier(UUID.randomUUID().toString());
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/password")
-                .param("identifier", emailAddress)
-                .param("resetToken", resetToken)
-                .with(body(apiRequest)))
-                .andExpect(status().isForbidden());
+        mockMvc.perform(requestBuilder).andExpect(status().isForbidden());
+
+        assertDBCheck(accessClaims);
+    }
+
+    private void assertDBCheck(AccessClaims accessClaims) {
         Mockito.verify(accessClaimsExtractor, Mockito.times(1))
                 .getClaims(resetToken);
         Mockito.verify(passwordResetRequestRepository, Mockito.times(1))
