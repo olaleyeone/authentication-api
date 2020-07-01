@@ -8,11 +8,13 @@ import freemarker.template.TemplateExceptionHandler;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Map;
 
+@Component
 public class TemplateEngineImpl implements TemplateEngine {
 
     final Logger logger = LoggerFactory.getLogger(getClass());

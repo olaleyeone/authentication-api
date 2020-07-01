@@ -63,7 +63,7 @@ public class PortalUserIdentifierVerificationServiceImpl implements PortalUserId
                 });
 
         portalUserIdentifierVerification.setCreatedOn(now);
-        int duration = settingService.getInteger("IDENTIFIER_VERIFICATION_CODE_EXPIRY_PERIOD_IN_SECONDS", 300);
+        int duration = settingService.getInteger("IDENTIFIER_VERIFICATION_CODE_EXPIRY_PERIOD_IN_SECONDS", 600);
         portalUserIdentifierVerification.setExpiresOn(now.plusSeconds(duration));
 
         String verificationCode = generateVerificationCode();

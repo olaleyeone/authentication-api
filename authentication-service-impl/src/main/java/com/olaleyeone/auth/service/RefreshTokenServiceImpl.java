@@ -18,7 +18,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     public static final String REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES = "REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES";
     public static final String ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS = "ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS";
-    private static final int REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES_VALUE = 30;
+    private static final int REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES_VALUE = 60*24;
 
     private final SettingService settingService;
     private final RefreshTokenRepository refreshTokenRepository;

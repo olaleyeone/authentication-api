@@ -2,12 +2,14 @@ package com.olaleyeone.auth.integration.security.auth;
 
 import com.olaleyeone.audittrail.context.Action;
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
+import com.olaleyeone.auth.data.dto.JwtDto;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.entity.SignatureKey;
 import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.integration.security.JwtServiceImplTestHelper;
 import com.olaleyeone.auth.integration.security.SimpleSigningKeyResolver;
 import com.olaleyeone.auth.service.KeyGenerator;
+import com.olaleyeone.auth.service.SettingService;
 import com.olaleyeone.auth.test.ComponentTest;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +20,7 @@ import org.mockito.Mockito;
 import java.security.Key;
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AccessTokenGeneratorTest extends ComponentTest {
 
@@ -34,6 +36,8 @@ class AccessTokenGeneratorTest extends ComponentTest {
     private AuthJwsGenerator jwsGenerator;
     @Mock
     private SimpleSigningKeyResolver signingKeyResolver;
+    @Mock
+    private SettingService settingService;
 
     @BeforeEach
     public void setUp() {
@@ -42,6 +46,7 @@ class AccessTokenGeneratorTest extends ComponentTest {
                 .keyGenerator(keyGenerator)
                 .taskContextFactory(taskContextFactory)
                 .signingKeyResolver(signingKeyResolver)
+                .settingService(settingService)
                 .build();
 
         refreshToken = JwtServiceImplTestHelper.refreshToken();
@@ -89,10 +94,18 @@ class AccessTokenGeneratorTest extends ComponentTest {
         Mockito.doReturn(jws).when(jwsGenerator)
                 .createJwt(Mockito.any(), Mockito.any());
 
-        String actual = accessTokenGenerator.generateJwt(refreshToken).getToken();
+        Mockito.doReturn(5).when(settingService)
+                .getInteger(Mockito.any(), Mockito.anyInt());
+
+        JwtDto jwt = accessTokenGenerator.generateJwt(refreshToken);
+        assertNotNull(jwt);
+
+        String actual = jwt.getToken();
         assertEquals(jws, actual);
 
+        assertTrue(jwt.getSecondsTillExpiry() <= 20 && jwt.getSecondsTillExpiry() >= 19);
+
         Mockito.verify(jwsGenerator, Mockito.times(1))
-                .createJwt(Mockito.any(), Mockito.any());
+                .createJwt(refreshToken, refreshToken.getAccessExpiryInstant().plusSeconds(5));
     }
 }

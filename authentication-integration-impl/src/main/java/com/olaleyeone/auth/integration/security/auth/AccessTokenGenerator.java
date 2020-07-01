@@ -8,6 +8,7 @@ import com.olaleyeone.auth.data.dto.JwtDto;
 import com.olaleyeone.auth.integration.security.AuthTokenGenerator;
 import com.olaleyeone.auth.integration.security.SimpleSigningKeyResolver;
 import com.olaleyeone.auth.service.KeyGenerator;
+import com.olaleyeone.auth.service.SettingService;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ public class AccessTokenGenerator implements AuthTokenGenerator {
 
     private final SimpleSigningKeyResolver signingKeyResolver;
     private final AuthJwsGenerator jwsGenerator;
+    private final SettingService settingService;
 
     @PostConstruct
     public void init() {
@@ -49,7 +51,8 @@ public class AccessTokenGenerator implements AuthTokenGenerator {
     public JwtDto generateJwt(RefreshToken refreshToken) {
         JwtDto jwtDto = new JwtDto();
         jwtDto.setSecondsTillExpiry(refreshToken.getSecondsTillAccessExpiry());
-        jwtDto.setToken(jwsGenerator.createJwt(refreshToken, refreshToken.getAccessExpiryInstant()));
+        jwtDto.setToken(jwsGenerator.createJwt(refreshToken, refreshToken.getAccessExpiryInstant()
+                .plusSeconds(settingService.getInteger("ACCESS_TOKEN_CLOCK_SKEW", 2))));
         return jwtDto;
     }
 
