@@ -51,13 +51,16 @@ class PasswordResetTokenGeneratorImplTest extends ComponentTest {
             action.execute();
             return null;
         }).when(taskContextFactory).startBackgroundTask(Mockito.any(), Mockito.any(), Mockito.any());
+
         Pair<Key, SignatureKey> key = Pair.of(null, null);
         Mockito.doReturn(key)
                 .when(keyGenerator)
                 .generateKey(Mockito.any());
+
         passwordResetTokenGenerator.init();
         Mockito.verify(keyGenerator, Mockito.times(1))
                 .generateKey(JwtTokenType.PASSWORD_RESET);
+
         Mockito.verify(jwsGenerator, Mockito.times(1))
                 .updateKey(key);
         Mockito.verify(signingKeyResolver, Mockito.times(1))

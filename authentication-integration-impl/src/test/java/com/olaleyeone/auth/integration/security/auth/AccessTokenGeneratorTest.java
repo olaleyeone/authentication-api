@@ -64,9 +64,11 @@ class AccessTokenGeneratorTest extends ComponentTest {
         Mockito.doReturn(key)
                 .when(keyGenerator)
                 .generateKey(Mockito.any());
+
         accessTokenGenerator.init();
         Mockito.verify(keyGenerator, Mockito.times(1))
                 .generateKey(JwtTokenType.ACCESS);
+
         Mockito.verify(jwsGenerator, Mockito.times(1))
                 .updateKey(key);
         Mockito.verify(signingKeyResolver, Mockito.times(1))

@@ -2,7 +2,6 @@ package com.olaleyeone.auth.integration.security.auth;
 
 import com.github.olaleyeone.auth.data.AccessClaims;
 import com.google.gson.Gson;
-import com.olaleyeone.auth.integration.security.auth.AccessClaimsExtractorImpl;
 import com.olaleyeone.auth.test.ComponentTest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -26,15 +25,13 @@ class AccessClaimsExtractorImplTest extends ComponentTest {
     @Mock
     private SigningKeyResolver signingKeyResolver;
 
-    private Gson gson;
-
     private KeyPair keyPair;
 
     private AccessClaimsExtractorImpl accessClaimsExtractor;
 
     @BeforeEach
     public void setUp() throws NoSuchAlgorithmException {
-        gson = new Gson();
+        Gson gson = new Gson();
         accessClaimsExtractor = new AccessClaimsExtractorImpl(signingKeyResolver, gson);
 
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");

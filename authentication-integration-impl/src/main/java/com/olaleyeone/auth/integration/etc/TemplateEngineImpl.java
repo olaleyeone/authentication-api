@@ -20,13 +20,12 @@ public class TemplateEngineImpl implements TemplateEngine {
     final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final Configuration configuration;
-    private final TemplateLoader templateLoader;
 
     public TemplateEngineImpl() {
         configuration = new Configuration(Configuration.VERSION_2_3_22);
         configuration.setDefaultEncoding("UTF-8");
         configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-        templateLoader = new ClassTemplateLoader(getClass().getClassLoader(), "/templates/email/");
+        TemplateLoader templateLoader = new ClassTemplateLoader(getClass().getClassLoader(), "/templates/email/");
         configuration.setTemplateLoader(templateLoader);
     }
 

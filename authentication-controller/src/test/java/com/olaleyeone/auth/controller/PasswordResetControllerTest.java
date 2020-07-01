@@ -39,21 +39,28 @@ class PasswordResetControllerTest extends ControllerTest {
     private PasswordResetRequest passwordResetRequest;
     private PortalUserIdentifier portalUserIdentifier;
 
+    private PasswordUpdateApiRequest apiRequest;
+
+    private String emailAddress;
+    private String resetToken;
+
     @BeforeEach
     public void setUp() {
         portalUserIdentifier = new PortalUserIdentifier();
         passwordResetRequest = new PasswordResetRequest();
         passwordResetRequest.setPortalUserIdentifier(portalUserIdentifier);
         passwordResetRequest.setExpiresOn(LocalDateTime.now().plusMinutes(20));
+
+        emailAddress = faker.internet().emailAddress();
+        resetToken = faker.lorem().sentence();
+
+        apiRequest = new PasswordUpdateApiRequest();
+        apiRequest.setPassword(faker.internet().password());
     }
 
     @Test
     void resetPasswordWithInvalidResetToken() throws Exception {
         Mockito.doThrow(RuntimeException.class).when(accessClaimsExtractor).getClaims(Mockito.any());
-        String emailAddress = faker.internet().emailAddress();
-        String resetToken = faker.lorem().sentence();
-        PasswordUpdateApiRequest apiRequest = new PasswordUpdateApiRequest();
-        apiRequest.setPassword(faker.internet().password());
         mockMvc.perform(MockMvcRequestBuilders.put("/password")
                 .param("identifier", emailAddress)
                 .param("resetToken", resetToken)
@@ -65,21 +72,16 @@ class PasswordResetControllerTest extends ControllerTest {
 
     @Test
     void resetPasswordWithUnknownRequest() throws Exception {
-        AccessClaims accessClaims = Mockito.mock(AccessClaims.class);
-        Mockito.doReturn(faker.number().digit()).when(accessClaims).getId();
+        AccessClaims accessClaims = initAccessClaims();
 
-        Mockito.doReturn(accessClaims).when(accessClaimsExtractor).getClaims(Mockito.any());
         Mockito.doReturn(Optional.empty()).when(passwordResetRequestRepository).findById(Mockito.any());
 
-        String emailAddress = faker.internet().emailAddress();
-        String resetToken = faker.lorem().sentence();
-        PasswordUpdateApiRequest apiRequest = new PasswordUpdateApiRequest();
-        apiRequest.setPassword(faker.internet().password());
         mockMvc.perform(MockMvcRequestBuilders.put("/password")
                 .param("identifier", emailAddress)
                 .param("resetToken", resetToken)
                 .with(body(apiRequest)))
                 .andExpect(status().isForbidden());
+
         Mockito.verify(accessClaimsExtractor, Mockito.times(1))
                 .getClaims(resetToken);
         Mockito.verify(passwordResetRequestRepository, Mockito.times(1))
@@ -88,17 +90,11 @@ class PasswordResetControllerTest extends ControllerTest {
 
     @Test
     void resetPasswordWithExpiredRequest() throws Exception {
-        AccessClaims accessClaims = Mockito.mock(AccessClaims.class);
-        Mockito.doReturn(faker.number().digit()).when(accessClaims).getId();
+        AccessClaims accessClaims = initAccessClaims();
 
-        Mockito.doReturn(accessClaims).when(accessClaimsExtractor).getClaims(Mockito.any());
         Mockito.doReturn(Optional.of(passwordResetRequest)).when(passwordResetRequestRepository).findById(Mockito.any());
         passwordResetRequest.setExpiresOn(LocalDateTime.now());
 
-        String emailAddress = faker.internet().emailAddress();
-        String resetToken = faker.lorem().sentence();
-        PasswordUpdateApiRequest apiRequest = new PasswordUpdateApiRequest();
-        apiRequest.setPassword(faker.internet().password());
         mockMvc.perform(MockMvcRequestBuilders.put("/password")
                 .param("identifier", emailAddress)
                 .param("resetToken", resetToken)
@@ -112,22 +108,17 @@ class PasswordResetControllerTest extends ControllerTest {
 
     @Test
     void resetPasswordWithUsedRequest() throws Exception {
-        AccessClaims accessClaims = Mockito.mock(AccessClaims.class);
-        Mockito.doReturn(faker.number().digit()).when(accessClaims).getId();
+        AccessClaims accessClaims = initAccessClaims();
 
-        Mockito.doReturn(accessClaims).when(accessClaimsExtractor).getClaims(Mockito.any());
         Mockito.doReturn(Optional.of(passwordResetRequest)).when(passwordResetRequestRepository).findById(Mockito.any());
         passwordResetRequest.setUsedOn(LocalDateTime.now());
 
-        String emailAddress = faker.internet().emailAddress();
-        String resetToken = faker.lorem().sentence();
-        PasswordUpdateApiRequest apiRequest = new PasswordUpdateApiRequest();
-        apiRequest.setPassword(faker.internet().password());
         mockMvc.perform(MockMvcRequestBuilders.put("/password")
                 .param("identifier", emailAddress)
                 .param("resetToken", resetToken)
                 .with(body(apiRequest)))
                 .andExpect(status().isForbidden());
+
         Mockito.verify(accessClaimsExtractor, Mockito.times(1))
                 .getClaims(resetToken);
         Mockito.verify(passwordResetRequestRepository, Mockito.times(1))
@@ -139,12 +130,7 @@ class PasswordResetControllerTest extends ControllerTest {
 
         PortalUserAuthentication userAuthentication = new PortalUserAuthentication();
 
-        AccessClaims accessClaims = Mockito.mock(AccessClaims.class);
-        Mockito.doReturn(faker.number().digit()).when(accessClaims).getId();
-
-        Mockito.doReturn(accessClaims).when(accessClaimsExtractor).getClaims(Mockito.any());
-        String emailAddress = faker.internet().emailAddress();
-        String resetToken = faker.lorem().sentence();
+        AccessClaims accessClaims = initAccessClaims();
 
         Mockito.doReturn(Optional.of(passwordResetRequest)).when(passwordResetRequestRepository).findById(Mockito.any());
         Mockito.doReturn(userAuthentication).when(passwordUpdateService).updatePassword(
@@ -153,13 +139,12 @@ class PasswordResetControllerTest extends ControllerTest {
 
         portalUserIdentifier.setIdentifier(emailAddress);
 
-        PasswordUpdateApiRequest apiRequest = new PasswordUpdateApiRequest();
-        apiRequest.setPassword(faker.internet().password());
         mockMvc.perform(MockMvcRequestBuilders.put("/password")
                 .param("identifier", emailAddress)
                 .param("resetToken", resetToken)
                 .with(body(apiRequest)))
                 .andExpect(status().isOk());
+
         Mockito.verify(accessClaimsExtractor, Mockito.times(1))
                 .getClaims(resetToken);
         Mockito.verify(passwordResetRequestRepository, Mockito.times(1))
@@ -172,19 +157,12 @@ class PasswordResetControllerTest extends ControllerTest {
     @Test
     void resetPasswordWithIdentifierMismatch() throws Exception {
 
-        AccessClaims accessClaims = Mockito.mock(AccessClaims.class);
-        Mockito.doReturn(faker.number().digit()).when(accessClaims).getId();
-
-        Mockito.doReturn(accessClaims).when(accessClaimsExtractor).getClaims(Mockito.any());
-        String emailAddress = faker.internet().emailAddress();
-        String resetToken = faker.lorem().sentence();
+        AccessClaims accessClaims = initAccessClaims();
 
         Mockito.doReturn(Optional.of(passwordResetRequest)).when(passwordResetRequestRepository).findById(Mockito.any());
 
         portalUserIdentifier.setIdentifier(UUID.randomUUID().toString());
 
-        PasswordUpdateApiRequest apiRequest = new PasswordUpdateApiRequest();
-        apiRequest.setPassword(faker.internet().password());
         mockMvc.perform(MockMvcRequestBuilders.put("/password")
                 .param("identifier", emailAddress)
                 .param("resetToken", resetToken)
@@ -194,5 +172,12 @@ class PasswordResetControllerTest extends ControllerTest {
                 .getClaims(resetToken);
         Mockito.verify(passwordResetRequestRepository, Mockito.times(1))
                 .findById(Long.valueOf(accessClaims.getId()));
+    }
+
+    private AccessClaims initAccessClaims() {
+        AccessClaims accessClaims = Mockito.mock(AccessClaims.class);
+        Mockito.doReturn(faker.number().digit()).when(accessClaims).getId();
+        Mockito.doReturn(accessClaims).when(accessClaimsExtractor).getClaims(Mockito.any());
+        return accessClaims;
     }
 }

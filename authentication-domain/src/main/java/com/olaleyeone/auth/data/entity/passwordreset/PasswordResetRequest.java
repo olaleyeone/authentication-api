@@ -3,6 +3,7 @@ package com.olaleyeone.auth.data.entity.passwordreset;
 import com.olaleyeone.audittrail.api.IgnoreData;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
+import com.olaleyeone.utils.TimeUtil;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -10,9 +11,6 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.Optional;
 
 @Entity
 @Data
@@ -55,14 +53,12 @@ public class PasswordResetRequest {
 
     @Transient
     public Instant getExpiryInstant() {
-        return Optional.ofNullable(expiresOn)
-                .map(it -> it.atZone(ZoneId.systemDefault()).toInstant())
-                .orElse(null);
+        return TimeUtil.toInstant(expiresOn);
     }
 
     @Transient
     public Long getSecondsTillExpiry() {
-        return Instant.now().until(getExpiryInstant(), ChronoUnit.SECONDS);
+        return TimeUtil.secondsTill(getExpiryInstant());
     }
 
     @PrePersist

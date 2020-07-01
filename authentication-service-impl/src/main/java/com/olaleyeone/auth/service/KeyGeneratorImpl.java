@@ -16,7 +16,7 @@ import java.util.UUID;
 @Named
 public class KeyGeneratorImpl implements KeyGenerator {
 
-    private KeyPairGenerator kpg;
+    private final KeyPairGenerator kpg;
 
     @Inject
     private SignatureKeyRepository signatureKeyRepository;
