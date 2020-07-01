@@ -4,9 +4,9 @@ import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.repository.PortalUserDataRepository;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
+import com.olaleyeone.auth.response.pojo.UserDataApiResponse;
 import com.olaleyeone.auth.response.pojo.UserIdentifierApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
@@ -26,7 +26,7 @@ public class UserApiResponseHandler {
 
         userApiResponse.setData(portalUserDataRepository.findByPortalUser(portalUser)
                 .stream()
-                .map(portalUserData -> Pair.of(portalUserData.getName(), portalUserData.getValue()))
+                .map(portalUserData -> new UserDataApiResponse(portalUserData.getName(), portalUserData.getValue()))
                 .collect(Collectors.toList()));
 
         return userApiResponse;

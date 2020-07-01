@@ -3,7 +3,7 @@ package com.olaleyeone.auth.controller;
 import com.github.olaleyeone.auth.access.AccessStatus;
 import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.data.entity.RefreshToken;
-import com.olaleyeone.auth.dto.PasswordUpdateApiRequest;
+import com.olaleyeone.auth.data.dto.PasswordUpdateApiRequest;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
 import com.olaleyeone.auth.security.authorizer.NotClientTokenAuthorizer;
 import com.olaleyeone.auth.service.PasswordUpdateService;

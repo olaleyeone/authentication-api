@@ -31,7 +31,7 @@ class SimpleSigningKeyResolverTest extends ComponentTest {
     private KeyPair keyPair;
     private SignatureKey signatureKey;
 
-    private JwtTokenType jwtTokenType = JwtTokenType.ACCESS;
+    private final JwtTokenType jwtTokenType = JwtTokenType.ACCESS;
 
     @BeforeEach
     void setUp() throws NoSuchAlgorithmException {

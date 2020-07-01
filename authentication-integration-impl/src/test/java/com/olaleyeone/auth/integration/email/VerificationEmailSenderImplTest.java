@@ -1,29 +1,23 @@
 package com.olaleyeone.auth.integration.email;
 
+import com.github.olaleyeone.mailsender.api.MailService;
 import com.olaleyeone.audittrail.context.Action;
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.integration.etc.TemplateEngine;
-import com.olaleyeone.auth.service.SettingService;
 import com.olaleyeone.auth.test.ComponentTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 class VerificationEmailSenderImplTest extends ComponentTest {
-
-    @Mock
-    private SettingService settingService;
 
     @Mock
     private TemplateEngine templateEngine;
@@ -47,15 +41,6 @@ class VerificationEmailSenderImplTest extends ComponentTest {
     }
 
     @Test
-    void testNoEmailTemplate() throws IOException {
-        verificationEmailSender.sendVerificationCode(new PortalUserIdentifierVerification(), faker.code().asin());
-        String templateStr = StreamUtils.copyToString(getClass().getResourceAsStream("/email/email-verification-code.ftl.html"),
-                Charset.forName("utf-8"));
-        Mockito.verify(templateEngine, Mockito.times(1))
-                .getAsString(Mockito.eq(templateStr), Mockito.any());
-    }
-
-    @Test
     void shouldCacheDefaultEmailTemplate() throws IOException {
         verificationEmailSender.sendVerificationCode(new PortalUserIdentifierVerification(), faker.code().asin());
         Mockito.verify(templateEngine, Mockito.times(1))
@@ -71,9 +56,6 @@ class VerificationEmailSenderImplTest extends ComponentTest {
 
     @Test
     void sendVerificationCode() {
-        String templateStr = faker.internet().slug();
-        Mockito.doReturn(Optional.of(templateStr)).when(settingService).getString(Mockito.any());
-
         String body = faker.backToTheFuture().quote();
         Mockito.doReturn(body).when(templateEngine).getAsString(Mockito.any(), Mockito.any());
 
@@ -83,7 +65,7 @@ class VerificationEmailSenderImplTest extends ComponentTest {
         verificationEmailSender.sendVerificationCode(verification, verificationCode);
 
         Mockito.verify(templateEngine, Mockito.times(1))
-                .getAsString(Mockito.eq(templateStr), Mockito.argThat(argument -> {
+                .getAsString(Mockito.eq("email-verification-code.ftl.html"), Mockito.argThat(argument -> {
                     assertEquals(verification.getIdentifier(), argument.get("email"));
                     assertEquals(verificationCode, argument.get("verificationCode"));
                     return true;

@@ -4,12 +4,13 @@ package com.olaleyeone.auth.controllertest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
+import com.github.olaleyeone.advice.ErrorAdvice;
 import com.github.olaleyeone.auth.data.AccessClaims;
 import com.github.olaleyeone.auth.interceptors.AccessConstraintHandlerInterceptor;
-import com.olaleyeone.auth.configuration.AdditionalComponentsConfiguration;
-import com.olaleyeone.auth.configuration.BeanValidationConfiguration;
-import com.github.olaleyeone.entitysearch.util.PredicateExtractor;
-import com.github.olaleyeone.entitysearch.util.SearchFilterPredicateExtractor;
+import com.github.olaleyeone.configuration.BeanValidationConfiguration;
+import com.github.olaleyeone.configuration.JacksonConfiguration;
+import com.github.olaleyeone.configuration.PredicateConfiguration;
+import com.olaleyeone.auth.configuration.RequestMetadataConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.mockito.internal.creation.bytebuddy.MockAccess;
@@ -77,12 +78,13 @@ public class ControllerTest {
 
     @Configuration
     @ComponentScan({
-            "com.olaleyeone.auth.controller",
-            "com.olaleyeone.auth.advice"
+            "com.olaleyeone.auth.controller"
     })
     @Import({
-            AdditionalComponentsConfiguration.class,
+            RequestMetadataConfiguration.class,
             BeanValidationConfiguration.class,
+            JacksonConfiguration.class,
+            PredicateConfiguration.class,
             SecurityMockConfig.class,
             ValidatorMockConfig.class,
             ServiceMockConfig.class,
@@ -107,13 +109,8 @@ public class ControllerTest {
         }
 
         @Bean
-        public PredicateExtractor predicateExtractor(ApplicationContext applicationContext) {
-            return applicationContext.getAutowireCapableBeanFactory().createBean(PredicateExtractor.class);
-        }
-
-        @Bean
-        public SearchFilterPredicateExtractor searchFilterPredicateExtractor(ApplicationContext applicationContext) {
-            return applicationContext.getAutowireCapableBeanFactory().createBean(SearchFilterPredicateExtractor.class);
+        public ErrorAdvice errorAdvice() {
+            return new ErrorAdvice();
         }
     }
 }

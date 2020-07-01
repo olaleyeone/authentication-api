@@ -8,12 +8,15 @@ dependencies {
     api "com.github.javafaker:javafaker:$javaFakerVersion"
     implementation "com.google.guava:guava:$guavaVersion"
 
-    implementation(project(":entity-search"))
+    implementation(project(":web-starter"))
+
+    runtimeOnly "com.h2database:h2:$h2Version"
+    runtimeOnly "org.hibernate:hibernate-core:$hibernateVersion"
 
     api("org.springframework.boot:spring-boot-starter-test:$springBootVersion") {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
-
-    runtimeOnly "com.h2database:h2:$h2Version"
-    runtimeOnly "org.hibernate:hibernate-core:$hibernateVersion"
+    implementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    implementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
+    implementation "org.springframework:spring-test:$springVersion"
 }

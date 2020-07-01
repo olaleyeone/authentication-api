@@ -1,13 +1,22 @@
 plugins {
-    id 'org.springframework.boot' version '2.2.6.RELEASE'
+    id 'org.springframework.boot' version '2.3.1.RELEASE'
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'java'
 //    id 'war'
+    id "com.github.olaleyeone.docker-app" version "0.0.1"
+    id "jacoco"
 }
 
 group = 'com.olaleyeone'
 version = '0.0.1'
 sourceCompatibility = '1.8'
+
+dockerApp {
+    mainClassName = 'com.olaleyeone.auth.bootstrap.AuthenticationApplication'
+    docker {
+        repository "olaleye"
+    }
+}
 
 configurations {
     compileOnly {
@@ -21,35 +30,62 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-freemarker'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
 //    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
 
-    /* add modules */
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    /* custom modules */
     implementation project(path: ":${projectName}-domain", configuration: 'default')
     implementation project(path: ":${projectName}-repository", configuration: 'default')
     implementation project(path: ":${projectName}-service-impl", configuration: 'default')
     implementation project(path: ":${projectName}-integration-impl", configuration: 'default')
     implementation project(path: ":${projectName}-controller", configuration: 'default')
+
+    testImplementation(project(":${projectName}-test-starter"))
 }
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                minimum = 0.95
+            }
+            excludes = [
+                    'com.olaleyeone.auth.bootstrap.*',
+                    'com.olaleyeone.auth.configuration.*',
+            ]
+        }
+    }
+}
+check.dependsOn jacocoTestCoverageVerification
 
 subprojects {
     apply plugin: 'java-library';
@@ -73,6 +109,6 @@ subprojects {
 
         testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-        testImplementation "org.mockito:mockito-core:3.3.3"
+        testImplementation "org.mockito:mockito-core:$mockitoVersion"
     }
 }

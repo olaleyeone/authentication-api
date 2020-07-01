@@ -2,15 +2,14 @@ package com.olaleyeone.auth.service;
 
 import com.olaleyeone.audittrail.api.Activity;
 import com.olaleyeone.audittrail.context.TaskContext;
+import com.olaleyeone.auth.data.dto.UserRegistrationApiRequest;
 import com.olaleyeone.auth.data.entity.*;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
-import com.olaleyeone.auth.dto.UserRegistrationApiRequest;
-import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
+import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.repository.PortalUserIdentifierVerificationRepository;
 import com.olaleyeone.auth.repository.PortalUserRepository;
-import com.olaleyeone.data.dto.RequestMetadata;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,15 +38,18 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     @Activity("USER REGISTRATION")
     @Transactional
     @Override
-    public PortalUserAuthentication registerUser(UserRegistrationApiRequest dto, RequestMetadata requestMetadata) {
+    public PortalUserAuthentication registerUser(UserRegistrationApiRequest dto) {
         taskContextProvider.get().setDescription(String.format("Register user with email %s", dto.getEmail()));
         PortalUser portalUser = new PortalUser();
+        portalUser.setDisplayName(StringUtils.normalizeSpace(dto.getDisplayName()));
         portalUser.setFirstName(StringUtils.normalizeSpace(dto.getFirstName()));
         portalUser.setLastName(getNonEmptyString(dto.getLastName()));
         portalUser.setOtherName(getNonEmptyString(dto.getOtherName()));
         if (StringUtils.isNotBlank(dto.getPassword())) {
             portalUser.setPassword(hashService.generateHash(dto.getPassword()));
+            portalUser.setPasswordUpdateRequired(dto.getPasswordUpdateRequired());
         }
+        portalUser.setGender(dto.getGender());
 
         portalUserRepository.save(portalUser);
 
@@ -72,7 +74,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
             });
         }
 
-        return implicitAuthenticationService.createSignUpAuthentication(portalUser, requestMetadata);
+        return implicitAuthenticationService.createSignUpAuthentication(portalUser);
     }
 
     private String getNonEmptyString(String value) {

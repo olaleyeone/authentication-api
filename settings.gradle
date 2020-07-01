@@ -6,4 +6,5 @@ include "${projectName}-domain",
         "${projectName}-integration",
         "${projectName}-integration-impl",
         "${projectName}-controller",
-        "entity-search"
+        "web-starter",
+        "mail-sender"

@@ -53,10 +53,11 @@ dependencies {
 
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion"
 
-    implementation(project(":entity-search"))
+    implementation(project(":web-starter"))
 
     testImplementation(project(":${projectName}-test-starter"))
     testImplementation "javax.servlet:javax.servlet-api:$servletVersion"
+    testImplementation "org.springframework:spring-test:$springVersion"
     testRuntimeOnly "org.hibernate.validator:hibernate-validator:$hibernateValidator"
     testRuntimeOnly "org.apache.tomcat.embed:tomcat-embed-el:9.0.34"
 }

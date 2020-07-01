@@ -3,7 +3,6 @@ package com.olaleyeone.auth.data.entity;
 import com.olaleyeone.auth.entitytest.EntityTest;
 import org.junit.jupiter.api.Test;
 
-import javax.persistence.PersistenceException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -31,13 +30,6 @@ class PortalUserTest extends EntityTest {
         saveAndFlush(user);
         entityManager.refresh(user);
         assertEquals(then, user.getCreatedOn());
-    }
-
-    @Test
-    void shouldNotSaveUserWithoutFirstName() {
-        PortalUser user = new PortalUser();
-        user.setLastName(faker.name().lastName());
-        assertThrows(PersistenceException.class, () -> saveAndFlush(user));
     }
 
     @Test

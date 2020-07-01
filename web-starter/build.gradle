@@ -1,0 +1,64 @@
+apply plugin: 'jacoco'
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                minimum = 0.95
+            }
+            excludes = [
+                    "com.github.olaleyeone.rest.exception.*",
+                    "com.github.olaleyeone.configuration.*",
+                    "com.github.olaleyeone.advice.*",
+                    "com.github.olaleyeone.entitysearch.util.OffsetBasedPageRequest"
+            ]
+        }
+    }
+}
+check.dependsOn jacocoTestCoverageVerification
+
+dependencies {
+    api "org.springframework.data:spring-data-jpa:$springDataVersion"
+    api "org.springframework:spring-web:$springVersion"
+    api "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    implementation "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:$hibernateJpaVersion"
+    implementation "javax.validation:validation-api:$validationApiVersion"
+    compileOnly "javax.servlet:javax.servlet-api:$servletVersion"
+
+    implementation fileTree(dir: project(":${projectName}-domain").file('libs'), include: ['*.jar'])
+    implementation fileTree(dir: project(":${projectName}-integration-impl").file('libs'), include: ['*.jar'])
+
+    implementation "org.springframework:spring-webmvc:$springVersion"
+    implementation "org.apache.commons:commons-lang3:$commonsLang3Version"
+
+    implementation "com.google.code.gson:gson:$gsonVersion"
+
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
+
+    testCompileOnly "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    testAnnotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
+    testAnnotationProcessor("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion") {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+
+    testImplementation "javax.servlet:javax.servlet-api:$servletVersion"
+    testImplementation "org.hibernate:hibernate-core:$hibernateVersion"
+    testRuntimeOnly "com.h2database:h2:$h2Version"
+    testImplementation "com.github.javafaker:javafaker:$javaFakerVersion"
+}

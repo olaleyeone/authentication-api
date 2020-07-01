@@ -4,7 +4,9 @@ import com.github.olaleyeone.auth.access.AccessStatus;
 import com.github.olaleyeone.auth.data.AccessClaimsExtractor;
 import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.data.entity.RefreshToken;
+import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.dto.AccessTokenApiRequest;
+import com.olaleyeone.auth.qualifier.JwtToken;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
@@ -36,6 +38,7 @@ class AccessTokenControllerTest extends ControllerTest {
     private RefreshTokenRepository refreshTokenRepository;
 
     @Autowired
+    @JwtToken(JwtTokenType.REFRESH)
     private AccessClaimsExtractor accessClaimsExtractor;
 
     @BeforeEach

@@ -1,16 +1,16 @@
 package com.olaleyeone.auth.controller;
 
+import com.github.olaleyeone.rest.exception.ErrorResponse;
 import com.olaleyeone.auth.controllertest.ControllerTest;
+import com.olaleyeone.auth.data.dto.UserRegistrationApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
-import com.olaleyeone.auth.dto.UserRegistrationApiRequest;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.UserRegistrationService;
 import com.olaleyeone.auth.validator.UniqueIdentifierValidator;
 import com.olaleyeone.auth.validator.ValidEmailRegistrationCodeValidator;
 import com.olaleyeone.auth.validator.ValidPhoneNumberValidator;
-import com.github.olaleyeone.rest.exception.ErrorResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,7 +47,7 @@ class UserRegistrationControllerTest extends ControllerTest {
     @BeforeEach
     void setUp() {
         userRegistrationApiRequest = new UserRegistrationApiRequest();
-        userRegistrationApiRequest.setFirstName(faker.name().firstName());
+        userRegistrationApiRequest.setDisplayName(faker.name().fullName());
         userRegistrationApiRequest.setPhoneNumber(faker.phoneNumber().phoneNumber());
         userRegistrationApiRequest.setEmail(faker.internet().emailAddress());
         userRegistrationApiRequest.setPassword(faker.internet().password());
@@ -71,7 +71,7 @@ class UserRegistrationControllerTest extends ControllerTest {
 
         PortalUserAuthentication userAuthentication = new PortalUserAuthentication();
 
-        Mockito.when(userRegistrationService.registerUser(Mockito.any(), Mockito.any()))
+        Mockito.when(userRegistrationService.registerUser(Mockito.any()))
                 .then(invocation -> userAuthentication);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
@@ -82,7 +82,7 @@ class UserRegistrationControllerTest extends ControllerTest {
                     assertEquals(accessTokenApiResponse, response);
                 });
         Mockito.verify(userRegistrationService, Mockito.times(1))
-                .registerUser(Mockito.eq(userRegistrationApiRequest), Mockito.any());
+                .registerUser(Mockito.eq(userRegistrationApiRequest));
     }
 
     @Test
@@ -91,7 +91,7 @@ class UserRegistrationControllerTest extends ControllerTest {
         Mockito.when(accessTokenApiResponseHandler.getAccessToken(Mockito.any(PortalUserAuthentication.class)))
                 .then(invocation -> ResponseEntity.ok(accessTokenApiResponse));
         Mockito.doThrow(new ErrorResponse(HttpStatus.BAD_REQUEST))
-                .when(userRegistrationService).registerUser(Mockito.any(), Mockito.any());
+                .when(userRegistrationService).registerUser(Mockito.any());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
                 .with(body(userRegistrationApiRequest)))
@@ -115,7 +115,7 @@ class UserRegistrationControllerTest extends ControllerTest {
         PortalUserAuthentication userAuthentication = new PortalUserAuthentication();
         userAuthentication.setPortalUser(new PortalUser());
 
-        Mockito.doReturn(userAuthentication).when(userRegistrationService).registerUser(Mockito.any(), Mockito.any());
+        Mockito.doReturn(userAuthentication).when(userRegistrationService).registerUser(Mockito.any());
 
         userRegistrationApiRequest.setPassword(null);
 
@@ -125,7 +125,7 @@ class UserRegistrationControllerTest extends ControllerTest {
                 .andExpect(result -> assertTrue(StringUtils.isNotBlank(result.getResponse().getContentAsString())));
 
         Mockito.verify(userRegistrationService, Mockito.times(1))
-                .registerUser(Mockito.eq(userRegistrationApiRequest), Mockito.any());
+                .registerUser(Mockito.eq(userRegistrationApiRequest));
         Mockito.verify(accessTokenApiResponseHandler, Mockito.never())
                 .getAccessToken(Mockito.any(PortalUserAuthentication.class));
     }

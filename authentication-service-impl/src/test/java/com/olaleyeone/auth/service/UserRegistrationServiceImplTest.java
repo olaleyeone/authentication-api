@@ -1,18 +1,18 @@
 package com.olaleyeone.auth.service;
 
+import com.olaleyeone.auth.data.dto.UserDataApiRequest;
+import com.olaleyeone.auth.data.dto.UserRegistrationApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
-import com.olaleyeone.auth.dto.UserDataApiRequest;
-import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
-import com.olaleyeone.data.dto.RequestMetadata;
-import com.olaleyeone.auth.dto.UserRegistrationApiRequest;
+import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.servicetest.ServiceTest;
+import com.olaleyeone.data.dto.RequestMetadata;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -36,6 +36,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
     private PortalUserIdentifierRepository portalUserIdentifierRepository;
 
     private UserRegistrationApiRequest dto;
+    @Autowired
     private RequestMetadata requestMetadata;
 
     @BeforeEach
@@ -46,9 +47,8 @@ class UserRegistrationServiceImplTest extends ServiceTest {
         dto.setEmail(faker.internet().emailAddress());
         dto.setPassword(faker.internet().password());
 
-        requestMetadata = new RequestMetadata();
-        requestMetadata.setIpAddress(faker.internet().ipV4Address());
-        requestMetadata.setUserAgent(faker.internet().userAgentAny());
+        Mockito.doReturn(faker.internet().ipV4Address()).when(requestMetadata).getIpAddress();
+        Mockito.doReturn(faker.internet().userAgentAny()).when(requestMetadata).getUserAgent();
 
         Mockito.doReturn(dto.getPhoneNumber())
                 .when(phoneNumberService).formatPhoneNumber(Mockito.anyString());
@@ -60,7 +60,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
                 .name(faker.name().name())
                 .value(faker.lordOfTheRings().character())
                 .build()));
-        PortalUserAuthentication userAuthentication = userRegistrationService.registerUser(dto, requestMetadata);
+        PortalUserAuthentication userAuthentication = userRegistrationService.registerUser(dto);
         assertNotNull(userAuthentication);
         assertNotNull(userAuthentication.getId());
         assertEquals(AuthenticationType.USER_REGISTRATION, userAuthentication.getType());
@@ -79,7 +79,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
     @Test
     public void shouldIgnoreBlankPassword() {
         dto.setPassword("");
-        PortalUserAuthentication userAuthentication = userRegistrationService.registerUser(dto, requestMetadata);
+        PortalUserAuthentication userAuthentication = userRegistrationService.registerUser(dto);
         PortalUser portalUser = userAuthentication.getPortalUser();
         assertNull(portalUser.getPassword());
         Mockito.verify(hashService, Mockito.never())
@@ -91,7 +91,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
         String encryptPassword = UUID.randomUUID().toString();
         Mockito.doReturn(encryptPassword)
                 .when(hashService).generateHash(Mockito.anyString());
-        PortalUserAuthentication userAuthentication = userRegistrationService.registerUser(dto, requestMetadata);
+        PortalUserAuthentication userAuthentication = userRegistrationService.registerUser(dto);
         PortalUser portalUser = userAuthentication.getPortalUser();
         assertEquals(encryptPassword, portalUser.getPassword());
         Mockito.verify(hashService, Mockito.times(1))
@@ -103,7 +103,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
         String phoneNumber = UUID.randomUUID().toString();
         Mockito.doReturn(phoneNumber)
                 .when(phoneNumberService).formatPhoneNumber(Mockito.anyString());
-        PortalUserAuthentication userAuthentication = userRegistrationService.registerUser(dto, requestMetadata);
+        PortalUserAuthentication userAuthentication = userRegistrationService.registerUser(dto);
         PortalUser portalUser = userAuthentication.getPortalUser();
 
         Optional<PortalUserIdentifier> optionalPortalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(phoneNumber);
@@ -119,7 +119,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
 
     @Test
     public void shouldSaveEmail() {
-        PortalUserAuthentication userAuthentication = userRegistrationService.registerUser(dto, requestMetadata);
+        PortalUserAuthentication userAuthentication = userRegistrationService.registerUser(dto);
         PortalUser portalUser = userAuthentication.getPortalUser();
 
         Optional<PortalUserIdentifier> optionalPortalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(dto.getEmail());
@@ -141,7 +141,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
                 .create();
         Mockito.doReturn(true).when(hashService).isSameHash(Mockito.any(), Mockito.any());
 
-        userRegistrationService.registerUser(dto, requestMetadata);
+        userRegistrationService.registerUser(dto);
 
         Optional<PortalUserIdentifier> optionalPortalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(dto.getEmail());
         assertTrue(optionalPortalUserIdentifier.isPresent());
@@ -163,7 +163,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
                 .create(3);
         Mockito.doReturn(true).when(hashService).isSameHash(Mockito.any(), Mockito.any());
 
-        userRegistrationService.registerUser(dto, requestMetadata);
+        userRegistrationService.registerUser(dto);
 
         Iterator<PortalUserIdentifierVerification> iterator = verifications.iterator();
         assertNotNull(iterator.next().getUsedOn());
@@ -176,7 +176,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
     public void shouldSaveEmailWithInvalidVerificationCode() {
         dto.setEmailVerificationCode(faker.code().asin());
 
-        assertThrows(IllegalArgumentException.class, () -> userRegistrationService.registerUser(dto, requestMetadata));
+        assertThrows(IllegalArgumentException.class, () -> userRegistrationService.registerUser(dto));
 
         Mockito.verify(hashService, Mockito.never())
                 .isSameHash(Mockito.any(), Mockito.any());
@@ -194,7 +194,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
                 .create();
         Mockito.doReturn(false).when(hashService).isSameHash(Mockito.any(), Mockito.any());
 
-        assertThrows(IllegalArgumentException.class, () -> userRegistrationService.registerUser(dto, requestMetadata));
+        assertThrows(IllegalArgumentException.class, () -> userRegistrationService.registerUser(dto));
 
         Mockito.verify(hashService, Mockito.times(1))
                 .isSameHash(dto.getEmailVerificationCode(), verification.getVerificationCodeHash());
@@ -204,6 +204,6 @@ class UserRegistrationServiceImplTest extends ServiceTest {
     public void shouldRequireIdentifier() {
         dto.setEmail("");
         dto.setPhoneNumber("");
-        assertThrows(IllegalArgumentException.class, () -> userRegistrationService.registerUser(dto, requestMetadata));
+        assertThrows(IllegalArgumentException.class, () -> userRegistrationService.registerUser(dto));
     }
 }

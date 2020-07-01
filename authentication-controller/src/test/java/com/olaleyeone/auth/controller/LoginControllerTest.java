@@ -1,12 +1,12 @@
 package com.olaleyeone.auth.controller;
 
+import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
-import com.olaleyeone.auth.dto.LoginApiRequest;
+import com.olaleyeone.auth.data.dto.LoginApiRequest;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.LoginAuthenticationService;
-import com.olaleyeone.auth.controllertest.ControllerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -70,5 +70,20 @@ class LoginControllerTest extends ControllerTest {
                     assertNotNull(response);
                     assertEquals(accessTokenApiResponse, response);
                 });
+    }
+
+    @Test
+    void loginToInactiveAccount() throws Exception {
+
+        Mockito.when(authenticationService.getAuthenticationResponse(Mockito.any(), Mockito.any()))
+                .then(invocation -> {
+                    PortalUserAuthentication userAuthentication = new PortalUserAuthentication();
+                    userAuthentication.setResponseType(AuthenticationResponseType.INACTIVE_ACCOUNT);
+                    return userAuthentication;
+                });
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/login")
+                .with(body(loginApiRequest)))
+                .andExpect(status().isUnauthorized());
     }
 }

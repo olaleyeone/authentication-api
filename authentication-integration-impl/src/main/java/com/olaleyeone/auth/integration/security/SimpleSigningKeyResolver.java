@@ -36,7 +36,7 @@ public class SimpleSigningKeyResolver extends SigningKeyResolverAdapter {
     private final Map<String, Key> keyMap = new HashMap<>();
     private final TreeSet<Map.Entry<String, LocalDateTime>> set = new TreeSet<>(comparing(Map.Entry::getValue));
 
-    protected void addKey(SignatureKey signatureKey) {
+    public void addKey(SignatureKey signatureKey) {
         try {
             lock.lock();
             if (set.size() >= maxSize && signatureKey.getCreatedOn().isBefore(set.first().getValue())) {

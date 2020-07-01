@@ -1,9 +1,9 @@
 package com.olaleyeone.auth.controller;
 
 import com.github.olaleyeone.auth.annotations.Public;
+import com.olaleyeone.auth.data.dto.UserRegistrationApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
-import com.olaleyeone.auth.dto.UserRegistrationApiRequest;
 import com.olaleyeone.auth.integration.events.NewUserEvent;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
@@ -33,14 +33,13 @@ public class UserRegistrationController {
 
     private final UserRegistrationService userRegistrationService;
     private final AccessTokenApiResponseHandler accessTokenApiResponseHandler;
-    private final Provider<RequestMetadata> requestMetadata;
     private final ApplicationContext applicationContext;
 
     @Public
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/users")
     public HttpEntity<AccessTokenApiResponse> registerUser(@Valid @RequestBody UserRegistrationApiRequest dto) {
-        PortalUserAuthentication portalUserAuthentication = userRegistrationService.registerUser(dto, requestMetadata.get());
+        PortalUserAuthentication portalUserAuthentication = userRegistrationService.registerUser(dto);
         PortalUser portalUser = portalUserAuthentication.getPortalUser();
         applicationContext.publishEvent(NewUserEvent.builder()
                 .portalUser(portalUser)

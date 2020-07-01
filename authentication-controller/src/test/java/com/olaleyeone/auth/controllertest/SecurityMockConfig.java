@@ -4,7 +4,7 @@ import com.github.olaleyeone.auth.access.TrustedIpAddressAuthorizer;
 import com.github.olaleyeone.auth.data.AccessClaims;
 import com.github.olaleyeone.auth.data.AccessClaimsExtractor;
 import com.github.olaleyeone.auth.data.AuthorizedRequest;
-import com.olaleyeone.auth.integration.security.TokenGenerator;
+import com.olaleyeone.auth.integration.security.AuthTokenGenerator;
 import com.olaleyeone.auth.qualifier.JwtToken;
 import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.security.authorizer.NotClientTokenAuthorizer;
@@ -66,13 +66,25 @@ class SecurityMockConfig {
 
     @JwtToken(JwtTokenType.REFRESH)
     @Bean
-    public AccessClaimsExtractor accessClaimsExtractor() {
+    public AccessClaimsExtractor refreshTokenAccessClaimsExtractor() {
         return Mockito.mock(AccessClaimsExtractor.class);
     }
 
     @JwtToken(JwtTokenType.REFRESH)
     @Bean
-    public TokenGenerator jwtService() {
-        return Mockito.mock(TokenGenerator.class);
+    public AuthTokenGenerator refreshTokenGenerator() {
+        return Mockito.mock(AuthTokenGenerator.class);
+    }
+
+    @JwtToken(JwtTokenType.PASSWORD_RESET)
+    @Bean
+    public AccessClaimsExtractor passwordResetAccessClaimsExtractor() {
+        return Mockito.mock(AccessClaimsExtractor.class);
+    }
+
+    @JwtToken(JwtTokenType.PASSWORD_RESET)
+    @Bean
+    public AuthTokenGenerator passwordResetTokenGenerator() {
+        return Mockito.mock(AuthTokenGenerator.class);
     }
 }

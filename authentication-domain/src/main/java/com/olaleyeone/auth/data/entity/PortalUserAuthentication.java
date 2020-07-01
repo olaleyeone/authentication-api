@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.data.entity;
 
+import com.olaleyeone.auth.data.entity.passwordreset.PasswordResetRequest;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
 import lombok.Data;
@@ -38,6 +39,10 @@ public class PortalUserAuthentication {
 
     @ManyToOne
     private PortalUser portalUser;
+
+    @OneToOne
+    @JoinColumn(unique = true)
+    private PasswordResetRequest passwordResetRequest;
 
     private LocalDateTime lastActiveAt;
     private LocalDateTime becomesInactiveAt;

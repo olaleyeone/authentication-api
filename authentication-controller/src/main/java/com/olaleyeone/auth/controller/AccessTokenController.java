@@ -13,8 +13,11 @@ import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +31,8 @@ import java.util.Optional;
 @RestController
 public class AccessTokenController {
 
+    final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private final RefreshTokenRepository refreshTokenRepository;
     private final AccessTokenApiResponseHandler accessTokenApiResponseHandler;
     @JwtToken(JwtTokenType.REFRESH)
@@ -39,16 +44,10 @@ public class AccessTokenController {
     @PostMapping("/oauth2/token")
     public HttpEntity<AccessTokenApiResponse> getAccessToken(@RequestBody Optional<AccessTokenApiRequest> accessTokenApiRequest) {
 
-        String token = accessTokenApiRequest.map(AccessTokenApiRequest::getRefreshToken).orElse(null);
+        String token = getToken(accessTokenApiRequest);
+
         if (StringUtils.isBlank(token)) {
-            if (httpServletRequest.getCookies() == null) {
-                throw new ErrorResponse(HttpStatus.UNAUTHORIZED);
-            }
-            token = Arrays.asList(httpServletRequest.getCookies())
-                    .stream()
-                    .filter(cookie -> cookie.getName().equals(AccessTokenApiResponseHandler.REFRESH_TOKEN_COOKIE_NAME))
-                    .findFirst()
-                    .map(Cookie::getValue).orElseThrow(() -> new ErrorResponse(HttpStatus.UNAUTHORIZED));
+            throw new ErrorResponse(HttpStatus.UNAUTHORIZED);
         }
 
         try {
@@ -58,8 +57,23 @@ public class AccessTokenController {
                     .orElseThrow(() -> new ErrorResponse(HttpStatus.UNAUTHORIZED));
             return accessTokenApiResponseHandler.getAccessToken(refreshToken);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new ErrorResponse(HttpStatus.UNAUTHORIZED);
+            logger.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+
+    private String getToken(@RequestBody Optional<AccessTokenApiRequest> accessTokenApiRequest) {
+        String token = accessTokenApiRequest.map(AccessTokenApiRequest::getRefreshToken).orElse(null);
+        if (StringUtils.isNotBlank(token)) {
+            return token;
+        }
+        if (httpServletRequest.getCookies() == null) {
+            return null;
+        }
+        return Arrays.asList(httpServletRequest.getCookies())
+                .stream()
+                .filter(cookie -> cookie.getName().equals(AccessTokenApiResponseHandler.REFRESH_TOKEN_COOKIE_NAME))
+                .findFirst()
+                .map(Cookie::getValue).orElseThrow(() -> new ErrorResponse(HttpStatus.UNAUTHORIZED));
     }
 }

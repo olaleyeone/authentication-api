@@ -2,6 +2,7 @@ package com.olaleyeone.auth.data.entity;
 
 import com.olaleyeone.audittrail.Audited;
 import com.olaleyeone.audittrail.embeddable.Audit;
+import com.olaleyeone.utils.TimeUtil;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -10,8 +11,6 @@ import lombok.experimental.Delegate;
 import javax.persistence.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @Entity
@@ -51,26 +50,22 @@ public class RefreshToken implements Audited {
 
     @Transient
     public Instant getExpiryInstant() {
-        return Optional.ofNullable(expiresAt)
-                .map(it -> it.atZone(ZoneId.systemDefault()).toInstant())
-                .orElse(null);
+        return TimeUtil.toInstant(expiresAt);
     }
 
     @Transient
     public Long getSecondsTillExpiry() {
-        return Instant.now().until(getExpiryInstant(), ChronoUnit.SECONDS);
+        return TimeUtil.secondsTill(getExpiryInstant());
     }
 
     @Transient
     public Instant getAccessExpiryInstant() {
-        return Optional.ofNullable(accessExpiresAt)
-                .map(it -> it.atZone(ZoneId.systemDefault()).toInstant())
-                .orElse(null);
+        return TimeUtil.toInstant(accessExpiresAt);
     }
 
     @Transient
     public Long getSecondsTillAccessExpiry() {
-        return Instant.now().until(getAccessExpiryInstant(), ChronoUnit.SECONDS);
+        return TimeUtil.secondsTill(getAccessExpiryInstant());
     }
 
     @PrePersist
