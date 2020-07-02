@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 import javax.inject.Named;
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @RequiredArgsConstructor
 @Named
@@ -19,7 +19,7 @@ public class LogoutServiceImpl implements LogoutService {
     @Transactional
     @Override
     public void logout(PortalUserAuthentication portalUserAuthentication) {
-        portalUserAuthentication.setLoggedOutAt(LocalDateTime.now());
+        portalUserAuthentication.setLoggedOutAt(OffsetDateTime.now());
         portalUserAuthenticationRepository.save(portalUserAuthentication);
     }
 }

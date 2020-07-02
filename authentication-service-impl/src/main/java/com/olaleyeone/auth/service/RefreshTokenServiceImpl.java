@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Named
 @RequiredArgsConstructor
@@ -18,7 +18,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     public static final String REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES = "REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES";
     public static final String ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS = "ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS";
-    private static final int REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES_VALUE = 60*24;
+    private static final int REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES_VALUE = 60 * 24;
 
     private final SettingService settingService;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -42,13 +42,13 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         return refreshToken;
     }
 
-    private LocalDateTime getExpiresAt() {
-        return LocalDateTime.now().plusMinutes(settingService.getInteger(REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES,
+    private OffsetDateTime getExpiresAt() {
+        return OffsetDateTime.now().plusMinutes(settingService.getInteger(REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES,
                 REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES_VALUE));
     }
 
-    private LocalDateTime getAccessExpiresAt() {
-        return LocalDateTime.now().plusSeconds(settingService.getInteger(ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS,
+    private OffsetDateTime getAccessExpiresAt() {
+        return OffsetDateTime.now().plusSeconds(settingService.getInteger(ACCESS_TOKEN_EXPIRY_DURATION_IN_SECONDS,
                 180));
     }
 
@@ -57,7 +57,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public void deactivateRefreshToken(RefreshToken refreshToken) {
         taskContextProvider.get().setDescription(String.format("deactivate token with id %d", refreshToken.getId()));
-        refreshToken.setTimeDeactivated(LocalDateTime.now());
+        refreshToken.setTimeDeactivated(OffsetDateTime.now());
         refreshTokenRepository.save(refreshToken);
     }
 }

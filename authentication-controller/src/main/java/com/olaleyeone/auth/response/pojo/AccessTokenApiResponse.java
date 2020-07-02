@@ -5,7 +5,7 @@ import com.olaleyeone.auth.data.entity.PortalUser;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Data
 @NoArgsConstructor
@@ -29,7 +29,7 @@ public class AccessTokenApiResponse {
     private Long secondsTillExpiry;
 
     @JsonProperty("expires_at")
-    private LocalDateTime expiresAt;
+    private OffsetDateTime expiresAt;
 
     public AccessTokenApiResponse(PortalUser user) {
         this.id = user.getId();

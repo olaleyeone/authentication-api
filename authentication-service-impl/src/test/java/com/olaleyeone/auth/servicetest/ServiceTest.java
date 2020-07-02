@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Import({ServiceTest.$Config.class})
 public class ServiceTest extends EntityTest {
@@ -35,7 +35,7 @@ public class ServiceTest extends EntityTest {
         applicationContext.getBeansOfType(MockAccess.class)
                 .values().forEach(Mockito::reset);
         Task task = new Task();
-        task.setDuration(new Duration(LocalDateTime.now(), null));
+        task.setDuration(new Duration(OffsetDateTime.now(), null));
         task.setName(faker.funnyName().name());
         task.setType(faker.app().name());
         taskContextHolder.registerContext(new TaskContextImpl(task, null, taskContextHolder, taskTransactionContextFactory));

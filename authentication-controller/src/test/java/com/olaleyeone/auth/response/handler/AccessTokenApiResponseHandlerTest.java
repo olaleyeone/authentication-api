@@ -1,11 +1,11 @@
 package com.olaleyeone.auth.response.handler;
 
+import com.olaleyeone.auth.data.dto.JwtDto;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
-import com.olaleyeone.auth.data.dto.JwtDto;
 import com.olaleyeone.auth.integration.security.AuthTokenGenerator;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.RefreshTokenService;
@@ -19,7 +19,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
 import java.net.HttpCookie;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -61,7 +61,7 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
 
         refreshToken = new RefreshToken();
         refreshToken.setActualAuthentication(userAuthentication);
-        refreshToken.setExpiresAt(LocalDateTime.now().plusDays(1));
+        refreshToken.setExpiresAt(OffsetDateTime.now().plusDays(1));
 
         refreshJwt = JwtDto.builder()
                 .token(UUID.randomUUID().toString())

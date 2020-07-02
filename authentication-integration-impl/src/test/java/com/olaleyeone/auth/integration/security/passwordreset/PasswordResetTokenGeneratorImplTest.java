@@ -17,9 +17,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.security.Key;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PasswordResetTokenGeneratorImplTest extends ComponentTest {
 
@@ -41,7 +41,7 @@ class PasswordResetTokenGeneratorImplTest extends ComponentTest {
     @BeforeEach
     void setUp() {
         passwordResetRequest = new PasswordResetRequest();
-        passwordResetRequest.setExpiresOn(LocalDateTime.now().plusMinutes(1));
+        passwordResetRequest.setExpiresOn(OffsetDateTime.now().plusMinutes(1));
     }
 
     @Test

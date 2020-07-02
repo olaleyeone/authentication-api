@@ -10,7 +10,7 @@ import lombok.experimental.Delegate;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @Entity
@@ -34,12 +34,12 @@ public class RefreshToken implements Audited {
     private Audit audit = new Audit();
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime accessExpiresAt;
+    private OffsetDateTime accessExpiresAt;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime expiresAt;
+    private OffsetDateTime expiresAt;
 
-    private LocalDateTime timeDeactivated;
+    private OffsetDateTime timeDeactivated;
 
     public void setActualAuthentication(PortalUserAuthentication actualAuthentication) {
         this.actualAuthentication = actualAuthentication;

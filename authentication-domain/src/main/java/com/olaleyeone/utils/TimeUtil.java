@@ -1,8 +1,7 @@
 package com.olaleyeone.utils;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.util.Optional;
@@ -13,9 +12,9 @@ public final class TimeUtil {
         //noop
     }
 
-    public static Instant toInstant(LocalDateTime expiresOn) {
+    public static Instant toInstant(OffsetDateTime expiresOn) {
         return Optional.ofNullable(expiresOn)
-                .map(it -> it.atZone(ZoneId.systemDefault()).toInstant())
+                .map(it -> it.toInstant())
                 .orElse(null);
     }
 

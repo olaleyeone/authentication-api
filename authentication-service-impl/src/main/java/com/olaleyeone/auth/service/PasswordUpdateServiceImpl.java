@@ -17,7 +17,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @RequiredArgsConstructor
 @Named
@@ -56,7 +56,7 @@ public class PasswordUpdateServiceImpl implements PasswordUpdateService {
         portalUser.setPassword(hashService.generateHash(passwordUpdateApiRequest.getPassword()));
         portalUserRepository.save(portalUser);
 
-        passwordResetRequest.setUsedOn(LocalDateTime.now());
+        passwordResetRequest.setUsedOn(OffsetDateTime.now());
         passwordResetRequestRepository.save(passwordResetRequest);
 
         if (BooleanUtils.isTrue(passwordUpdateApiRequest.getInvalidateOtherSessions())) {

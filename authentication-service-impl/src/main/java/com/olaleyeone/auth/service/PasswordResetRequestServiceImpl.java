@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Provider;
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -37,7 +37,7 @@ public class PasswordResetRequestServiceImpl implements PasswordResetRequestServ
     @Override
     public Map.Entry<PasswordResetRequest, String> createRequest(PortalUserIdentifier portalUserIdentifier) {
         RequestMetadata requestMetadata = requestMetadataProvider.get();
-        LocalDateTime now = LocalDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now();
         taskContextProvider.get().setDescription(String.format("Generate password reset code for %s [%s]",
                 portalUserIdentifier.getIdentifier(), portalUserIdentifier.getIdentifierType()));
 

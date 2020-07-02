@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -51,7 +51,7 @@ class PasswordResetControllerTest extends ControllerTest {
         portalUserIdentifier = new PortalUserIdentifier();
         passwordResetRequest = new PasswordResetRequest();
         passwordResetRequest.setPortalUserIdentifier(portalUserIdentifier);
-        passwordResetRequest.setExpiresOn(LocalDateTime.now().plusMinutes(20));
+        passwordResetRequest.setExpiresOn(OffsetDateTime.now().plusMinutes(20));
 
         emailAddress = faker.internet().emailAddress();
         resetToken = faker.lorem().sentence();
@@ -89,7 +89,7 @@ class PasswordResetControllerTest extends ControllerTest {
         AccessClaims accessClaims = initAccessClaims();
 
         Mockito.doReturn(Optional.of(passwordResetRequest)).when(passwordResetRequestRepository).findById(Mockito.any());
-        passwordResetRequest.setExpiresOn(LocalDateTime.now());
+        passwordResetRequest.setExpiresOn(OffsetDateTime.now());
 
         mockMvc.perform(requestBuilder).andExpect(status().isForbidden());
 
@@ -101,7 +101,7 @@ class PasswordResetControllerTest extends ControllerTest {
         AccessClaims accessClaims = initAccessClaims();
 
         Mockito.doReturn(Optional.of(passwordResetRequest)).when(passwordResetRequestRepository).findById(Mockito.any());
-        passwordResetRequest.setUsedOn(LocalDateTime.now());
+        passwordResetRequest.setUsedOn(OffsetDateTime.now());
 
         mockMvc.perform(requestBuilder).andExpect(status().isForbidden());
 

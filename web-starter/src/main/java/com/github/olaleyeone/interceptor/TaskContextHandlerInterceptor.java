@@ -22,7 +22,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
@@ -58,7 +58,7 @@ public class TaskContextHandlerInterceptor extends HandlerInterceptorAdapter {
                 .map(Object::toString)
                 .orElse(request.getServletPath()));
         task.setType(Task.WEB_REQUEST);
-        task.setDuration(new Duration(LocalDateTime.now(), null));
+        task.setDuration(new Duration(OffsetDateTime.now(), null));
 
         WebRequest webRequest = new WebRequest();
         webRequest.setIpAddress(getActualIpAddress(request));
@@ -91,7 +91,7 @@ public class TaskContextHandlerInterceptor extends HandlerInterceptorAdapter {
         webRequest.setStatusCode(response.getStatus());
 
         Duration duration = task.getDuration();
-        duration.setNanoSecondsTaken(duration.getStartedOn().until(LocalDateTime.now(), ChronoUnit.NANOS));
+        duration.setNanoSecondsTaken(duration.getStartedOn().until(OffsetDateTime.now(), ChronoUnit.NANOS));
         taskContextSaver.save(taskContext);
     }
 

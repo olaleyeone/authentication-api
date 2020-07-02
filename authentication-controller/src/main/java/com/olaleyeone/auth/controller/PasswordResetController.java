@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @RequiredArgsConstructor
 @RestController
@@ -58,7 +58,7 @@ public class PasswordResetController {
         if (passwordResetRequest.getUsedOn() != null) {
             throw new ErrorResponse(HttpStatus.FORBIDDEN);
         }
-        if (passwordResetRequest.getExpiresOn().isBefore(LocalDateTime.now())) {
+        if (passwordResetRequest.getExpiresOn().isBefore(OffsetDateTime.now())) {
             throw new ErrorResponse(HttpStatus.FORBIDDEN);
         }
         if (!passwordResetRequest.getPortalUserIdentifier().getIdentifier().equals(identifier)) {
