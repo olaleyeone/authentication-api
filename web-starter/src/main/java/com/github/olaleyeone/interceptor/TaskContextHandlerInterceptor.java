@@ -14,7 +14,6 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -31,16 +30,16 @@ public class TaskContextHandlerInterceptor extends HandlerInterceptorAdapter {
 
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Getter
-    @Setter
-    @Value("${IP_V4_LOCALHOST:127.0.0.1}")
-    private String IP_V4_LOCALHOST;
-    @Value("${IP_V6_LOCALHOST:0:0:0:0:0:0:0:1}")
-    private String IP_V6_LOCALHOST;
+//    @Getter
+//    @Setter
+//    @Value("${IP_V4_LOCALHOST:127.0.0.1}")
+//    private String IP_V4_LOCALHOST;
+//    @Value("${IP_V6_LOCALHOST:0:0:0:0:0:0:0:1}")
+//    private String IP_V6_LOCALHOST;
 
     @Getter
     @Setter
-    private String proxyIpHeader = "X-FORWARDED-FOR";
+    private String proxyIpHeader = "X-REAL-IP";
 
     private final TaskContextFactory taskContextFactory;
 
@@ -96,18 +95,9 @@ public class TaskContextHandlerInterceptor extends HandlerInterceptorAdapter {
     }
 
     public String getActualIpAddress(HttpServletRequest request) {
-        String ipAddress = request.getRemoteAddr();
-        if (isWebServer(ipAddress) && StringUtils.isNotBlank(request.getHeader(proxyIpHeader))) {
-            ipAddress = request.getHeader(proxyIpHeader);
+        if (StringUtils.isBlank(proxyIpHeader)) {
+            return request.getRemoteAddr();
         }
-        return ipAddress;
-    }
-
-    public boolean isWebServer(String ipAddress) {
-        return isLocalhost(ipAddress);
-    }
-
-    public boolean isLocalhost(String ipAddress) {
-        return ipAddress.equals(IP_V4_LOCALHOST) || ipAddress.equals(IP_V6_LOCALHOST);
+        return StringUtils.defaultIfBlank(request.getHeader(proxyIpHeader), request.getRemoteAddr());
     }
 }
