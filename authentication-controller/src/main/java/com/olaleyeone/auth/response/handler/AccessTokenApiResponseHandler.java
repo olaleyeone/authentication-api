@@ -1,13 +1,19 @@
 package com.olaleyeone.auth.response.handler;
 
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
-import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.dto.JwtDto;
+import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
+import com.olaleyeone.auth.data.entity.RefreshToken;
+import com.olaleyeone.auth.data.enums.JwtTokenType;
+import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.integration.security.AuthTokenGenerator;
 import com.olaleyeone.auth.qualifier.JwtToken;
-import com.olaleyeone.auth.data.enums.JwtTokenType;
+import com.olaleyeone.auth.repository.PortalUserDataRepository;
+import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
+import com.olaleyeone.auth.response.pojo.UserDataApiResponse;
 import com.olaleyeone.auth.service.RefreshTokenService;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,8 +22,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
 import javax.inject.Named;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
+@Builder
 @Named
 public class AccessTokenApiResponseHandler {
 
@@ -39,6 +48,9 @@ public class AccessTokenApiResponseHandler {
     @Value("${cookie.flags}")
     private final String cookieFlags;
 
+    private final PortalUserIdentifierRepository portalUserIdentifierRepository;
+    private final PortalUserDataRepository portalUserDataRepository;
+
     public HttpEntity<AccessTokenApiResponse> getAccessToken(PortalUserAuthentication portalUserAuthentication) {
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(portalUserAuthentication);
 
@@ -53,6 +65,23 @@ public class AccessTokenApiResponseHandler {
 
     private HttpEntity<AccessTokenApiResponse> getUserApiResponseHttpEntity(RefreshToken refreshToken) {
         AccessTokenApiResponse accessTokenApiResponse = new AccessTokenApiResponse(refreshToken.getPortalUser());
+        List<PortalUserIdentifier> userIdentifiers = portalUserIdentifierRepository.findByPortalUser(refreshToken.getPortalUser());
+        accessTokenApiResponse.setEmailAddresses(userIdentifiers
+                .stream()
+                .filter(portalUserIdentifier -> portalUserIdentifier.getIdentifierType() == UserIdentifierType.EMAIL)
+                .map(PortalUserIdentifier::getIdentifier)
+                .collect(Collectors.toSet()));
+        accessTokenApiResponse.setPhoneNumbers(userIdentifiers
+                .stream()
+                .filter(portalUserIdentifier -> portalUserIdentifier.getIdentifierType() == UserIdentifierType.PHONE_NUMBER)
+                .map(PortalUserIdentifier::getIdentifier)
+                .collect(Collectors.toSet()));
+
+        accessTokenApiResponse.setData(portalUserDataRepository.findByPortalUser(refreshToken.getPortalUser())
+                .stream()
+                .map(portalUserData -> new UserDataApiResponse(portalUserData.getName(), portalUserData.getValue()))
+                .collect(Collectors.toList()));
+
         JwtDto refreshTokenJwt = refreshTokenJwtService.generateJwt(refreshToken);
         JwtDto accessTokenJwt = accessTokenJwtService.generateJwt(refreshToken);
 

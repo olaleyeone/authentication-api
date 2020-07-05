@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.data.entity;
 
-import com.olaleyeone.auth.entitytest.EntityTest;
+import com.olaleyeone.auth.test.entity.EntityTest;
 import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;

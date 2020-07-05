@@ -5,7 +5,7 @@ import com.olaleyeone.audittrail.entity.Task;
 import com.olaleyeone.audittrail.impl.TaskContextHolder;
 import com.olaleyeone.audittrail.impl.TaskContextImpl;
 import com.olaleyeone.audittrail.impl.TaskTransactionContextFactory;
-import com.olaleyeone.auth.entitytest.EntityTest;
+import com.olaleyeone.auth.test.entity.EntityTest;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import com.olaleyeone.auth.integration.security.HashService;
 import org.junit.jupiter.api.BeforeEach;

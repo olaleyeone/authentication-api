@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.entitytest;
+package com.olaleyeone.auth.test.entity;
 
 import com.github.olaleyeone.entitysearch.JpaQuerySource;
 import com.olaleyeone.data.dto.RequestMetadata;

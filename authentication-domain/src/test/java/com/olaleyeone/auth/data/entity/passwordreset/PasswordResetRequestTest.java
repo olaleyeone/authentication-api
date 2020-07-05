@@ -1,7 +1,7 @@
 package com.olaleyeone.auth.data.entity.passwordreset;
 
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
-import com.olaleyeone.auth.entitytest.EntityTest;
+import com.olaleyeone.auth.test.entity.EntityTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

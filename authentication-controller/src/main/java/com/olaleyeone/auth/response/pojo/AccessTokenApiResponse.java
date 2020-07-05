@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -15,6 +17,10 @@ public class AccessTokenApiResponse {
     private String displayName;
     private String firstName;
     private String lastName;
+
+    private Set<String> emailAddresses;
+    private Set<String> phoneNumbers;
+    private List<UserDataApiResponse> data;
 
     private Boolean passwordUpdateRequired;
 
