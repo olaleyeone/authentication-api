@@ -19,6 +19,7 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.transaction.Transactional;
 import java.time.OffsetDateTime;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Named
@@ -53,7 +54,7 @@ public class PasswordUpdateServiceImpl implements PasswordUpdateService {
     @Activity("PASSWORD RESET")
     @Transactional
     @Override
-    public PortalUserAuthentication updatePassword(PasswordResetRequest passwordResetRequest, PasswordResetApiRequest passwordUpdateApiRequest) {
+    public Optional<PortalUserAuthentication> updatePassword(PasswordResetRequest passwordResetRequest, PasswordResetApiRequest passwordUpdateApiRequest) {
         PortalUser portalUser = passwordResetRequest.getPortalUser();
         taskContextProvider.get().setDescription(
                 String.format("Password reset by user %s", portalUser.getId()));
@@ -69,6 +70,9 @@ public class PasswordUpdateServiceImpl implements PasswordUpdateService {
         if (BooleanUtils.isTrue(passwordUpdateApiRequest.getInvalidateOtherSessions())) {
             portalUserAuthenticationRepository.deactivateOtherSessions(portalUser);
         }
-        return implicitAuthenticationService.createPasswordResetAuthentication(passwordResetRequest);
+        if (!passwordResetRequest.isAutoLogin()) {
+            return Optional.empty();
+        }
+        return Optional.of(implicitAuthenticationService.createPasswordResetAuthentication(passwordResetRequest));
     }
 }

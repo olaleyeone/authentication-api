@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -103,12 +104,18 @@ class PasswordUpdateServiceImplTest extends ServiceTest {
     }
 
     @Test
-    void applyPasswordReset() {
+    void applyPasswordResetWithAutoLogin() {
         PasswordResetApiRequest apiRequest = new PasswordResetApiRequest();
         apiRequest.setPassword(faker.internet().password());
         apiRequest.setInvalidateOtherSessions(true);
 
-        PasswordResetRequest passwordResetRequest = modelFactory.create(PasswordResetRequest.class);
+        PasswordResetRequest passwordResetRequest = modelFactory.pipe(PasswordResetRequest.class)
+                .then(it -> {
+                    it.setAutoLogin(true);
+                    return it;
+                })
+                .create();
+
         List<PortalUserAuthentication> otherSessions = modelFactory.pipe(PortalUserAuthentication.class)
                 .then(it -> {
                     it.setPortalUserIdentifier(null);
@@ -117,14 +124,10 @@ class PasswordUpdateServiceImplTest extends ServiceTest {
                 })
                 .create(2);
 
-        Mockito.doReturn(faker.internet().ipV4Address()).when(requestMetadata).getIpAddress();
-        Mockito.doReturn(faker.internet().userAgentAny()).when(requestMetadata).getUserAgent();
-        PortalUserAuthentication userAuthentication = passwordUpdateService.updatePassword(passwordResetRequest, apiRequest);
-        entityManager.flush();
-        entityManager.refresh(passwordResetRequest);
-        assertNull(passwordResetRequest.getDeactivatedOn());
-        assertNotNull(passwordResetRequest.getUsedOn());
-        assertNotNull(userAuthentication);
+        Optional<PortalUserAuthentication> optionalPortalUserAuthentication = doPasswordReset(apiRequest, passwordResetRequest);
+
+        assertTrue(optionalPortalUserAuthentication.isPresent());
+        PortalUserAuthentication userAuthentication = optionalPortalUserAuthentication.get();
         assertEquals(requestMetadata.getIpAddress(), userAuthentication.getIpAddress());
         assertEquals(requestMetadata.getUserAgent(), userAuthentication.getUserAgent());
 
@@ -132,5 +135,34 @@ class PasswordUpdateServiceImplTest extends ServiceTest {
             entityManager.refresh(it);
             assertNotNull(it.getDeactivatedAt());
         });
+    }
+
+    @Test
+    void applyPasswordResetWithoutAutoLogin() {
+        PasswordResetApiRequest apiRequest = new PasswordResetApiRequest();
+        apiRequest.setPassword(faker.internet().password());
+        apiRequest.setInvalidateOtherSessions(true);
+
+        PasswordResetRequest passwordResetRequest = modelFactory.pipe(PasswordResetRequest.class)
+                .then(it -> {
+                    it.setAutoLogin(false);
+                    return it;
+                })
+                .create();
+
+        Optional<PortalUserAuthentication> optionalPortalUserAuthentication = doPasswordReset(apiRequest, passwordResetRequest);
+
+        assertFalse(optionalPortalUserAuthentication.isPresent());
+    }
+
+    private Optional<PortalUserAuthentication> doPasswordReset(PasswordResetApiRequest apiRequest, PasswordResetRequest passwordResetRequest) {
+        Mockito.doReturn(faker.internet().ipV4Address()).when(requestMetadata).getIpAddress();
+        Mockito.doReturn(faker.internet().userAgentAny()).when(requestMetadata).getUserAgent();
+        Optional<PortalUserAuthentication> optionalPortalUserAuthentication = passwordUpdateService.updatePassword(passwordResetRequest, apiRequest);
+        entityManager.flush();
+        entityManager.refresh(passwordResetRequest);
+        assertNull(passwordResetRequest.getDeactivatedOn());
+        assertNotNull(passwordResetRequest.getUsedOn());
+        return optionalPortalUserAuthentication;
     }
 }

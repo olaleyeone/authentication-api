@@ -5,12 +5,12 @@ import com.github.olaleyeone.auth.data.AccessClaims;
 import com.github.olaleyeone.auth.data.AccessClaimsExtractor;
 import com.github.olaleyeone.rest.exception.ErrorResponse;
 import com.olaleyeone.auth.data.dto.PasswordResetApiRequest;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.passwordreset.PasswordResetRequest;
 import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.qualifier.JwtToken;
 import com.olaleyeone.auth.repository.PasswordResetRequestRepository;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
+import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.PasswordUpdateService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +36,7 @@ public class PasswordResetController {
     private final PasswordResetRequestRepository passwordResetRequestRepository;
     private final PasswordUpdateService passwordUpdateService;
     private final AccessTokenApiResponseHandler accessTokenApiResponseHandler;
+    private final UserApiResponseHandler userApiResponseHandler;
 
     @JwtToken(JwtTokenType.PASSWORD_RESET)
     private final AccessClaimsExtractor accessClaimsExtractor;
@@ -64,7 +65,8 @@ public class PasswordResetController {
         if (!passwordResetRequest.getPortalUserIdentifier().getIdentifier().equals(identifier)) {
             throw new ErrorResponse(HttpStatus.FORBIDDEN);
         }
-        PortalUserAuthentication userAuthentication = passwordUpdateService.updatePassword(passwordResetRequest, apiRequest);
-        return accessTokenApiResponseHandler.getAccessToken(userAuthentication);
+        return passwordUpdateService.updatePassword(passwordResetRequest, apiRequest)
+                .map(accessTokenApiResponseHandler::getAccessToken)
+                .orElseGet(() -> new HttpEntity<>(new AccessTokenApiResponse(passwordResetRequest.getPortalUser())));
     }
 }

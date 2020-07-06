@@ -39,7 +39,7 @@ class PasswordResetRequestServiceImplTest extends ServiceTest {
     @Test
     void createRequest() {
         PortalUserIdentifier portalUserIdentifier = modelFactory.create(PortalUserIdentifier.class);
-        Map.Entry<PasswordResetRequest, String> request = passwordResetRequestService.createRequest(portalUserIdentifier);
+        Map.Entry<PasswordResetRequest, String> request = passwordResetRequestService.createRequest(portalUserIdentifier, true);
         assertNotNull(request.getKey());
         assertNotNull(request.getKey().getId());
         assertEquals(hash, request.getKey().getResetCodeHash());
@@ -50,9 +50,9 @@ class PasswordResetRequestServiceImplTest extends ServiceTest {
     void deactivatePreviousCode() {
         PortalUserIdentifier portalUserIdentifier = modelFactory.create(PortalUserIdentifier.class);
         Map.Entry<PasswordResetRequest, String> verification1 =
-                passwordResetRequestService.createRequest(portalUserIdentifier);
+                passwordResetRequestService.createRequest(portalUserIdentifier, true);
         Map.Entry<PasswordResetRequest, String> verification2 =
-                passwordResetRequestService.createRequest(portalUserIdentifier);
+                passwordResetRequestService.createRequest(portalUserIdentifier, false);
         entityManager.flush();
         entityManager.refresh(verification1.getKey());
         assertNotNull(verification1.getKey().getDeactivatedOn());

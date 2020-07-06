@@ -6,9 +6,11 @@ import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.entity.passwordreset.PasswordResetRequest;
 
+import java.util.Optional;
+
 public interface PasswordUpdateService {
 
     void updatePassword(RefreshToken portalUser, PasswordUpdateApiRequest passwordUpdateApiRequest);
 
-    PortalUserAuthentication updatePassword(PasswordResetRequest passwordResetRequest, PasswordResetApiRequest passwordUpdateApiRequest);
+    Optional<PortalUserAuthentication> updatePassword(PasswordResetRequest passwordResetRequest, PasswordResetApiRequest passwordUpdateApiRequest);
 }

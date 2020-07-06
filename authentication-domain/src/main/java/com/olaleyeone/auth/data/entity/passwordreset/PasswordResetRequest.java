@@ -51,6 +51,8 @@ public class PasswordResetRequest {
     private OffsetDateTime usedOn;
     private OffsetDateTime deactivatedOn;
 
+    private boolean autoLogin;
+
     @Transient
     public Instant getExpiryInstant() {
         return TimeUtil.toInstant(expiresOn);

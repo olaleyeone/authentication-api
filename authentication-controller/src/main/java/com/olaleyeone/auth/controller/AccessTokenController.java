@@ -73,6 +73,7 @@ public class AccessTokenController {
         return Arrays.asList(httpServletRequest.getCookies())
                 .stream()
                 .filter(cookie -> cookie.getName().equals(AccessTokenApiResponseHandler.REFRESH_TOKEN_COOKIE_NAME))
+//                .peek(cookie -> logger.info("{}", cookie.getValue()))
                 .findFirst()
                 .map(Cookie::getValue).orElseThrow(() -> new ErrorResponse(HttpStatus.UNAUTHORIZED));
     }
