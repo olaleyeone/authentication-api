@@ -25,6 +25,8 @@ import javax.inject.Named;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.olaleyeone.auth.response.handler.UserApiResponseHandler.getIdentifiers;
+
 @RequiredArgsConstructor
 @Builder
 @Named
@@ -66,16 +68,9 @@ public class AccessTokenApiResponseHandler {
     private HttpEntity<AccessTokenApiResponse> getUserApiResponseHttpEntity(RefreshToken refreshToken) {
         AccessTokenApiResponse accessTokenApiResponse = new AccessTokenApiResponse(refreshToken.getPortalUser());
         List<PortalUserIdentifier> userIdentifiers = portalUserIdentifierRepository.findByPortalUser(refreshToken.getPortalUser());
-        accessTokenApiResponse.setEmailAddresses(userIdentifiers
-                .stream()
-                .filter(portalUserIdentifier -> portalUserIdentifier.getIdentifierType() == UserIdentifierType.EMAIL)
-                .map(PortalUserIdentifier::getIdentifier)
-                .collect(Collectors.toSet()));
-        accessTokenApiResponse.setPhoneNumbers(userIdentifiers
-                .stream()
-                .filter(portalUserIdentifier -> portalUserIdentifier.getIdentifierType() == UserIdentifierType.PHONE_NUMBER)
-                .map(PortalUserIdentifier::getIdentifier)
-                .collect(Collectors.toSet()));
+
+        accessTokenApiResponse.setEmailAddresses(getIdentifiers(userIdentifiers, UserIdentifierType.EMAIL));
+        accessTokenApiResponse.setPhoneNumbers(getIdentifiers(userIdentifiers, UserIdentifierType.PHONE_NUMBER));
 
         accessTokenApiResponse.setData(portalUserDataRepository.findByPortalUser(refreshToken.getPortalUser())
                 .stream()

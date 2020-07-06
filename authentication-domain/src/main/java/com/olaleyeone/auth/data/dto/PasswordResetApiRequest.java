@@ -5,7 +5,6 @@
  */
 package com.olaleyeone.auth.data.dto;
 
-import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -14,14 +13,13 @@ import javax.validation.constraints.NotBlank;
 public class PasswordResetApiRequest {
 
     @NotBlank
-    private String identifier;
-
-    @NotBlank
-    private UserIdentifierType identifierType;
-
-    @NotBlank
     private String password;
 
-    @NotBlank
-    private String resetToken;
+    private Boolean invalidateOtherSessions;
+
+//    @NotBlank
+//    private String identifier;
+//
+//    @NotBlank
+//    private String resetToken;
 }

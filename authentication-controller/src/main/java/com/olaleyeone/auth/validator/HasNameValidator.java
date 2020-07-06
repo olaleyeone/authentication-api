@@ -2,13 +2,11 @@ package com.olaleyeone.auth.validator;
 
 import com.olaleyeone.auth.constraints.HasName;
 import com.olaleyeone.auth.data.dto.UserRegistrationApiRequest;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Named;
 import javax.validation.ConstraintValidatorContext;
 
-@RequiredArgsConstructor
 @Named
 public class HasNameValidator implements HasName.Validator {
 

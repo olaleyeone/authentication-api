@@ -11,11 +11,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +27,7 @@ import java.util.stream.Collectors;
 public class ErrorAdvice {
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<?> handle(NotFoundException e) {
+    public ResponseEntity<ApiResponse<String>> handle(NotFoundException e) {
         ApiResponse<String> apiResponse = new ApiResponse<>();
         apiResponse.setMessage(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
@@ -56,7 +58,9 @@ public class ErrorAdvice {
                 .collect(Collectors.groupingBy(errorMessage -> errorMessage.path)));
         apiResponse.setData(data);
 
-        apiResponse.setMessage(bindingResult.getAllErrors().iterator().next().getDefaultMessage());
+        ObjectError firstError = bindingResult.getAllErrors().iterator().next();
+        apiResponse.setMessage(firstError.getDefaultMessage());
+        apiResponse.setMessageCode(firstError.getCode());
 
         return new ResponseEntity<>(apiResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
@@ -74,16 +78,18 @@ public class ErrorAdvice {
                                 it.getMessage()))
                         .collect(Collectors.groupingBy(errorMessage -> errorMessage.path))
         );
-        apiResponse.setMessage(ex.getConstraintViolations().iterator().next().getMessage());
+        ConstraintViolation<?> constraintViolation = ex.getConstraintViolations().iterator().next();
+        apiResponse.setMessage(constraintViolation.getMessage());
+        apiResponse.setMessageCode(constraintViolation.getMessageTemplate());
 
         return new ResponseEntity<>(apiResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ApiResponse<List<String>>> handleConstraintViolation(
+    public ResponseEntity<ApiResponse<String>> handleBadRequest(
             HttpMessageNotReadableException ex,
             HttpServletRequest request) {
-        ApiResponse<List<String>> apiResponse = new ApiResponse<>();
+        ApiResponse<String> apiResponse = new ApiResponse<>();
         apiResponse.setMessage(request.getContentLength() == 0 ? "Missing request body" : "Could not parse request body");
         return new ResponseEntity<>(apiResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }

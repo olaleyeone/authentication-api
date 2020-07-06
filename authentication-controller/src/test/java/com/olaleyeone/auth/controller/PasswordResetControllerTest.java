@@ -3,7 +3,7 @@ package com.olaleyeone.auth.controller;
 import com.github.olaleyeone.auth.data.AccessClaims;
 import com.github.olaleyeone.auth.data.AccessClaimsExtractor;
 import com.olaleyeone.auth.controllertest.ControllerTest;
-import com.olaleyeone.auth.data.dto.PasswordUpdateApiRequest;
+import com.olaleyeone.auth.data.dto.PasswordResetApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.passwordreset.PasswordResetRequest;
@@ -40,7 +40,7 @@ class PasswordResetControllerTest extends ControllerTest {
     private PasswordResetRequest passwordResetRequest;
     private PortalUserIdentifier portalUserIdentifier;
 
-    private PasswordUpdateApiRequest apiRequest;
+    private PasswordResetApiRequest apiRequest;
 
     private String emailAddress;
     private String resetToken;
@@ -56,7 +56,7 @@ class PasswordResetControllerTest extends ControllerTest {
         emailAddress = faker.internet().emailAddress();
         resetToken = faker.lorem().sentence();
 
-        apiRequest = new PasswordUpdateApiRequest();
+        apiRequest = new PasswordResetApiRequest();
         apiRequest.setPassword(faker.internet().password());
 
         requestBuilder = MockMvcRequestBuilders.put("/password")
@@ -118,7 +118,7 @@ class PasswordResetControllerTest extends ControllerTest {
         Mockito.doReturn(Optional.of(passwordResetRequest)).when(passwordResetRequestRepository).findById(Mockito.any());
         Mockito.doReturn(userAuthentication).when(passwordUpdateService).updatePassword(
                 Mockito.any(PasswordResetRequest.class),
-                Mockito.any(PasswordUpdateApiRequest.class));
+                Mockito.any(PasswordResetApiRequest.class));
 
         portalUserIdentifier.setIdentifier(emailAddress);
 

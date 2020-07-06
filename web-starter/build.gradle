@@ -20,10 +20,7 @@ jacocoTestCoverageVerification {
                 minimum = 0.95
             }
             excludes = [
-                    "com.github.olaleyeone.rest.exception.*",
-                    "com.github.olaleyeone.configuration.*",
-                    "com.github.olaleyeone.advice.*",
-                    "com.github.olaleyeone.entitysearch.util.OffsetBasedPageRequest"
+                    "com.github.olaleyeone.configuration.*"
             ]
         }
     }
@@ -59,6 +56,9 @@ dependencies {
 
     testImplementation "javax.servlet:javax.servlet-api:$servletVersion"
     testImplementation "org.hibernate:hibernate-core:$hibernateVersion"
-    testRuntimeOnly "com.h2database:h2:$h2Version"
     testImplementation "com.github.javafaker:javafaker:$javaFakerVersion"
+
+    testRuntimeOnly "com.h2database:h2:$h2Version"
+    testRuntimeOnly "org.hibernate.validator:hibernate-validator:$hibernateValidator"
+    testRuntimeOnly "org.apache.tomcat.embed:tomcat-embed-el:9.0.36"
 }

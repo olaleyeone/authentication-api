@@ -2,6 +2,7 @@ package com.olaleyeone.auth.service;
 
 import com.olaleyeone.audittrail.api.Activity;
 import com.olaleyeone.audittrail.context.TaskContext;
+import com.olaleyeone.auth.data.dto.PasswordResetApiRequest;
 import com.olaleyeone.auth.data.dto.PasswordUpdateApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
@@ -34,12 +35,16 @@ public class PasswordUpdateServiceImpl implements PasswordUpdateService {
     @Transactional
     @Override
     public void updatePassword(RefreshToken refreshToken, PasswordUpdateApiRequest passwordUpdateApiRequest) {
-        taskContextProvider.get().setDescription(
-                String.format("Updating password for logged in user %s", refreshToken.getPortalUser().getId()));
         PortalUser portalUser = refreshToken.getPortalUser();
+
+        taskContextProvider.get().setDescription(
+                String.format("Updating password for logged in user %s", portalUser.getId()));
+
         portalUser.setPassword(hashService.generateHash(passwordUpdateApiRequest.getPassword()));
+        portalUser.setPasswordLastUpdatedOn(OffsetDateTime.now());
         portalUser.setPasswordUpdateRequired(false);
         portalUserRepository.save(portalUser);
+
         if (BooleanUtils.isTrue(passwordUpdateApiRequest.getInvalidateOtherSessions())) {
             portalUserAuthenticationRepository.deactivateOtherSessions(refreshToken.getActualAuthentication());
         }
@@ -48,12 +53,14 @@ public class PasswordUpdateServiceImpl implements PasswordUpdateService {
     @Activity("PASSWORD RESET")
     @Transactional
     @Override
-    public PortalUserAuthentication updatePassword(PasswordResetRequest passwordResetRequest, PasswordUpdateApiRequest passwordUpdateApiRequest) {
+    public PortalUserAuthentication updatePassword(PasswordResetRequest passwordResetRequest, PasswordResetApiRequest passwordUpdateApiRequest) {
         PortalUser portalUser = passwordResetRequest.getPortalUser();
         taskContextProvider.get().setDescription(
                 String.format("Password reset by user %s", portalUser.getId()));
 
         portalUser.setPassword(hashService.generateHash(passwordUpdateApiRequest.getPassword()));
+        portalUser.setPasswordLastUpdatedOn(OffsetDateTime.now());
+        portalUser.setPasswordUpdateRequired(false);
         portalUserRepository.save(portalUser);
 
         passwordResetRequest.setUsedOn(OffsetDateTime.now());

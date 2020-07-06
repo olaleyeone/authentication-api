@@ -3,6 +3,7 @@ package com.olaleyeone.auth.response.handler;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserData;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
+import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import com.olaleyeone.auth.repository.PortalUserDataRepository;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
@@ -23,6 +24,8 @@ class UserApiResponseHandlerTest extends ComponentTest {
     private PortalUserIdentifierRepository portalUserIdentifierRepository;
     @Mock
     private PortalUserDataRepository portalUserDataRepository;
+    @Mock
+    private PortalUserAuthenticationRepository portalUserAuthenticationRepository;
 
     @InjectMocks
     private UserApiResponseHandler userApiResponseHandler;

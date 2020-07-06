@@ -4,7 +4,7 @@ import com.github.olaleyeone.auth.annotations.Public;
 import com.github.olaleyeone.auth.data.AccessClaims;
 import com.github.olaleyeone.auth.data.AccessClaimsExtractor;
 import com.github.olaleyeone.rest.exception.ErrorResponse;
-import com.olaleyeone.auth.data.dto.PasswordUpdateApiRequest;
+import com.olaleyeone.auth.data.dto.PasswordResetApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.passwordreset.PasswordResetRequest;
 import com.olaleyeone.auth.data.enums.JwtTokenType;
@@ -45,7 +45,7 @@ public class PasswordResetController {
     public HttpEntity<AccessTokenApiResponse> resetPasswordWithResetToken(
             @RequestParam("identifier") String identifier,
             @RequestParam("resetToken") String resetToken,
-            @Valid @RequestBody PasswordUpdateApiRequest apiRequest) {
+            @Valid @RequestBody PasswordResetApiRequest apiRequest) {
         AccessClaims claims;
         try {
             claims = accessClaimsExtractor.getClaims(resetToken);

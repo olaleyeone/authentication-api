@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface PortalUserAuthenticationRepository extends JpaRepository<PortalUserAuthentication, Long> {
 
@@ -17,6 +19,11 @@ public interface PortalUserAuthenticationRepository extends JpaRepository<Portal
             " AND t.portalUser=?1" +
             " AND t.autoLogoutAt>CURRENT_TIMESTAMP")
     List<PortalUserAuthentication> findActiveSessions(PortalUser portalUser);
+
+    @Query("SELECT MAX(t.becomesInactiveAt) FROM PortalUserAuthentication t" +
+            " WHERE t.responseType='SUCCESSFUL'" +
+            " AND t.portalUser=?1")
+    Optional<OffsetDateTime> getLastActive(PortalUser portalUser);
 
     @Modifying
     @Query("UPDATE PortalUserAuthentication auth SET auth.deactivatedAt=CURRENT_TIMESTAMP" +

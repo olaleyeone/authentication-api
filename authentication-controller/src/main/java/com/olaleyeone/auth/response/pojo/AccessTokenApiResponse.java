@@ -2,6 +2,7 @@ package com.olaleyeone.auth.response.pojo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.olaleyeone.auth.data.entity.PortalUser;
+import com.olaleyeone.auth.data.enums.Gender;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +18,8 @@ public class AccessTokenApiResponse {
     private String displayName;
     private String firstName;
     private String lastName;
+
+    private Gender gender;
 
     private Set<String> emailAddresses;
     private Set<String> phoneNumbers;
@@ -42,6 +45,7 @@ public class AccessTokenApiResponse {
         this.displayName = user.getDisplayName();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
+        this.gender = user.getGender();
         this.passwordUpdateRequired = user.getPasswordUpdateRequired();
     }
 }

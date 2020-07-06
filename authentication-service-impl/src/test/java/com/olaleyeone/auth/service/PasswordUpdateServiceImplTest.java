@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.service;
 
+import com.olaleyeone.auth.data.dto.PasswordResetApiRequest;
 import com.olaleyeone.auth.data.dto.PasswordUpdateApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.RefreshToken;
@@ -103,6 +104,10 @@ class PasswordUpdateServiceImplTest extends ServiceTest {
 
     @Test
     void applyPasswordReset() {
+        PasswordResetApiRequest apiRequest = new PasswordResetApiRequest();
+        apiRequest.setPassword(faker.internet().password());
+        apiRequest.setInvalidateOtherSessions(true);
+
         PasswordResetRequest passwordResetRequest = modelFactory.create(PasswordResetRequest.class);
         List<PortalUserAuthentication> otherSessions = modelFactory.pipe(PortalUserAuthentication.class)
                 .then(it -> {
