@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.service;
 
+import com.olaleyeone.auth.data.dto.PasswordResetApiRequest;
 import com.olaleyeone.auth.data.dto.PasswordUpdateApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.RefreshToken;
@@ -11,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -78,7 +79,7 @@ class PasswordUpdateServiceImplTest extends ServiceTest {
         List<PortalUserAuthentication> otherSessions = modelFactory.pipe(PortalUserAuthentication.class)
                 .then(it -> {
                     it.setPortalUserIdentifier(null);
-                    it.setAutoLogoutAt(LocalDateTime.now());
+                    it.setAutoLogoutAt(OffsetDateTime.now());
                     it.setPortalUser(refreshToken.getPortalUser());
                     return it;
                 })
@@ -103,6 +104,10 @@ class PasswordUpdateServiceImplTest extends ServiceTest {
 
     @Test
     void applyPasswordReset() {
+        PasswordResetApiRequest apiRequest = new PasswordResetApiRequest();
+        apiRequest.setPassword(faker.internet().password());
+        apiRequest.setInvalidateOtherSessions(true);
+
         PasswordResetRequest passwordResetRequest = modelFactory.create(PasswordResetRequest.class);
         List<PortalUserAuthentication> otherSessions = modelFactory.pipe(PortalUserAuthentication.class)
                 .then(it -> {

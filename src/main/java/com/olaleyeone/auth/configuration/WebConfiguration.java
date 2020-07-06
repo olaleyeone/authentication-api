@@ -41,6 +41,11 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Bean
+    public ErrorAdvice errorAdvice() {
+        return new ErrorAdvice();
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
@@ -54,10 +59,5 @@ public class WebConfiguration implements WebMvcConfigurer {
         );
         beanFactory.autowireBean(accessConstraintHandlerInterceptor);
         registry.addInterceptor(accessConstraintHandlerInterceptor);
-    }
-
-    @Bean
-    public ErrorAdvice errorAdvice() {
-        return new ErrorAdvice();
     }
 }

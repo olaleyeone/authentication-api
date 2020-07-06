@@ -5,6 +5,7 @@ import com.github.olaleyeone.auth.data.AccessClaims;
 import com.github.olaleyeone.auth.data.AccessClaimsExtractor;
 import com.github.olaleyeone.auth.data.AuthorizedRequest;
 import com.olaleyeone.auth.integration.security.AuthTokenGenerator;
+import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.qualifier.JwtToken;
 import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.security.authorizer.NotClientTokenAuthorizer;
@@ -21,6 +22,11 @@ class SecurityMockConfig {
     @Bean
     public TrustedIpAddressAuthorizer trustedIpAddressAuthorizer() {
         return Mockito.mock(TrustedIpAddressAuthorizer.class);
+    }
+
+    @Bean
+    public HashService hashService() {
+        return Mockito.mock(HashService.class);
     }
 
     @Bean

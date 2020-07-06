@@ -15,6 +15,7 @@ import com.olaleyeone.auth.integration.security.passwordreset.PasswordResetToken
 import com.olaleyeone.auth.qualifier.JwtToken;
 import com.olaleyeone.auth.repository.SignatureKeyRepository;
 import com.olaleyeone.auth.service.KeyGenerator;
+import com.olaleyeone.auth.service.SettingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.Bean;
@@ -58,12 +59,16 @@ public class SecurityConfiguration {
 
     @JwtToken(JwtTokenType.ACCESS)
     @Bean
-    public AuthTokenGenerator accessTokenGenerator(KeyGenerator keyGenerator, TaskContextFactory taskContextFactory) {
+    public AuthTokenGenerator accessTokenGenerator(
+            KeyGenerator keyGenerator,
+            TaskContextFactory taskContextFactory,
+            SettingService settingService) {
         return AccessTokenGenerator.builder()
                 .jwsGenerator(new AuthJwsGenerator())
                 .keyGenerator(keyGenerator)
                 .signingKeyResolver(accessTokenKeyResolver(null))
                 .taskContextFactory(taskContextFactory)
+                .settingService(settingService)
                 .build();
     }
 

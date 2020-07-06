@@ -1,14 +1,13 @@
 package com.olaleyeone.auth.data.entity.passwordreset;
 
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
-import com.olaleyeone.auth.entitytest.EntityTest;
+import com.olaleyeone.auth.test.entity.EntityTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.PersistenceException;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 
@@ -22,7 +21,7 @@ class PasswordResetRequestTest extends EntityTest {
     void setUp() {
         passwordResetRequest = new PasswordResetRequest();
         passwordResetRequest.setPortalUserIdentifier(modelFactory.create(PortalUserIdentifier.class));
-        passwordResetRequest.setExpiresOn(LocalDateTime.now().plusSeconds(faker.number().randomDigit()));
+        passwordResetRequest.setExpiresOn(OffsetDateTime.now().plusSeconds(faker.number().randomDigit()));
         String digit = faker.number().digit();
         passwordResetRequest.setResetCode(digit);
         passwordResetRequest.setResetCodeHash(Base64.getEncoder().encodeToString(digit.getBytes()));
@@ -32,7 +31,7 @@ class PasswordResetRequestTest extends EntityTest {
 
     @Test
     void prePersistWithoutCreatedOn() {
-        LocalDateTime now = LocalDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now();
         passwordResetRequest.setCreatedOn(now);
         saveAndFlush(passwordResetRequest);
         assertNotNull(passwordResetRequest);
@@ -55,17 +54,17 @@ class PasswordResetRequestTest extends EntityTest {
     @Test
     public void getExpiryInstant() {
         PasswordResetRequest passwordResetRequest = new PasswordResetRequest();
-        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(20);
+        OffsetDateTime expiresAt = OffsetDateTime.now().plusMinutes(20);
         passwordResetRequest.setExpiresOn(expiresAt);
-        assertEquals(expiresAt.atZone(ZoneId.systemDefault()).toInstant(), passwordResetRequest.getExpiryInstant());
+        assertEquals(expiresAt.toInstant(), passwordResetRequest.getExpiryInstant());
     }
 
     @Test
     public void getSecondsTillExpiry() {
         PasswordResetRequest passwordResetRequest = new PasswordResetRequest();
-        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(20);
+        OffsetDateTime expiresAt = OffsetDateTime.now().plusMinutes(20);
         passwordResetRequest.setExpiresOn(expiresAt);
-        long secondsTillExpiry = Instant.now().until(expiresAt.atZone(ZoneId.systemDefault()).toInstant(), ChronoUnit.SECONDS);
+        long secondsTillExpiry = Instant.now().until(expiresAt.toInstant(), ChronoUnit.SECONDS);
         assertTrue((secondsTillExpiry - passwordResetRequest.getSecondsTillExpiry()) <= 1);
     }
 }

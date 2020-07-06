@@ -6,7 +6,7 @@ import com.olaleyeone.auth.data.enums.AuthenticationType;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @Entity
@@ -44,20 +44,20 @@ public class PortalUserAuthentication {
     @JoinColumn(unique = true)
     private PasswordResetRequest passwordResetRequest;
 
-    private LocalDateTime lastActiveAt;
-    private LocalDateTime becomesInactiveAt;
+    private OffsetDateTime lastActiveAt;
+    private OffsetDateTime becomesInactiveAt;
 
-    private LocalDateTime autoLogoutAt;
-    private LocalDateTime loggedOutAt;
+    private OffsetDateTime autoLogoutAt;
+    private OffsetDateTime loggedOutAt;
     
-    private LocalDateTime deactivatedAt;
+    private OffsetDateTime deactivatedAt;
 
     @Column(updatable = false, nullable = false)
-    private LocalDateTime dateCreated;
+    private OffsetDateTime dateCreated;
 
     @PrePersist
     public void prePersist() {
-        dateCreated = LocalDateTime.now();
+        dateCreated = OffsetDateTime.now();
         Optional.ofNullable(portalUserIdentifier)
                 .map(PortalUserIdentifier::getPortalUser)
                 .ifPresent(portalUser -> {

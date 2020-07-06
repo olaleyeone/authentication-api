@@ -19,7 +19,7 @@ import org.springframework.http.HttpHeaders;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -59,10 +59,14 @@ class TaskContextHandlerInterceptorTest extends ComponentTest {
         String path = faker.internet().slug();
         Mockito.doReturn(path).when(request).getServletPath();
         Mockito.doReturn(path).when(request).getRequestURI();
+
         String ipV4Address = faker.internet().ipV4Address();
         Mockito.doReturn(ipV4Address).when(request).getRemoteAddr();
+
         String userAgent = faker.internet().userAgentAny();
         Mockito.doReturn(userAgent).when(request).getHeader(Mockito.eq(HttpHeaders.USER_AGENT));
+        Mockito.doReturn(null).when(request).getHeader(Mockito.eq(taskContextHandlerInterceptor.getProxyIpHeader()));
+
         taskContextHandlerInterceptor.preHandle(request, response, null);
         Mockito.verify(taskContextFactory, Mockito.times(1))
                 .start(Mockito.argThat(task -> {
@@ -87,7 +91,9 @@ class TaskContextHandlerInterceptorTest extends ComponentTest {
         Mockito.doReturn(faker.number().digit()).when(accessClaims).getSubject();
         Mockito.doReturn(faker.number().digit()).when(accessClaims).getId();
 
-        Mockito.doReturn(faker.internet().ipV4Address()).when(request).getRemoteAddr();
+        taskContextHandlerInterceptor.setProxyIpHeader(null);
+        String ipV4Address = faker.internet().ipV4Address();
+        Mockito.doReturn(ipV4Address).when(request).getRemoteAddr();
 
         taskContextHandlerInterceptor.preHandle(request, response, null);
         Mockito.verify(taskContextFactory, Mockito.times(1))
@@ -98,6 +104,7 @@ class TaskContextHandlerInterceptorTest extends ComponentTest {
                     WebRequest webRequest = task.getWebRequest();
                     assertEquals(accessClaims.getId(), webRequest.getSessionId());
                     assertEquals(accessClaims.getSubject(), webRequest.getUserId());
+                    assertEquals(ipV4Address, webRequest.getIpAddress());
                     return true;
                 }));
     }
@@ -105,12 +112,12 @@ class TaskContextHandlerInterceptorTest extends ComponentTest {
     @Test
     void preHandleForProxy() {
         String ipV4Address = faker.internet().ipV4Address();
-        String ip_v4_localhost = faker.internet().ipV4Address();
-        taskContextHandlerInterceptor.setIP_V4_LOCALHOST(ip_v4_localhost);
-        Mockito.doReturn(taskContextHandlerInterceptor.getIP_V4_LOCALHOST()).when(request).getRemoteAddr();
+
         Mockito.doReturn(ipV4Address).when(request).getHeader(Mockito.eq(taskContextHandlerInterceptor.getProxyIpHeader()));
+        Mockito.doReturn(faker.internet().ipV4Address()).when(request).getRemoteAddr();
 
         Mockito.doReturn(faker.internet().userAgentAny()).when(request).getHeader(Mockito.eq(HttpHeaders.USER_AGENT));
+
         taskContextHandlerInterceptor.preHandle(request, response, null);
         Mockito.verify(taskContextFactory, Mockito.times(1))
                 .start(Mockito.argThat(task -> {
@@ -125,7 +132,7 @@ class TaskContextHandlerInterceptorTest extends ComponentTest {
     @Test
     void afterCompletion() {
         Task task = new Task();
-        task.setDuration(Duration.builder().startedOn(LocalDateTime.now()).build());
+        task.setDuration(Duration.builder().startedOn(OffsetDateTime.now()).build());
         task.setWebRequest(new WebRequest());
         TaskContextImpl taskContext = new TaskContextImpl(task, null, taskContextHolder, null);
         Mockito.doReturn(taskContext).when(taskContextHolder).getObject();

@@ -1,19 +1,18 @@
 package com.github.olaleyeone.entitysearch.util;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.Data;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.io.Serializable;
 
+@Data
 public class OffsetBasedPageRequest implements Pageable, Serializable {
 
     private static final long serialVersionUID = -25822477129613575L;
 
     private final int limit;
-    private final int offset;
+    private final long offset;
     private final Sort sort;
 
     /**
@@ -23,7 +22,7 @@ public class OffsetBasedPageRequest implements Pageable, Serializable {
      * @param limit  the size of the elements to be returned.
      * @param sort   can be {@literal null}.
      */
-    public OffsetBasedPageRequest(int offset, int limit, Sort sort) {
+    public OffsetBasedPageRequest(long offset, int limit, Sort sort) {
         if (offset < 0) {
             throw new IllegalArgumentException("Offset index must not be less than zero!");
         }
@@ -38,7 +37,7 @@ public class OffsetBasedPageRequest implements Pageable, Serializable {
 
     @Override
     public int getPageNumber() {
-        return offset / limit;
+        return Long.valueOf(offset / limit).intValue();
     }
 
     @Override
@@ -58,15 +57,13 @@ public class OffsetBasedPageRequest implements Pageable, Serializable {
 
     @Override
     public Pageable next() {
-//        return new OffsetBasedPageRequest(getOffset() + getPageSize(), getPageSize(), getSort());
-        throw new UnsupportedOperationException();
+        return new OffsetBasedPageRequest(getOffset() + getPageSize(), getPageSize(), getSort());
     }
 
-    public OffsetBasedPageRequest previous() {
-//        return hasPrevious() ? new OffsetBasedPageRequest(getOffset() - getPageSize(), getPageSize(), getSort()) : this;
-        throw new UnsupportedOperationException();
+    @Override
+    public Pageable first() {
+        return new OffsetBasedPageRequest(0L, getPageSize(), getSort());
     }
-
 
     @Override
     public Pageable previousOrFirst() {
@@ -74,46 +71,12 @@ public class OffsetBasedPageRequest implements Pageable, Serializable {
     }
 
     @Override
-    public Pageable first() {
-        return new OffsetBasedPageRequest(0, getPageSize(), getSort());
-    }
-
-    @Override
     public boolean hasPrevious() {
-        return offset > limit;
+        return offset >= limit;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-
-        if (!(o instanceof OffsetBasedPageRequest)) return false;
-
-        OffsetBasedPageRequest that = (OffsetBasedPageRequest) o;
-
-        return new EqualsBuilder()
-                .append(limit, that.limit)
-                .append(offset, that.offset)
-                .append(sort, that.sort)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .append(limit)
-                .append(offset)
-                .append(sort)
-                .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("limit", limit)
-                .append("offset", offset)
-                .append("sort", sort)
-                .toString();
+    private OffsetBasedPageRequest previous() {
+        return new OffsetBasedPageRequest(getOffset() - getPageSize(), getPageSize(), getSort());
     }
 }
 

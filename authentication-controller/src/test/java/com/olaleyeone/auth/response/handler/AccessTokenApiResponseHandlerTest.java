@@ -1,12 +1,12 @@
 package com.olaleyeone.auth.response.handler;
 
-import com.olaleyeone.auth.data.entity.PortalUser;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
-import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
-import com.olaleyeone.auth.data.entity.RefreshToken;
-import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.dto.JwtDto;
+import com.olaleyeone.auth.data.entity.*;
+import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
+import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.integration.security.AuthTokenGenerator;
+import com.olaleyeone.auth.repository.PortalUserDataRepository;
+import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.RefreshTokenService;
 import com.olaleyeone.auth.test.ComponentTest;
@@ -19,9 +19,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
 import java.net.HttpCookie;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.time.OffsetDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,6 +32,12 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
 
     @Mock
     private AuthTokenGenerator tokenGenerator;
+
+    @Mock
+    private PortalUserIdentifierRepository portalUserIdentifierRepository;
+
+    @Mock
+    private PortalUserDataRepository portalUserDataRepository;
 
     @InjectMocks
     private AccessTokenApiResponseHandler handler;
@@ -61,7 +66,7 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
 
         refreshToken = new RefreshToken();
         refreshToken.setActualAuthentication(userAuthentication);
-        refreshToken.setExpiresAt(LocalDateTime.now().plusDays(1));
+        refreshToken.setExpiresAt(OffsetDateTime.now().plusDays(1));
 
         refreshJwt = JwtDto.builder()
                 .token(UUID.randomUUID().toString())
@@ -108,6 +113,38 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
     }
 
     @Test
+    public void shouldReturnIdentifiers() {
+        Set<String> emails = new HashSet<>(Arrays.asList(UUID.randomUUID().toString(), UUID.randomUUID().toString()));
+        Set<String> phoneNumbers = new HashSet<>(Arrays.asList(UUID.randomUUID().toString(), UUID.randomUUID().toString()));
+
+        Iterator<String> emailIterator = emails.iterator();
+        Iterator<String> phoneNumberIterator = phoneNumbers.iterator();
+
+        Mockito.doReturn(Arrays.asList(
+                getPortalUserIdentifier(emailIterator.next(), UserIdentifierType.EMAIL),
+                getPortalUserIdentifier(emailIterator.next(), UserIdentifierType.EMAIL),
+                getPortalUserIdentifier(phoneNumberIterator.next(), UserIdentifierType.PHONE_NUMBER),
+                getPortalUserIdentifier(phoneNumberIterator.next(), UserIdentifierType.PHONE_NUMBER)
+        )).when(portalUserIdentifierRepository).findByPortalUser(Mockito.any());
+
+        HttpEntity<AccessTokenApiResponse> responseEntity = handler.getAccessToken(refreshToken);
+
+        assertNotNull(responseEntity.getBody());
+        assertEquals(emails, responseEntity.getBody().getEmailAddresses());
+        assertEquals(phoneNumbers, responseEntity.getBody().getPhoneNumbers());
+    }
+
+    @Test
+    public void shouldReturnUserData() {
+        Mockito.doReturn(Arrays.asList(dtoFactory.make(PortalUserData.class))).when(portalUserDataRepository).findByPortalUser(Mockito.any());
+
+        HttpEntity<AccessTokenApiResponse> responseEntity = handler.getAccessToken(refreshToken);
+
+        assertNotNull(responseEntity.getBody());
+        assertEquals(1, responseEntity.getBody().getData().size());
+    }
+
+    @Test
     public void shouldReturnAccessTokenCookies() {
 
         HttpEntity<AccessTokenApiResponse> responseEntity = handler.getAccessToken(userAuthentication);
@@ -123,9 +160,16 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
 
     @Test
     public void shouldReturnRefreshTokenCookies() {
-
         String contextPath = "/" + faker.internet().slug();
-        handler = new AccessTokenApiResponseHandler(refreshTokenService, tokenGenerator, tokenGenerator, contextPath, "Secure; HttpOnly");
+        handler = AccessTokenApiResponseHandler.builder()
+                .accessTokenJwtService(tokenGenerator)
+                .refreshTokenJwtService(tokenGenerator)
+                .refreshTokenService(refreshTokenService)
+                .portalUserDataRepository(portalUserDataRepository)
+                .portalUserIdentifierRepository(portalUserIdentifierRepository)
+                .contextPath(contextPath)
+                .cookieFlags("Secure; HttpOnly")
+                .build();
         HttpEntity<AccessTokenApiResponse> responseEntity = handler.getAccessToken(userAuthentication);
 
         List<HttpCookie> httpCookies = getCookiesByName(responseEntity, "refresh_token");
@@ -147,5 +191,12 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
         List<String> list = responseEntity.getHeaders().get(HttpHeaders.SET_COOKIE);
         assertNotNull(list);
         return String.join(", ", list);
+    }
+
+    PortalUserIdentifier getPortalUserIdentifier(String identifier, UserIdentifierType identifierType) {
+        PortalUserIdentifier portalUser = dtoFactory.make(PortalUserIdentifier.class);
+        portalUser.setIdentifierType(identifierType);
+        portalUser.setIdentifier(identifier);
+        return portalUser;
     }
 }

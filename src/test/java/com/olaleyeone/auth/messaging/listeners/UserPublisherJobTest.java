@@ -4,7 +4,7 @@ import com.github.olaleyeone.entitysearch.JpaQuerySource;
 import com.olaleyeone.audittrail.context.Action;
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.auth.data.entity.PortalUser;
-import com.olaleyeone.auth.entitytest.EntityTest;
+import com.olaleyeone.auth.test.entity.EntityTest;
 import com.olaleyeone.auth.messaging.producers.UserPublisher;
 import com.olaleyeone.auth.repository.PortalUserRepository;
 import org.junit.jupiter.api.BeforeEach;

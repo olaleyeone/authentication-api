@@ -10,7 +10,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Data
@@ -43,13 +43,13 @@ public class PasswordResetRequest {
     private String resetCodeHash;
 
     @Column(updatable = false, nullable = false)
-    private LocalDateTime createdOn;
+    private OffsetDateTime createdOn;
 
     @Column(updatable = false, nullable = false)
-    private LocalDateTime expiresOn;
+    private OffsetDateTime expiresOn;
 
-    private LocalDateTime usedOn;
-    private LocalDateTime deactivatedOn;
+    private OffsetDateTime usedOn;
+    private OffsetDateTime deactivatedOn;
 
     @Transient
     public Instant getExpiryInstant() {
@@ -64,7 +64,7 @@ public class PasswordResetRequest {
     @PrePersist
     public void prePersist() {
         if (createdOn == null) {
-            createdOn = LocalDateTime.now();
+            createdOn = OffsetDateTime.now();
         }
         if (portalUserIdentifier != null) {
             portalUser = portalUserIdentifier.getPortalUser();

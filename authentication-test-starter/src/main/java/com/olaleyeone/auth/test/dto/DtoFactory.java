@@ -1,27 +1,22 @@
-package com.olaleyeone.auth.entitytest.data;
+package com.olaleyeone.auth.test.dto;
 
-import com.github.heywhy.springentityfactory.FactoryConfiguration;
+import com.github.heywhy.springentityfactory.contracts.EntityFactoryBuilder;
 import com.github.heywhy.springentityfactory.contracts.FactoryHelper;
 import com.github.heywhy.springentityfactory.contracts.ModelFactory;
+import com.github.heywhy.springentityfactory.impl.ModelFactoryImpl;
 import com.github.javafaker.Faker;
 import com.google.common.reflect.ClassPath;
 import lombok.SneakyThrows;
-import org.springframework.context.annotation.Configuration;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.util.List;
 
-@Configuration
-public class EntityFactoryConfiguration extends FactoryConfiguration {
+public class DtoFactory {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final ModelFactory modelFactory;
 
-    @Override
-    public ModelFactory entityFactory(Faker faker, EntityManager entityManager) {
-        ModelFactory modelFactory = super.entityFactory(faker, this.entityManager);
+    public DtoFactory(Faker faker) {
+        this.modelFactory = new ModelFactoryImpl(faker);
         registerFactories(modelFactory);
-        return modelFactory;
     }
 
     @SneakyThrows
@@ -33,5 +28,17 @@ public class EntityFactoryConfiguration extends FactoryConfiguration {
                 .map(classInfo -> classInfo.load())
                 .filter(javaClass -> FactoryHelper.class.isAssignableFrom(javaClass))
                 .forEach(aClass -> modelFactory.register((Class) aClass));
+    }
+
+    public <T> T make(Class<T> model) {
+        return modelFactory.make(model);
+    }
+
+    public <T> List<T> make(Class<T> model, int count) {
+        return modelFactory.make(model, count);
+    }
+
+    public <T> EntityFactoryBuilder<T> pipe(Class<T> model) {
+        return modelFactory.pipe(model);
     }
 }

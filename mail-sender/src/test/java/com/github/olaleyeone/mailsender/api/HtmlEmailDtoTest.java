@@ -6,7 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import javax.activation.DataSource;
 import javax.activation.URLDataSource;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -21,15 +22,17 @@ class HtmlEmailDtoTest extends ComponentTest {
 
     @Test
     void addRecipientEmails() {
-        String recipientEmail = faker.internet().emailAddress();
-        htmlEmailDto.addRecipientEmails(recipientEmail);
-        assertEquals(Collections.singletonList(recipientEmail), htmlEmailDto.getRecipientEmails());
+        List<String> recipientEmails = Arrays.asList(faker.internet().emailAddress(), faker.internet().emailAddress());
+        recipientEmails.forEach(htmlEmailDto::addRecipientEmail);
+        assertEquals(recipientEmails, htmlEmailDto.getRecipientEmails());
     }
 
     @Test
     void addAttachments() {
-        DataSource dataSource = new URLDataSource(getClass().getResource("."));
-        htmlEmailDto.addAttachments(dataSource);
-        assertEquals(Collections.singletonList(dataSource), htmlEmailDto.getAttachments());
+        List<DataSource> dataSources = Arrays.asList(
+                new URLDataSource(getClass().getResource(".")),
+                new URLDataSource(getClass().getResource(".")));
+        dataSources.forEach(htmlEmailDto::addAttachment);
+        assertEquals(dataSources, htmlEmailDto.getAttachments());
     }
 }

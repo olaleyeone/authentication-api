@@ -1,9 +1,9 @@
 package com.olaleyeone.auth.data.entity;
 
-import com.olaleyeone.auth.entitytest.EntityTest;
+import com.olaleyeone.auth.test.entity.EntityTest;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +22,7 @@ class PortalUserTest extends EntityTest {
 
     @Test
     void shouldNotOverwriteCreatedOn() {
-        LocalDateTime then = LocalDateTime.now().minusDays(1);
+        OffsetDateTime then = OffsetDateTime.now().minusDays(1);
         PortalUser user = new PortalUser();
         user.setFirstName(faker.name().firstName());
         user.setLastName(faker.name().lastName());
@@ -43,7 +43,7 @@ class PortalUserTest extends EntityTest {
                 })
                 .create();
 
-        LocalDateTime dateCreated = user.getCreatedOn();
+        OffsetDateTime dateCreated = user.getCreatedOn();
         user.setPassword(UUID.randomUUID().toString());
         saveAndFlush(user);
         entityManager.refresh(user);

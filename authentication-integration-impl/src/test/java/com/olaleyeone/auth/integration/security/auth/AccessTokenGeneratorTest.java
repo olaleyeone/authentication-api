@@ -18,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.security.Key;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -90,7 +90,7 @@ class AccessTokenGeneratorTest extends ComponentTest {
     @Test
     void getAccessToken() {
         long accessTokenDurationInSeconds = 20;
-        refreshToken.setAccessExpiresAt(LocalDateTime.now().plusSeconds(accessTokenDurationInSeconds));
+        refreshToken.setAccessExpiresAt(OffsetDateTime.now().plusSeconds(accessTokenDurationInSeconds));
 
         String jws = faker.buffy().quotes();
         Mockito.doReturn(jws).when(jwsGenerator)

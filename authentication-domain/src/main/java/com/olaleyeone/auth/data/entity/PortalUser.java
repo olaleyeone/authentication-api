@@ -1,7 +1,6 @@
 package com.olaleyeone.auth.data.entity;
 
 import com.olaleyeone.audittrail.Audited;
-import com.olaleyeone.audittrail.api.IgnoreData;
 import com.olaleyeone.audittrail.embeddable.Audit;
 import com.olaleyeone.auth.data.enums.Gender;
 import lombok.AccessLevel;
@@ -11,6 +10,7 @@ import lombok.experimental.Delegate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Data
@@ -20,10 +20,12 @@ public class PortalUser implements Audited {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @IgnoreData
+//    @IgnoreData
     private String password;
 
     private Boolean passwordUpdateRequired;
+
+    private OffsetDateTime passwordLastUpdatedOn;
 
     private String displayName;
 

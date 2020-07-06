@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.security.Key;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -81,7 +81,7 @@ class RefreshTokenGeneratorTest extends ComponentTest {
 
     @Test
     void getRefreshToken() {
-        refreshToken.setExpiresAt(LocalDateTime.now().plusMinutes(1));
+        refreshToken.setExpiresAt(OffsetDateTime.now().plusMinutes(1));
 
         String jws = faker.buffy().quotes();
         Mockito.doReturn(jws).when(jwsGenerator)

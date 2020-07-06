@@ -14,14 +14,14 @@ public class HtmlEmailDto {
     private List<String> recipientEmails;
     private List<DataSource> attachments;
 
-    public void addRecipientEmails(String recipientEmail) {
+    public void addRecipientEmail(String recipientEmail) {
         if (recipientEmails == null) {
             recipientEmails = new ArrayList<>();
         }
         this.recipientEmails.add(recipientEmail);
     }
 
-    public void addAttachments(DataSource attachment) {
+    public void addAttachment(DataSource attachment) {
         if (this.attachments == null) {
             this.attachments = new ArrayList<>();
         }

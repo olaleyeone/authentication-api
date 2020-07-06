@@ -1,10 +1,10 @@
 package com.olaleyeone.auth.integration.security.auth;
 
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
+import com.olaleyeone.auth.data.dto.JwtDto;
 import com.olaleyeone.auth.data.entity.RefreshToken;
 import com.olaleyeone.auth.data.entity.SignatureKey;
 import com.olaleyeone.auth.data.enums.JwtTokenType;
-import com.olaleyeone.auth.data.dto.JwtDto;
 import com.olaleyeone.auth.integration.security.AuthTokenGenerator;
 import com.olaleyeone.auth.integration.security.SimpleSigningKeyResolver;
 import com.olaleyeone.auth.service.KeyGenerator;
@@ -51,8 +51,8 @@ public class AccessTokenGenerator implements AuthTokenGenerator {
     public JwtDto generateJwt(RefreshToken refreshToken) {
         JwtDto jwtDto = new JwtDto();
         jwtDto.setSecondsTillExpiry(refreshToken.getSecondsTillAccessExpiry());
-        jwtDto.setToken(jwsGenerator.createJwt(refreshToken, refreshToken.getAccessExpiryInstant()
-                .plusSeconds(settingService.getInteger("ACCESS_TOKEN_CLOCK_SKEW", 2))));
+        Integer access_token_clock_skew = settingService.getInteger("ACCESS_TOKEN_CLOCK_SKEW", 2);
+        jwtDto.setToken(jwsGenerator.createJwt(refreshToken, refreshToken.getAccessExpiryInstant().plusSeconds(access_token_clock_skew)));
         return jwtDto;
     }
 
