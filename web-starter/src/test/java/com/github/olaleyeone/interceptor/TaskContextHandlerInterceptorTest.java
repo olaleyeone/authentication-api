@@ -10,6 +10,7 @@ import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.audittrail.impl.TaskContextHolder;
 import com.olaleyeone.audittrail.impl.TaskContextImpl;
 import com.olaleyeone.audittrail.impl.TaskContextSaver;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -21,8 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.OffsetDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TaskContextHandlerInterceptorTest extends ComponentTest {
 
@@ -53,6 +53,13 @@ class TaskContextHandlerInterceptorTest extends ComponentTest {
     @InjectMocks
     private TaskContextHandlerInterceptor taskContextHandlerInterceptor;
 
+    private String httpMethod;
+
+    @BeforeEach
+    void setUp() {
+        httpMethod = "post";
+    }
+
     @Test
     void preHandle() {
         Mockito.doReturn(authorizedRequest).when(authorizedRequestProvider).get();
@@ -62,6 +69,7 @@ class TaskContextHandlerInterceptorTest extends ComponentTest {
 
         String ipV4Address = faker.internet().ipV4Address();
         Mockito.doReturn(ipV4Address).when(request).getRemoteAddr();
+        Mockito.doReturn(httpMethod).when(request).getMethod();
 
         String userAgent = faker.internet().userAgentAny();
         Mockito.doReturn(userAgent).when(request).getHeader(Mockito.eq(HttpHeaders.USER_AGENT));
@@ -73,7 +81,7 @@ class TaskContextHandlerInterceptorTest extends ComponentTest {
                     assertNotNull(task);
                     assertNotNull(task.getDuration());
                     assertEquals(Task.WEB_REQUEST, task.getType());
-                    assertEquals(path, task.getName());
+                    assertTrue(task.getName().contains(path));
 
                     assertNotNull(task.getWebRequest());
                     WebRequest webRequest = task.getWebRequest();
@@ -92,8 +100,10 @@ class TaskContextHandlerInterceptorTest extends ComponentTest {
         Mockito.doReturn(faker.number().digit()).when(accessClaims).getId();
 
         taskContextHandlerInterceptor.setProxyIpHeader(null);
+
         String ipV4Address = faker.internet().ipV4Address();
         Mockito.doReturn(ipV4Address).when(request).getRemoteAddr();
+        Mockito.doReturn(httpMethod).when(request).getMethod();
 
         taskContextHandlerInterceptor.preHandle(request, response, null);
         Mockito.verify(taskContextFactory, Mockito.times(1))
@@ -115,6 +125,7 @@ class TaskContextHandlerInterceptorTest extends ComponentTest {
 
         Mockito.doReturn(ipV4Address).when(request).getHeader(Mockito.eq(taskContextHandlerInterceptor.getProxyIpHeader()));
         Mockito.doReturn(faker.internet().ipV4Address()).when(request).getRemoteAddr();
+        Mockito.doReturn(httpMethod).when(request).getMethod();
 
         Mockito.doReturn(faker.internet().userAgentAny()).when(request).getHeader(Mockito.eq(HttpHeaders.USER_AGENT));
 
