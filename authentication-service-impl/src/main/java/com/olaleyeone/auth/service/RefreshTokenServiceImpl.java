@@ -43,8 +43,12 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     private OffsetDateTime getExpiresAt() {
-        return OffsetDateTime.now().plusMinutes(settingService.getInteger(REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES,
-                REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES_VALUE));
+        Integer durationInMinutes = settingService.getInteger(REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES,
+                REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES_VALUE);
+        if (durationInMinutes <= 0) {
+            return null;
+        }
+        return OffsetDateTime.now().plusMinutes(durationInMinutes);
     }
 
     private OffsetDateTime getAccessExpiresAt() {

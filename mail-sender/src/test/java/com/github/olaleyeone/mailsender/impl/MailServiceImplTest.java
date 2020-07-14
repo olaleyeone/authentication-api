@@ -32,7 +32,11 @@ class MailServiceImplTest extends ComponentTest {
     @Test
     void sendEmailSuccessfully() throws IOException {
         Call<?> call = Mockito.mock(Call.class);
-        Mockito.doReturn(call).when(mailGunApi).sendMail(Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.doReturn(call).when(mailGunApi).sendMail(
+                Mockito.any(),
+                Mockito.any(),
+                Mockito.any(),
+                Mockito.any());
         Mockito.doReturn(Response.success(200, null)).when(call).execute();
         HtmlEmailDto emailDto = new HtmlEmailDto();
         emailDto.addRecipientEmail(faker.internet().emailAddress());
@@ -42,7 +46,11 @@ class MailServiceImplTest extends ComponentTest {
     @Test
     void sendEmailWithFailure() throws IOException {
         Call<?> call = Mockito.mock(Call.class);
-        Mockito.doReturn(call).when(mailGunApi).sendMail(Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.doReturn(call).when(mailGunApi).sendMail(
+                Mockito.any(),
+                Mockito.any(),
+                Mockito.any(),
+                Mockito.any());
         Mockito.doReturn(Response.error(403, ResponseBody.create(
                 MediaType.get("text/plain"),
                 faker.backToTheFuture().quote()
@@ -55,7 +63,7 @@ class MailServiceImplTest extends ComponentTest {
     @Test
     void sendEmailWithError() throws IOException {
         Call<?> call = Mockito.mock(Call.class);
-        Mockito.doReturn(call).when(mailGunApi).sendMail(Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.doReturn(call).when(mailGunApi).sendMail(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
         Mockito.doThrow(new RuntimeException()).when(call).execute();
         HtmlEmailDto emailDto = new HtmlEmailDto();
         assertThrows(RuntimeException.class, () -> mailService.sendEmail(emailDto));

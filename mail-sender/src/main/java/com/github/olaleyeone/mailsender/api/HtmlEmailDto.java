@@ -12,6 +12,7 @@ public class HtmlEmailDto {
     private String subject;
     private String htmlMessage;
     private List<String> recipientEmails;
+    private List<String> bcc;
     private List<DataSource> attachments;
 
     public void addRecipientEmail(String recipientEmail) {

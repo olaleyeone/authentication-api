@@ -19,6 +19,9 @@ public final class TimeUtil {
     }
 
     public static Long secondsTill(Temporal instant) {
+        if (instant == null) {
+            return null;
+        }
         return Instant.now().until(instant, ChronoUnit.SECONDS);
     }
 }

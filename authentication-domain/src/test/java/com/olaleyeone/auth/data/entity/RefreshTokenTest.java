@@ -55,6 +55,13 @@ class RefreshTokenTest extends EntityTest {
     }
 
     @Test
+    public void getNullExpiryInstant() {
+        RefreshToken refreshToken = new RefreshToken();
+        assertNull(refreshToken.getExpiryInstant());
+        assertNull(refreshToken.getSecondsTillExpiry());
+    }
+
+    @Test
     public void getSecondsTillExpiry() {
         RefreshToken refreshToken = new RefreshToken();
         OffsetDateTime expiresAt = OffsetDateTime.now().plusMinutes(20);

@@ -52,7 +52,9 @@ public class AccessTokenController {
 
         try {
             AccessClaims accessClaims = accessClaimsExtractor.getClaims(token);
-
+            if (accessClaims == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
             RefreshToken refreshToken = refreshTokenRepository.findActiveToken(Long.valueOf(accessClaims.getId()))
                     .orElseThrow(() -> new ErrorResponse(HttpStatus.UNAUTHORIZED));
             return accessTokenApiResponseHandler.getAccessToken(refreshToken);
