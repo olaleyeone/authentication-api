@@ -1,7 +1,7 @@
 package com.olaleyeone.auth.service;
 
 import com.olaleyeone.audittrail.api.Activity;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import lombok.RequiredArgsConstructor;
 

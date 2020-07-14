@@ -23,6 +23,7 @@ jacocoTestCoverageVerification {
                     'com.olaleyeone.data.entity.Q*',
                     'com.olaleyeone.auth.qualifier.*',
                     'com.olaleyeone.auth.data.entity.Q*',
+                    'com.olaleyeone.auth.data.entity.authentication.Q*',
                     'com.olaleyeone.auth.data.entity.passwordreset.Q*',
                     'com.olaleyeone.auth.data.embeddable.Q*'
             ]

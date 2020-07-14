@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.data.entity;
 
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
 import com.olaleyeone.auth.test.entity.EntityTest;

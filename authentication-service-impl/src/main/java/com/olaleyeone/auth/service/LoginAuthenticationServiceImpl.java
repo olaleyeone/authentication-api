@@ -2,7 +2,7 @@ package com.olaleyeone.auth.service;
 
 import com.olaleyeone.audittrail.api.Activity;
 import com.olaleyeone.audittrail.context.TaskContext;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
@@ -12,6 +12,7 @@ import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.data.dto.RequestMetadata;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.BooleanUtils;
 
 import javax.inject.Named;
 import javax.inject.Provider;
@@ -72,6 +73,9 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
                     PortalUserAuthentication userAuthentication = makeAuthenticationResponse(
                             requestDto, requestMetadata, AuthenticationResponseType.SUCCESSFUL);
                     userAuthentication.setPortalUserIdentifier(userIdentifier);
+                    if (BooleanUtils.isTrue(requestDto.getInvalidateOtherSessions())) {
+                        portalUserAuthenticationRepository.deactivateOtherSessions(userIdentifier.getPortalUser());
+                    }
                     return portalUserAuthenticationRepository.save(userAuthentication);
                 });
     }

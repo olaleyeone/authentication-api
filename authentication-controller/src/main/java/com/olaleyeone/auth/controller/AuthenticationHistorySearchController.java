@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.controller;
 
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.search.filter.PortalUserAuthenticationSearchFilter;
 import com.olaleyeone.auth.search.handler.PortalUserAuthenticationSearchHandler;
 import com.github.olaleyeone.entitysearch.util.SearchFilterPredicateExtractor;

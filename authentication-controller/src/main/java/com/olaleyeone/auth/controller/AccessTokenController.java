@@ -4,7 +4,7 @@ import com.github.olaleyeone.auth.annotations.Public;
 import com.github.olaleyeone.auth.data.AccessClaims;
 import com.github.olaleyeone.auth.data.AccessClaimsExtractor;
 import com.github.olaleyeone.rest.exception.ErrorResponse;
-import com.olaleyeone.auth.data.entity.RefreshToken;
+import com.olaleyeone.auth.data.entity.authentication.RefreshToken;
 import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.dto.AccessTokenApiRequest;
 import com.olaleyeone.auth.qualifier.JwtToken;

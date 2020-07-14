@@ -3,7 +3,7 @@ package com.olaleyeone.auth.controller;
 import com.github.olaleyeone.auth.annotations.Public;
 import com.github.olaleyeone.rest.ApiResponse;
 import com.github.olaleyeone.rest.exception.ErrorResponse;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.dto.LoginApiRequest;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;

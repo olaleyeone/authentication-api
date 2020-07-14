@@ -1,5 +1,7 @@
 package com.olaleyeone.auth.data.entity;
 
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.RefreshToken;
 import com.olaleyeone.auth.test.entity.EntityTest;
 import org.junit.jupiter.api.Test;
 

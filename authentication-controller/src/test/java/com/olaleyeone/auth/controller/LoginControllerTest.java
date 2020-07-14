@@ -1,7 +1,7 @@
 package com.olaleyeone.auth.controller;
 
 import com.olaleyeone.auth.controllertest.ControllerTest;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.dto.LoginApiRequest;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;

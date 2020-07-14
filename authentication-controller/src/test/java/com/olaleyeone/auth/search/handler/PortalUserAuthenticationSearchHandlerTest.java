@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.search.handler;
 
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.test.entity.EntityTest;
 import com.olaleyeone.auth.search.filter.PortalUserAuthenticationSearchFilter;
 import org.junit.jupiter.api.BeforeEach;
