@@ -7,8 +7,10 @@ import com.olaleyeone.auth.constraints.ValidEmailVerificationCode;
 import com.olaleyeone.auth.constraints.ValidPhoneNumber;
 import lombok.Data;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -41,5 +43,5 @@ public class UserRegistrationApiRequest {
 
     private Gender gender;
 
-    private List<UserDataApiRequest> data;
+    private List<@NotNull @Valid UserDataApiRequest> data;
 }

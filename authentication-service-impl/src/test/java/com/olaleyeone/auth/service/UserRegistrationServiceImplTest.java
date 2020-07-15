@@ -63,7 +63,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
         PortalUserAuthentication userAuthentication = userRegistrationService.registerUser(dto);
         assertNotNull(userAuthentication);
         assertNotNull(userAuthentication.getId());
-        assertEquals(AuthenticationType.USER_REGISTRATION, userAuthentication.getType());
+        assertEquals(AuthenticationType.SIGN_UP, userAuthentication.getType());
 
         assertNotNull(userAuthentication.getPortalUser());
         assertNotNull(userAuthentication.getPortalUser().getId());

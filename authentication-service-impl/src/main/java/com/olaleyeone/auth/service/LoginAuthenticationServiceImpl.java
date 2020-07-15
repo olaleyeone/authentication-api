@@ -2,11 +2,11 @@ package com.olaleyeone.auth.service;
 
 import com.olaleyeone.audittrail.api.Activity;
 import com.olaleyeone.audittrail.context.TaskContext;
-import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
+import com.olaleyeone.auth.data.dto.LoginApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
-import com.olaleyeone.auth.data.dto.LoginApiRequest;
 import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
@@ -25,6 +25,7 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
 
     private final PortalUserIdentifierRepository portalUserIdentifierRepository;
     private final PortalUserAuthenticationRepository portalUserAuthenticationRepository;
+    private final PortalUserAuthenticationDataService portalUserAuthenticationDataService;
     private final HashService hashService;
     private final Provider<TaskContext> taskContextProvider;
 
@@ -76,7 +77,11 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
                     if (BooleanUtils.isTrue(requestDto.getInvalidateOtherSessions())) {
                         portalUserAuthenticationRepository.deactivateOtherSessions(userIdentifier.getPortalUser());
                     }
-                    return portalUserAuthenticationRepository.save(userAuthentication);
+                    PortalUserAuthentication portalUserAuthentication = portalUserAuthenticationRepository.save(userAuthentication);
+                    if (requestDto.getData() != null) {
+                        requestDto.getData().forEach(it -> portalUserAuthenticationDataService.addData(portalUserAuthentication, it));
+                    }
+                    return portalUserAuthentication;
                 });
     }
 

@@ -32,7 +32,7 @@ public class ImplicitAuthenticationServiceImpl implements ImplicitAuthentication
                 String.format("Auto login user %s after registration", portalUser.getId()));
         PortalUserAuthentication userAuthentication = new PortalUserAuthentication();
         userAuthentication.setPortalUser(portalUser);
-        userAuthentication.setType(AuthenticationType.USER_REGISTRATION);
+        userAuthentication.setType(AuthenticationType.SIGN_UP);
         userAuthentication.setResponseType(AuthenticationResponseType.SUCCESSFUL);
         userAuthentication.setIpAddress(requestMetadata.getIpAddress());
         userAuthentication.setUserAgent(requestMetadata.getUserAgent());

@@ -20,11 +20,11 @@ public class PortalUserDataServiceImpl implements PortalUserDataService {
     @Transactional
     @Override
     public PortalUserData addData(PortalUser portalUser, UserDataApiRequest entry) {
-        PortalUserData portalUserData = new PortalUserData();
-        portalUserData.setPortalUser(portalUser);
-        portalUserData.setName(entry.getName());
-        portalUserData.setValue(entry.getValue());
-        portalUserDataRepository.save(portalUserData);
-        return portalUserData;
+        PortalUserData data = new PortalUserData();
+        data.setPortalUser(portalUser);
+        data.setName(entry.getName());
+        data.setValue(entry.getValue());
+        portalUserDataRepository.save(data);
+        return data;
     }
 }

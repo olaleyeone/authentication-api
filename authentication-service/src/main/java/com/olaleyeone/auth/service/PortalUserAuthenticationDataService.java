@@ -6,5 +6,5 @@ import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthenticationDa
 
 public interface PortalUserAuthenticationDataService {
 
-    PortalUserAuthenticationData addData(PortalUserAuthentication portalUser, UserDataApiRequest entry);
+    PortalUserAuthenticationData addData(PortalUserAuthentication userAuthentication, UserDataApiRequest entry);
 }

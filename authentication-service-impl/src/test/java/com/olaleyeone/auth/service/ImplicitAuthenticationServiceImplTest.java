@@ -36,7 +36,7 @@ class ImplicitAuthenticationServiceImplTest extends ServiceTest {
         assertNotNull(signUpAuthentication);
         assertNotNull(signUpAuthentication.getId());
         assertEquals(portalUser, signUpAuthentication.getPortalUser());
-        assertEquals(AuthenticationType.USER_REGISTRATION, signUpAuthentication.getType());
+        assertEquals(AuthenticationType.SIGN_UP, signUpAuthentication.getType());
     }
 
     @Test

@@ -57,6 +57,8 @@ public class PortalUserAuthentication {
     @Column(updatable = false, nullable = false)
     private OffsetDateTime dateCreated;
 
+    private OffsetDateTime publishedOn;
+
     @PrePersist
     public void prePersist() {
         dateCreated = OffsetDateTime.now();
