@@ -41,4 +41,12 @@ class PortalUserAuthenticationTest extends EntityTest {
         portalUserAuthentication.setPortalUser(modelFactory.create(PortalUser.class));
         assertThrows(IllegalArgumentException.class, () -> saveAndFlush(portalUserAuthentication));
     }
+
+    @Test
+    public void lastUpdatedShouldChange() {
+        PortalUserAuthentication userAuthentication = modelFactory.create(PortalUserAuthentication.class);
+        userAuthentication.setLastUpdatedOn(null);
+        saveAndFlush(userAuthentication);
+        assertNotNull(userAuthentication.getLastUpdatedOn());
+    }
 }

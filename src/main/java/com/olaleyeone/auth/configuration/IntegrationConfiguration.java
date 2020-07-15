@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Import;
 })
 @ComponentScan({
         "com.olaleyeone.auth.integration",
+        "com.olaleyeone.auth.event",
         "com.olaleyeone.auth.messaging"
 })
 public class IntegrationConfiguration {

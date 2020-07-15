@@ -3,7 +3,6 @@ package com.olaleyeone.auth.messaging.producers;
 import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
-import com.olaleyeone.auth.integration.events.SessionUpdateEvent;
 import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import com.olaleyeone.auth.response.handler.UserSessionApiResponseHandler;
 import lombok.Builder;
@@ -13,10 +12,8 @@ import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -48,16 +45,6 @@ public class UserSessionPublisher {
     @Getter
     @Value("${user_session.topic.name}")
     private final String userTopic;
-
-    @EventListener(SessionUpdateEvent.class)
-    @Async
-    public void publishSessionEvent(SessionUpdateEvent event) {
-        PortalUserAuthentication userAuthentication = event.getUserAuthentication();
-        taskContextFactory.startBackgroundTask(
-                "PUBLISH USER SESSION",
-                String.format("Publish user session %d", userAuthentication.getId()),
-                () -> publish(userAuthentication));
-    }
 
     public Future<?> publish(PortalUserAuthentication userAuthentication) {
         CompletableFuture<?> completableFuture = new CompletableFuture<>();

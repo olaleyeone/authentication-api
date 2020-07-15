@@ -1,7 +1,9 @@
 package com.olaleyeone.auth.response.handler;
 
 import com.olaleyeone.auth.data.dto.JwtDto;
-import com.olaleyeone.auth.data.entity.*;
+import com.olaleyeone.auth.data.entity.PortalUser;
+import com.olaleyeone.auth.data.entity.PortalUserData;
+import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.authentication.RefreshToken;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 
@@ -40,6 +43,9 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
 
     @Mock
     private PortalUserDataRepository portalUserDataRepository;
+
+    @Mock
+    private ApplicationContext applicationContext;
 
     @InjectMocks
     private AccessTokenApiResponseHandler handler;
