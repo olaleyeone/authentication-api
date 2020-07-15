@@ -51,17 +51,19 @@ public class PortalUserAuthentication {
 
     private OffsetDateTime autoLogoutAt;
     private OffsetDateTime loggedOutAt;
-    
+
     private OffsetDateTime deactivatedAt;
 
     @Column(updatable = false, nullable = false)
     private OffsetDateTime dateCreated;
 
+    private OffsetDateTime lastUpdatedOn;
     private OffsetDateTime publishedOn;
 
     @PrePersist
     public void prePersist() {
         dateCreated = OffsetDateTime.now();
+        lastUpdatedOn = OffsetDateTime.now();
         Optional.ofNullable(portalUserIdentifier)
                 .map(PortalUserIdentifier::getPortalUser)
                 .ifPresent(portalUser -> {
@@ -71,5 +73,10 @@ public class PortalUserAuthentication {
                         throw new IllegalArgumentException();
                     }
                 });
+    }
+
+    @PreUpdate
+    public void beforeUpdate() {
+        lastUpdatedOn = OffsetDateTime.now();
     }
 }

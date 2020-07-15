@@ -18,18 +18,18 @@ public class UserSessionApiResponseHandler {
     private final PortalUserAuthenticationDataRepository portalUserAuthenticationDataRepository;
 
     public UserSessionApiResponse toApiResponse(PortalUserAuthentication userAuthentication) {
-        UserSessionApiResponse userApiResponse = new UserSessionApiResponse(userAuthentication);
+        UserSessionApiResponse apiResponse = new UserSessionApiResponse(userAuthentication);
 
-        userApiResponse.setData(portalUserAuthenticationDataRepository.findByPortalUserAuthentication(userAuthentication)
+        apiResponse.setData(portalUserAuthenticationDataRepository.findByPortalUserAuthentication(userAuthentication)
                 .stream()
                 .map(portalUserData -> new UserDataApiResponse(portalUserData.getName(), portalUserData.getValue()))
                 .collect(Collectors.toList()));
 
-        userApiResponse.setUserData(portalUserDataRepository.findByPortalUser(userAuthentication.getPortalUser())
+        apiResponse.setUserData(portalUserDataRepository.findByPortalUser(userAuthentication.getPortalUser())
                 .stream()
                 .map(portalUserData -> new UserDataApiResponse(portalUserData.getName(), portalUserData.getValue()))
                 .collect(Collectors.toList()));
 
-        return userApiResponse;
+        return apiResponse;
     }
 }
