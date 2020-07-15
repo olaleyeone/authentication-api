@@ -8,7 +8,6 @@ import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +20,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import javax.inject.Provider;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
@@ -67,7 +67,7 @@ public class UserPublisher {
                                 "UPDATE PUBLISHED USER",
                                 description,
                                 () -> transactionTemplate.execute(status -> {
-                                    portalUser.setPublishedOn(LocalDateTime.now());
+                                    portalUser.setPublishedOn(OffsetDateTime.now());
                                     return portalUserRepository.save(portalUser);
                                 })));
                 completableFuture.complete(null);
@@ -76,7 +76,6 @@ public class UserPublisher {
         return completableFuture;
     }
 
-    @SneakyThrows
     public ListenableFuture<SendResult<String, Object>> sendMessage(PortalUser msg) {
         return kafkaTemplate.send(userTopic, msg.getId().toString(), userApiResponseHandler.toUserApiResponse(msg));
     }

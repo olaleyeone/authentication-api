@@ -22,7 +22,7 @@ public class NewUserEventListener {
 
     @EventListener(NewUserEvent.class)
     @Async
-    public void talentEvent(NewUserEvent event) {
+    public void handleEvent(NewUserEvent event) {
         PortalUser portalUser = event.getPortalUser();
         taskContextFactory.startBackgroundTask(
                 "PUBLISH NEW USER",

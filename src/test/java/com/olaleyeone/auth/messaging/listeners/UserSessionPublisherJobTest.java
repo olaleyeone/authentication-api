@@ -4,9 +4,11 @@ import com.github.olaleyeone.entitysearch.JpaQuerySource;
 import com.olaleyeone.audittrail.context.Action;
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.auth.data.entity.PortalUser;
-import com.olaleyeone.auth.test.entity.EntityTest;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.messaging.producers.UserPublisher;
+import com.olaleyeone.auth.messaging.producers.UserSessionPublisher;
 import com.olaleyeone.auth.repository.PortalUserRepository;
+import com.olaleyeone.auth.test.entity.EntityTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -21,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class UserPublisherJobTest extends EntityTest {
+class UserSessionPublisherJobTest extends EntityTest {
 
     @Autowired
     private JpaQuerySource jpaQuerySource;
@@ -32,15 +34,15 @@ class UserPublisherJobTest extends EntityTest {
     private EntityManager entityManager;
 
     @Mock
-    private UserPublisher messageProducer;
+    private UserSessionPublisher messageProducer;
     @Mock
     private TaskContextFactory taskContextFactory;
 
-    private UserPublisherJob userPublisherJob;
+    private UserSessionPublisherJob userPublisherJob;
 
     @BeforeEach
     public void setUp() {
-        userPublisherJob = UserPublisherJob.builder()
+        userPublisherJob = UserSessionPublisherJob.builder()
                 .portalUserRepository(portalUserRepository)
                 .jpaQuerySource(jpaQuerySource)
                 .messageProducer(messageProducer)
@@ -55,7 +57,7 @@ class UserPublisherJobTest extends EntityTest {
 
     @Test
     void listenWithData() {
-        PortalUser portalUser = modelFactory.pipe(PortalUser.class)
+        PortalUserAuthentication portalUser = modelFactory.pipe(PortalUserAuthentication.class)
                 .then(it -> {
                     it.setPublishedOn(null);
                     return it;
@@ -75,7 +77,7 @@ class UserPublisherJobTest extends EntityTest {
 
     @Test
     void listenWithoutData() {
-        modelFactory.pipe(PortalUser.class)
+        modelFactory.pipe(PortalUserAuthentication.class)
                 .then(it -> {
                     it.setPublishedOn(OffsetDateTime.now());
                     return it;
@@ -88,7 +90,7 @@ class UserPublisherJobTest extends EntityTest {
 
     @Test
     void listenWithException() {
-        PortalUser portalUser = modelFactory.pipe(PortalUser.class)
+        PortalUserAuthentication userAuthentication = modelFactory.pipe(PortalUserAuthentication.class)
                 .then(it -> {
                     it.setPublishedOn(null);
                     return it;
@@ -99,6 +101,6 @@ class UserPublisherJobTest extends EntityTest {
             throw new RuntimeException();
         }).when(messageProducer).publish(Mockito.any());
         userPublisherJob.listen("");
-        Mockito.verify(messageProducer, Mockito.times(1)).publish(portalUser);
+        Mockito.verify(messageProducer, Mockito.times(1)).publish(userAuthentication);
     }
 }

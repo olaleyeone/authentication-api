@@ -22,7 +22,7 @@ public class SessionUpdateEventListener {
 
     @EventListener(SessionUpdateEvent.class)
     @Async
-    public void talentEvent(SessionUpdateEvent event) {
+    public void handleEvent(SessionUpdateEvent event) {
         PortalUserAuthentication userAuthentication = event.getUserAuthentication();
         taskContextFactory.startBackgroundTask(
                 "PUBLISH SESSION UPDATE",

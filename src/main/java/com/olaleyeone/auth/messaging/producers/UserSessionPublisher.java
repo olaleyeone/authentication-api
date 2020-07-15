@@ -8,7 +8,6 @@ import com.olaleyeone.auth.response.handler.UserSessionApiResponseHandler;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,7 +75,6 @@ public class UserSessionPublisher {
         return completableFuture;
     }
 
-    @SneakyThrows
     public ListenableFuture<SendResult<String, Object>> sendMessage(PortalUserAuthentication msg) {
         return kafkaTemplate.send(userTopic, msg.getId().toString(), responseHandler.toApiResponse(msg));
     }

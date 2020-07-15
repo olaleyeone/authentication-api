@@ -3,10 +3,10 @@ package com.olaleyeone.auth.messaging.producers;
 import com.olaleyeone.audittrail.context.Action;
 import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
-import com.olaleyeone.auth.data.entity.PortalUser;
-import com.olaleyeone.auth.repository.PortalUserRepository;
-import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
-import com.olaleyeone.auth.response.pojo.UserApiResponse;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
+import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
+import com.olaleyeone.auth.response.handler.UserSessionApiResponseHandler;
+import com.olaleyeone.auth.response.pojo.UserSessionApiResponse;
 import com.olaleyeone.auth.test.ComponentTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,12 +23,12 @@ import javax.inject.Provider;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class UserPublisherTest extends ComponentTest {
+class UserSessionPublisherTest extends ComponentTest {
 
     @Mock
     private KafkaTemplate<String, Object> kafkaTemplate;
     @Mock
-    private PortalUserRepository portalUserRepository;
+    private PortalUserAuthenticationRepository portalUserAuthenticationRepository;
     @Mock
     private TransactionTemplate transactionTemplate;
     @Mock
@@ -36,38 +36,38 @@ class UserPublisherTest extends ComponentTest {
     @Mock
     private TaskContextFactory taskContextFactory;
     @Mock
-    private UserApiResponseHandler userApiResponseHandler;
+    private UserSessionApiResponseHandler userSessionApiResponseHandler;
 
     @Mock
     private TaskContext taskContext;
 
-    public UserPublisher userPublisher;
+    public UserSessionPublisher publisher;
 
-    private PortalUser portalUser;
+    private PortalUserAuthentication portalUserAuthentication;
 
     @BeforeEach
     void setUp() {
-        userPublisher = UserPublisher.builder()
+        publisher = UserSessionPublisher.builder()
                 .kafkaTemplate(kafkaTemplate)
                 .userTopic(faker.lordOfTheRings().character())
-                .portalUserRepository(portalUserRepository)
+                .portalUserAuthenticationRepository(portalUserAuthenticationRepository)
                 .taskContextFactory(taskContextFactory)
                 .taskContextProvider(taskContextProvider)
                 .transactionTemplate(transactionTemplate)
-                .userApiResponseHandler(userApiResponseHandler)
+                .responseHandler(userSessionApiResponseHandler)
                 .build();
-        portalUser = modelFactory.make(PortalUser.class);
-        portalUser.setId(faker.number().randomNumber());
+        portalUserAuthentication = dtoFactory.make(PortalUserAuthentication.class);
+        portalUserAuthentication.setId(faker.number().randomNumber());
     }
 
     @Test
     void publish() {
         prepareMocks();
 
-        userPublisher.publish(portalUser);
-        assertNotNull(portalUser.getPublishedOn());
-        Mockito.verify(portalUserRepository, Mockito.times(1))
-                .save(portalUser);
+        publisher.publish(portalUserAuthentication);
+        assertNotNull(portalUserAuthentication.getPublishedOn());
+        Mockito.verify(portalUserAuthenticationRepository, Mockito.times(1))
+                .save(portalUserAuthentication);
     }
 
     private void prepareMocks() {
@@ -95,23 +95,23 @@ class UserPublisherTest extends ComponentTest {
                 .when(kafkaTemplate)
                 .send(Mockito.any(), Mockito.any(), Mockito.any());
 
-        userPublisher.publish(portalUser);
-        assertNull(portalUser.getPublishedOn());
-        Mockito.verify(portalUserRepository, Mockito.never())
-                .save(portalUser);
+        publisher.publish(portalUserAuthentication);
+        assertNull(portalUserAuthentication.getPublishedOn());
+        Mockito.verify(portalUserAuthenticationRepository, Mockito.never())
+                .save(portalUserAuthentication);
     }
 
     @Test
     void sendMessage() {
-        UserApiResponse userApiResponse = new UserApiResponse();
-        Mockito.doReturn(userApiResponse).when(userApiResponseHandler).toUserApiResponse(Mockito.any());
-        userPublisher.sendMessage(portalUser);
+        UserSessionApiResponse apiResponse = new UserSessionApiResponse();
+        Mockito.doReturn(apiResponse).when(userSessionApiResponseHandler).toApiResponse(Mockito.any());
+        publisher.sendMessage(portalUserAuthentication);
         Mockito.verify(kafkaTemplate, Mockito.times(1))
                 .send(
-                        userPublisher.getUserTopic(),
-                        portalUser.getId().toString(),
-                        userApiResponse);
-        Mockito.verify(userApiResponseHandler, Mockito.times(1))
-                .toUserApiResponse(portalUser);
+                        publisher.getUserTopic(),
+                        portalUserAuthentication.getId().toString(),
+                        apiResponse);
+        Mockito.verify(userSessionApiResponseHandler, Mockito.times(1))
+                .toApiResponse(portalUserAuthentication);
     }
 }

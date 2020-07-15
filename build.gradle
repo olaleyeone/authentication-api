@@ -80,7 +80,7 @@ jacocoTestCoverageVerification {
             }
             excludes = [
                     'com.olaleyeone.auth.bootstrap.*',
-                    'com.olaleyeone.auth.configuration.*',
+                    'com.olaleyeone.auth.configuration.*'
             ]
         }
     }
