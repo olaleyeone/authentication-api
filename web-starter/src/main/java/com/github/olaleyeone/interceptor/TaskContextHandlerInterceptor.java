@@ -53,7 +53,7 @@ public class TaskContextHandlerInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
         Task task = new Task();
-        task.setName(String.format("%s %s", request.getMethod().toUpperCase(),
+        task.setName(String.format("%s %s", StringUtils.upperCase(request.getMethod()),
                 Optional.ofNullable(request.getAttribute(org.springframework.web.servlet.HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE))
                         .map(Object::toString)
                         .orElse(request.getServletPath())));

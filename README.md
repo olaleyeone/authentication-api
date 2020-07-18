@@ -7,5 +7,6 @@
 ### Docker build
 ```docker build . -t authentication-api```
 
-### Tag for deployment
-```docker build . -t authentication-api```
+### Tag and push for deployment
+Run `docker tag olaleye/authentication-api olaleye/authentication-api:0.0.1`.
+Run `docker push olaleye/authentication-api:0.0.1`.
