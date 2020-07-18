@@ -30,7 +30,9 @@ public class AuditTrailConfiguration extends com.olaleyeone.audittrail.configura
 
     @Bean
     @Override
-    public EntityManagerAdvice entityManagerAdvice(EntityDataExtractor entityDataExtractor, Provider<TaskTransactionContext> taskTransactionContextProvider) {
+    public EntityManagerAdvice entityManagerAdvice(
+            EntityDataExtractor entityDataExtractor,
+            Provider<TaskTransactionContext> taskTransactionContextProvider) {
         return super.entityManagerAdvice(entityDataExtractor, taskTransactionContextProvider);
     }
 }

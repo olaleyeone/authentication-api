@@ -20,7 +20,7 @@ public class DtoFactory {
     }
 
     @SneakyThrows
-    public void registerFactories(ModelFactory modelFactory) {
+    private void registerFactories(ModelFactory modelFactory) {
         String className = getClass().getName();
         String packageName = className.substring(0, className.length() - (getClass().getSimpleName().length() + 1));
         ClassPath.from(this.getClass().getClassLoader()).getTopLevelClassesRecursive(packageName)
