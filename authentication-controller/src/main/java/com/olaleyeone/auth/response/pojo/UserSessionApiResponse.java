@@ -24,9 +24,10 @@ public class UserSessionApiResponse {
     private AuthenticationType authenticationType;
 
     private String userAgent;
+    private String firebaseToken;
 
     private List<UserDataApiResponse> data;
-    private List<UserDataApiResponse> userData;
+//    private List<UserDataApiResponse> userData;
 
     public UserSessionApiResponse(PortalUserAuthentication portalUserAuthentication) {
         this.authenticationType = portalUserAuthentication.getType();

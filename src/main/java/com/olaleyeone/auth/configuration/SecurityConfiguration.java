@@ -25,9 +25,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SecurityConfiguration {
 
-//    @Autowired
-//    private AutowireCapableBeanFactory beanFactory;
-
     @Bean
     public HashService hashService() {
         return new HashServiceImpl();
@@ -37,25 +34,6 @@ public class SecurityConfiguration {
     public AuthorizedRequestFactory requestMetadataFactory(AutowireCapableBeanFactory beanFactory) {
         return beanFactory.createBean(AuthorizedRequestFactory.class);
     }
-
-//    @Profile("!test")
-//    @Bean
-//    public TrustedIpAddressAuthorizer trustedIpAddressAccessManager(SettingService settingService) {
-//        return (accessConstraint, ipAddress) -> {
-//            Optional<String> value = settingService.getString(StringUtils.defaultIfBlank(accessConstraint.value(), "TRUSTED_IP"));
-//            if (value.isPresent()) {
-//                return Arrays.asList(value.get().split(" *, *")).contains(ipAddress)
-//                        ? AccessStatus.allowed()
-//                        : AccessStatus.denied(ipAddress);
-//            }
-//            if (accessConstraint.defaultIpAddresses().length > 0) {
-//                return Arrays.asList(accessConstraint.defaultIpAddresses()).contains(ipAddress)
-//                        ? AccessStatus.allowed()
-//                        : AccessStatus.denied(ipAddress);
-//            }
-//            return AccessStatus.denied("");
-//        };
-//    }
 
     @JwtToken(JwtTokenType.ACCESS)
     @Bean

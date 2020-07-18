@@ -43,5 +43,7 @@ public class UserRegistrationApiRequest {
 
     private Gender gender;
 
+    private String firebaseToken;
+
     private List<@NotNull @Valid UserDataApiRequest> data;
 }

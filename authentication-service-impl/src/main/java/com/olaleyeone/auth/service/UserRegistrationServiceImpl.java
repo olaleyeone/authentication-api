@@ -75,7 +75,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
             });
         }
 
-        return implicitAuthenticationService.createSignUpAuthentication(portalUser);
+        return implicitAuthenticationService.createSignUpAuthentication(portalUser, dto);
     }
 
     private String getNonEmptyString(String value) {

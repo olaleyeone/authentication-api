@@ -36,6 +36,8 @@ public class PortalUserAuthentication {
     @Column(nullable = false)
     private String userAgent;
 
+    private String firebaseToken;
+
     @ManyToOne
     private PortalUserIdentifier portalUserIdentifier;
 

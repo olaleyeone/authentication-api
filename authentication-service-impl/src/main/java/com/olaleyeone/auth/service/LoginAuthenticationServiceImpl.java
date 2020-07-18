@@ -73,6 +73,7 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
                 () -> {
                     PortalUserAuthentication userAuthentication = makeAuthenticationResponse(
                             requestDto, requestMetadata, AuthenticationResponseType.SUCCESSFUL);
+
                     userAuthentication.setPortalUserIdentifier(userIdentifier);
                     if (BooleanUtils.isTrue(requestDto.getInvalidateOtherSessions())) {
                         portalUserAuthenticationRepository.deactivateOtherSessions(userIdentifier.getPortalUser());
@@ -93,6 +94,7 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
         userAuthentication.setIdentifier(requestDto.getIdentifier());
         userAuthentication.setIpAddress(requestMetadata.getIpAddress());
         userAuthentication.setUserAgent(requestMetadata.getUserAgent());
+        userAuthentication.setFirebaseToken(requestDto.getFirebaseToken());
         return userAuthentication;
     }
 

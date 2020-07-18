@@ -6,3 +6,6 @@
 
 ### Docker build
 ```docker build . -t authentication-api```
+
+### Tag for deployment
+```docker build . -t authentication-api```

@@ -17,5 +17,7 @@ public class LoginApiRequest {
 
     private Boolean invalidateOtherSessions;
 
+    private String firebaseToken;
+
     private List<@NotNull @Valid UserDataApiRequest> data;
 }
