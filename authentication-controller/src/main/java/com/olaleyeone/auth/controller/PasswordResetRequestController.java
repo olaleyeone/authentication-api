@@ -30,13 +30,15 @@ public class PasswordResetRequestController {
     @Public
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(path = "/password-resets", params = "email")
-    public void requestPasswordResetWithEmail(@RequestParam("email") String identifier) {
+    public void requestPasswordResetWithEmail(
+            @RequestParam("email") String identifier,
+            @RequestParam(name = "autoLogin", required = false) boolean autoLogin) {
         PortalUserIdentifier portalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(identifier, UserIdentifierType.EMAIL)
                 .orElse(null);
         if (portalUserIdentifier == null) {
             return;
         }
-        Map.Entry<PasswordResetRequest, String> request = passwordResetRequestService.createRequest(portalUserIdentifier);
+        Map.Entry<PasswordResetRequest, String> request = passwordResetRequestService.createRequest(portalUserIdentifier, autoLogin);
         PasswordResetRequest passwordResetRequest = request.getKey();
         passwordResetTokenEmailSender.sendResetLink(passwordResetRequest, requestMetadataProvider.get().getHost());
     }

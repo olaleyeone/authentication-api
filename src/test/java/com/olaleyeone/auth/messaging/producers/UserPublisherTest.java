@@ -4,7 +4,6 @@ import com.olaleyeone.audittrail.context.Action;
 import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.auth.data.entity.PortalUser;
-import com.olaleyeone.auth.integration.events.NewUserEvent;
 import com.olaleyeone.auth.repository.PortalUserRepository;
 import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.UserApiResponse;
@@ -59,16 +58,6 @@ class UserPublisherTest extends ComponentTest {
                 .build();
         portalUser = modelFactory.make(PortalUser.class);
         portalUser.setId(faker.number().randomNumber());
-    }
-
-    @Test
-    void newUserCreated() {
-        prepareMocks();
-
-        userPublisher.newUserCreated(new NewUserEvent(portalUser));
-        assertNotNull(portalUser.getPublishedOn());
-        Mockito.verify(portalUserRepository, Mockito.times(1))
-                .save(portalUser);
     }
 
     @Test

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -62,7 +63,7 @@ class UserPublisherJobTest extends EntityTest {
                 .create();
 
         Mockito.doAnswer(invocation -> {
-            portalUser.setPublishedOn(LocalDateTime.now());
+            portalUser.setPublishedOn(OffsetDateTime.now());
             entityManager.merge(portalUser);
             assertNotNull(portalUser.getPublishedOn());
             return CompletableFuture.completedFuture(null);
@@ -76,7 +77,7 @@ class UserPublisherJobTest extends EntityTest {
     void listenWithoutData() {
         modelFactory.pipe(PortalUser.class)
                 .then(it -> {
-                    it.setPublishedOn(LocalDateTime.now());
+                    it.setPublishedOn(OffsetDateTime.now());
                     return it;
                 })
                 .create();

@@ -1,7 +1,9 @@
-package com.olaleyeone.auth.data.entity;
+package com.olaleyeone.auth.data.entity.authentication;
 
 import com.olaleyeone.audittrail.Audited;
 import com.olaleyeone.audittrail.embeddable.Audit;
+import com.olaleyeone.auth.data.entity.PortalUser;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.utils.TimeUtil;
 import lombok.AccessLevel;
 import lombok.Data;

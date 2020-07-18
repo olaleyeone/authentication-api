@@ -1,10 +1,10 @@
 package com.olaleyeone.auth.search.handler;
 
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
-import com.olaleyeone.auth.data.entity.QPortalUserAuthentication;
-import com.olaleyeone.auth.search.filter.PortalUserAuthenticationSearchFilter;
 import com.github.olaleyeone.entitysearch.JpaQuerySource;
 import com.github.olaleyeone.entitysearch.SearchHandler;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.QPortalUserAuthentication;
+import com.olaleyeone.auth.search.filter.PortalUserAuthenticationSearchFilter;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;

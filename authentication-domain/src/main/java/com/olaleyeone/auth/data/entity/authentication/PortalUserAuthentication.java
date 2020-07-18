@@ -1,5 +1,7 @@
-package com.olaleyeone.auth.data.entity;
+package com.olaleyeone.auth.data.entity.authentication;
 
+import com.olaleyeone.auth.data.entity.PortalUser;
+import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.passwordreset.PasswordResetRequest;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
@@ -34,6 +36,8 @@ public class PortalUserAuthentication {
     @Column(nullable = false)
     private String userAgent;
 
+    private String firebaseToken;
+
     @ManyToOne
     private PortalUserIdentifier portalUserIdentifier;
 
@@ -49,15 +53,19 @@ public class PortalUserAuthentication {
 
     private OffsetDateTime autoLogoutAt;
     private OffsetDateTime loggedOutAt;
-    
+
     private OffsetDateTime deactivatedAt;
 
     @Column(updatable = false, nullable = false)
     private OffsetDateTime dateCreated;
 
+    private OffsetDateTime lastUpdatedOn;
+    private OffsetDateTime publishedOn;
+
     @PrePersist
     public void prePersist() {
         dateCreated = OffsetDateTime.now();
+        lastUpdatedOn = OffsetDateTime.now();
         Optional.ofNullable(portalUserIdentifier)
                 .map(PortalUserIdentifier::getPortalUser)
                 .ifPresent(portalUser -> {
@@ -67,5 +75,10 @@ public class PortalUserAuthentication {
                         throw new IllegalArgumentException();
                     }
                 });
+    }
+
+    @PreUpdate
+    public void beforeUpdate() {
+        lastUpdatedOn = OffsetDateTime.now();
     }
 }

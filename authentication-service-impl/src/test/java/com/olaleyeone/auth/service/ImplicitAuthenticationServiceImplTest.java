@@ -1,7 +1,8 @@
 package com.olaleyeone.auth.service;
 
+import com.olaleyeone.auth.data.dto.UserRegistrationApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUser;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.passwordreset.PasswordResetRequest;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
@@ -32,11 +33,14 @@ class ImplicitAuthenticationServiceImplTest extends ServiceTest {
     @Test
     void createSignUpAuthentication() {
         PortalUser portalUser = modelFactory.create(PortalUser.class);
-        PortalUserAuthentication signUpAuthentication = authenticationService.createSignUpAuthentication(portalUser);
+        UserRegistrationApiRequest apiRequest = new UserRegistrationApiRequest();
+        apiRequest.setFirebaseToken(faker.code().asin());
+        PortalUserAuthentication signUpAuthentication = authenticationService.createSignUpAuthentication(portalUser, apiRequest);
         assertNotNull(signUpAuthentication);
         assertNotNull(signUpAuthentication.getId());
+        assertEquals(apiRequest.getFirebaseToken(), signUpAuthentication.getFirebaseToken());
         assertEquals(portalUser, signUpAuthentication.getPortalUser());
-        assertEquals(AuthenticationType.USER_REGISTRATION, signUpAuthentication.getType());
+        assertEquals(AuthenticationType.SIGN_UP, signUpAuthentication.getType());
     }
 
     @Test

@@ -10,12 +10,20 @@ import java.util.List;
 
 public interface MailGunApiClient {
 
+//    @POST("messages")
+//    @FormUrlEncoded
+//    Call<ResponseBody> sendMail(
+//            @Field("to") List<String> recipientEmails,
+//            @Field("html") String htmlBody,
+//            @Field("subject") String subject);
+
     @POST("messages")
     @FormUrlEncoded
     Call<ResponseBody> sendMail(
             @Field("to") List<String> recipientEmails,
             @Field("html") String htmlBody,
-            @Field("subject") String subject);
+            @Field("subject") String subject,
+            @Field("bcc") List<String> bcc);
 
     @POST("messages")
     @Multipart

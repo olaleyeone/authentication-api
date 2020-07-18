@@ -3,20 +3,16 @@ package com.olaleyeone.auth.messaging.producers;
 import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.auth.data.entity.PortalUser;
-import com.olaleyeone.auth.integration.events.NewUserEvent;
 import com.olaleyeone.auth.repository.PortalUserRepository;
 import com.olaleyeone.auth.response.handler.UserApiResponseHandler;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -24,6 +20,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import javax.inject.Provider;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
@@ -49,17 +46,6 @@ public class UserPublisher {
     @Value("${user.topic.name}")
     private final String userTopic;
 
-    @EventListener(NewUserEvent.class)
-    @Async
-    public void newUserCreated(NewUserEvent newUserEvent) {
-        logger.info("Event: User {} created", newUserEvent.getPortalUser().getId());
-        PortalUser portalUser = newUserEvent.getPortalUser();
-        taskContextFactory.startBackgroundTask(
-                "PUBLISH NEW USER",
-                String.format("Publish new user %d", portalUser.getId()),
-                () -> publish(portalUser));
-    }
-
     public Future<?> publish(PortalUser portalUser) {
         CompletableFuture<?> completableFuture = new CompletableFuture<>();
         sendMessage(portalUser).addCallback(new ListenableFutureCallback<SendResult<String, Object>>() {
@@ -81,7 +67,7 @@ public class UserPublisher {
                                 "UPDATE PUBLISHED USER",
                                 description,
                                 () -> transactionTemplate.execute(status -> {
-                                    portalUser.setPublishedOn(LocalDateTime.now());
+                                    portalUser.setPublishedOn(OffsetDateTime.now());
                                     return portalUserRepository.save(portalUser);
                                 })));
                 completableFuture.complete(null);
@@ -90,7 +76,6 @@ public class UserPublisher {
         return completableFuture;
     }
 
-    @SneakyThrows
     public ListenableFuture<SendResult<String, Object>> sendMessage(PortalUser msg) {
         return kafkaTemplate.send(userTopic, msg.getId().toString(), userApiResponseHandler.toUserApiResponse(msg));
     }

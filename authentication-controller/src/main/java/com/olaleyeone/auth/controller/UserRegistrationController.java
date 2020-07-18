@@ -3,12 +3,12 @@ package com.olaleyeone.auth.controller;
 import com.github.olaleyeone.auth.annotations.Public;
 import com.olaleyeone.auth.data.dto.UserRegistrationApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUser;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.integration.events.NewUserEvent;
+import com.olaleyeone.auth.integration.events.SessionUpdateEvent;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.UserRegistrationService;
-import com.olaleyeone.data.dto.RequestMetadata;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Provider;
 import javax.validation.Valid;
 
 @RequiredArgsConstructor
@@ -49,6 +48,7 @@ public class UserRegistrationController {
                     .body(new AccessTokenApiResponse(portalUser));
         }
         HttpEntity<AccessTokenApiResponse> httpEntity = accessTokenApiResponseHandler.getAccessToken(portalUserAuthentication);
+        applicationContext.publishEvent(new SessionUpdateEvent(portalUserAuthentication));
         return ResponseEntity.status(HttpStatus.CREATED)
                 .headers(httpEntity.getHeaders())
                 .body(httpEntity.getBody());

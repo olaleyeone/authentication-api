@@ -35,7 +35,7 @@ public class PasswordResetRequestServiceImpl implements PasswordResetRequestServ
     @Activity("PASSWORD RESET REQUEST")
     @Transactional
     @Override
-    public Map.Entry<PasswordResetRequest, String> createRequest(PortalUserIdentifier portalUserIdentifier) {
+    public Map.Entry<PasswordResetRequest, String> createRequest(PortalUserIdentifier portalUserIdentifier, boolean autoLogin) {
         RequestMetadata requestMetadata = requestMetadataProvider.get();
         OffsetDateTime now = OffsetDateTime.now();
         taskContextProvider.get().setDescription(String.format("Generate password reset code for %s [%s]",
@@ -45,6 +45,7 @@ public class PasswordResetRequestServiceImpl implements PasswordResetRequestServ
         passwordResetRequest.setPortalUserIdentifier(portalUserIdentifier);
         passwordResetRequest.setIpAddress(requestMetadata.getIpAddress());
         passwordResetRequest.setUserAgent(requestMetadata.getUserAgent());
+        passwordResetRequest.setAutoLogin(autoLogin);
 
         taskContextProvider.get().execute(
                 "EXISTING VERIFICATION CODE DEACTIVATION",

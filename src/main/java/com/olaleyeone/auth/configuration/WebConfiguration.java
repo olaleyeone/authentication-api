@@ -50,7 +50,6 @@ public class WebConfiguration implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
         registry.addInterceptor(beanFactory.createBean(TaskContextHandlerInterceptor.class));
-//        registry.addInterceptor(beanFactory.createBean(RemoteAddressConstraintHandlerInterceptor.class));
         AccessConstraintHandlerInterceptor accessConstraintHandlerInterceptor = new AccessConstraintHandlerInterceptor(
                 applicationContext,
                 Arrays.asList(BasicErrorController.class,

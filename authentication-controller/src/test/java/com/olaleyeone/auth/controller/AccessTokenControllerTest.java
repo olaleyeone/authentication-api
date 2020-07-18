@@ -3,7 +3,7 @@ package com.olaleyeone.auth.controller;
 import com.github.olaleyeone.auth.access.AccessStatus;
 import com.github.olaleyeone.auth.data.AccessClaimsExtractor;
 import com.olaleyeone.auth.controllertest.ControllerTest;
-import com.olaleyeone.auth.data.entity.RefreshToken;
+import com.olaleyeone.auth.data.entity.authentication.RefreshToken;
 import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.dto.AccessTokenApiRequest;
 import com.olaleyeone.auth.qualifier.JwtToken;

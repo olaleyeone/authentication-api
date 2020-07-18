@@ -4,7 +4,7 @@ import com.github.olaleyeone.rest.ApiResponse;
 import com.github.olaleyeone.rest.exception.ErrorResponse;
 import com.github.olaleyeone.rest.exception.NotFoundException;
 import com.olaleyeone.auth.data.dto.PasswordUpdateApiRequest;
-import com.olaleyeone.auth.data.entity.RefreshToken;
+import com.olaleyeone.auth.data.entity.authentication.RefreshToken;
 import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
 import com.olaleyeone.auth.response.handler.UserApiResponseHandler;

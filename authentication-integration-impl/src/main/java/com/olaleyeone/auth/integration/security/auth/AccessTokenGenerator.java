@@ -2,7 +2,7 @@ package com.olaleyeone.auth.integration.security.auth;
 
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
 import com.olaleyeone.auth.data.dto.JwtDto;
-import com.olaleyeone.auth.data.entity.RefreshToken;
+import com.olaleyeone.auth.data.entity.authentication.RefreshToken;
 import com.olaleyeone.auth.data.entity.SignatureKey;
 import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.integration.security.AuthTokenGenerator;

@@ -4,7 +4,8 @@ import com.github.olaleyeone.auth.data.AccessClaims;
 import com.github.olaleyeone.auth.data.AccessClaimsExtractor;
 import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.data.dto.PasswordResetApiRequest;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.PortalUser;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.passwordreset.PasswordResetRequest;
 import com.olaleyeone.auth.data.enums.JwtTokenType;
@@ -48,10 +49,14 @@ class PasswordResetControllerTest extends ControllerTest {
 
     @BeforeEach
     public void setUp() {
+        PortalUser portalUser = new PortalUser();
         portalUserIdentifier = new PortalUserIdentifier();
+        portalUserIdentifier.setPortalUser(portalUser);
+
         passwordResetRequest = new PasswordResetRequest();
         passwordResetRequest.setPortalUserIdentifier(portalUserIdentifier);
         passwordResetRequest.setExpiresOn(OffsetDateTime.now().plusMinutes(20));
+        passwordResetRequest.prePersist();
 
         emailAddress = faker.internet().emailAddress();
         resetToken = faker.lorem().sentence();
@@ -116,7 +121,7 @@ class PasswordResetControllerTest extends ControllerTest {
         AccessClaims accessClaims = initAccessClaims();
 
         Mockito.doReturn(Optional.of(passwordResetRequest)).when(passwordResetRequestRepository).findById(Mockito.any());
-        Mockito.doReturn(userAuthentication).when(passwordUpdateService).updatePassword(
+        Mockito.doReturn(Optional.of(userAuthentication)).when(passwordUpdateService).updatePassword(
                 Mockito.any(PasswordResetRequest.class),
                 Mockito.any(PasswordResetApiRequest.class));
 

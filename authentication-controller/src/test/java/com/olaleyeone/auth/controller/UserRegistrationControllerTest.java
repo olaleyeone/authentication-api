@@ -4,7 +4,7 @@ import com.github.olaleyeone.rest.exception.ErrorResponse;
 import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.data.dto.UserRegistrationApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUser;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.service.UserRegistrationService;

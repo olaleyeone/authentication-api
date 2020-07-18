@@ -47,7 +47,7 @@ class PasswordResetRequestControllerTest extends ControllerTest {
         String emailAddress = faker.internet().emailAddress();
         PortalUserIdentifier portalUserIdentifier = new PortalUserIdentifier();
         Map.Entry<PasswordResetRequest, String> reset = Pair.of(new PasswordResetRequest(), faker.code().ean8());
-        Mockito.doReturn(reset).when(passwordResetRequestService).createRequest(Mockito.any());
+        Mockito.doReturn(reset).when(passwordResetRequestService).createRequest(Mockito.any(), Mockito.anyBoolean());
 
         Mockito.doReturn(Optional.of(portalUserIdentifier)).when(portalUserIdentifierRepository).findActiveByIdentifier(Mockito.any(), Mockito.any());
         String domainName = faker.internet().domainName();
@@ -56,7 +56,7 @@ class PasswordResetRequestControllerTest extends ControllerTest {
                 .param("email", emailAddress))
                 .andExpect(status().isOk());
         Mockito.verify(passwordResetRequestService, Mockito.times(1))
-                .createRequest(portalUserIdentifier);
+                .createRequest(Mockito.eq(portalUserIdentifier), Mockito.anyBoolean());
         Mockito.verify(passwordResetTokenEmailSender, Mockito.times(1))
                 .sendResetLink(reset.getKey(), domainName);
     }

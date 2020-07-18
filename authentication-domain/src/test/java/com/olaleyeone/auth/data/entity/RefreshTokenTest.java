@@ -1,5 +1,7 @@
 package com.olaleyeone.auth.data.entity;
 
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.RefreshToken;
 import com.olaleyeone.auth.test.entity.EntityTest;
 import org.junit.jupiter.api.Test;
 
@@ -52,6 +54,13 @@ class RefreshTokenTest extends EntityTest {
         OffsetDateTime expiresAt = OffsetDateTime.now().plusMinutes(20);
         refreshToken.setExpiresAt(expiresAt);
         assertEquals(expiresAt.toInstant(), refreshToken.getExpiryInstant());
+    }
+
+    @Test
+    public void getNullExpiryInstant() {
+        RefreshToken refreshToken = new RefreshToken();
+        assertNull(refreshToken.getExpiryInstant());
+        assertNull(refreshToken.getSecondsTillExpiry());
     }
 
     @Test

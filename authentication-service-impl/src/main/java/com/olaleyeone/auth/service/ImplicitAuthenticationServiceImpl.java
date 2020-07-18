@@ -2,8 +2,9 @@ package com.olaleyeone.auth.service;
 
 import com.olaleyeone.audittrail.api.Activity;
 import com.olaleyeone.audittrail.context.TaskContext;
+import com.olaleyeone.auth.data.dto.UserRegistrationApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUser;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.passwordreset.PasswordResetRequest;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
@@ -26,16 +27,18 @@ public class ImplicitAuthenticationServiceImpl implements ImplicitAuthentication
     @Activity("AUTO LOGIN")
     @Transactional
     @Override
-    public PortalUserAuthentication createSignUpAuthentication(PortalUser portalUser) {
+    public PortalUserAuthentication createSignUpAuthentication(PortalUser portalUser, UserRegistrationApiRequest dto) {
         RequestMetadata requestMetadata = requestMetadataProvider.get();
         activityLoggerProvider.get().setDescription(
                 String.format("Auto login user %s after registration", portalUser.getId()));
         PortalUserAuthentication userAuthentication = new PortalUserAuthentication();
         userAuthentication.setPortalUser(portalUser);
-        userAuthentication.setType(AuthenticationType.USER_REGISTRATION);
+        userAuthentication.setType(AuthenticationType.SIGN_UP);
         userAuthentication.setResponseType(AuthenticationResponseType.SUCCESSFUL);
         userAuthentication.setIpAddress(requestMetadata.getIpAddress());
         userAuthentication.setUserAgent(requestMetadata.getUserAgent());
+        userAuthentication.setFirebaseToken(dto.getFirebaseToken());
+
         return portalUserAuthenticationRepository.save(userAuthentication);
     }
 

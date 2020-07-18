@@ -1,11 +1,11 @@
 package com.olaleyeone.auth.search.filter;
 
-import com.olaleyeone.auth.data.entity.PortalUser;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
-import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
-import com.olaleyeone.auth.data.entity.QPortalUserAuthentication;
 import com.github.olaleyeone.entitysearch.PageDto;
 import com.github.olaleyeone.entitysearch.SearchFilter;
+import com.olaleyeone.auth.data.entity.PortalUser;
+import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.QPortalUserAuthentication;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Data;
 import lombok.Getter;

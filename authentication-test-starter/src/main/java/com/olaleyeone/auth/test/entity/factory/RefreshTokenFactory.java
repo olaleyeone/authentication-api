@@ -3,8 +3,8 @@ package com.olaleyeone.auth.test.entity.factory;
 import com.github.heywhy.springentityfactory.contracts.FactoryHelper;
 import com.github.heywhy.springentityfactory.contracts.ModelFactory;
 import com.github.javafaker.Faker;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
-import com.olaleyeone.auth.data.entity.RefreshToken;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.RefreshToken;
 
 import java.time.OffsetDateTime;
 

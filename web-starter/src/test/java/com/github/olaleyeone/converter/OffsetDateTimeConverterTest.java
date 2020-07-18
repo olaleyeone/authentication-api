@@ -21,13 +21,6 @@ class OffsetDateTimeConverterTest extends ComponentTest {
         formatterRegistry.addConverter(new OffsetDateTimeConverter(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
     }
 
-//    @Override
-//    public void addFormatters(FormatterRegistry registry) {
-//        registry.addConverter(new LocalDateConverter("yyyy-MM-dd"));
-//        registry.addConverter(new DateConverter("yyyy-MM-dd"));
-////        registry.addConverter(new LocalDateTimeConverter("yyyy-MM-dd'T'HH:mm:ss.SSS"));
-//    }
-
     @Test
     void convertNull() {
         assertNull(formatterRegistry.convert("", OffsetDateTime.class));

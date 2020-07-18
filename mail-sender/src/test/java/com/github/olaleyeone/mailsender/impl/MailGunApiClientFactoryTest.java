@@ -56,8 +56,11 @@ class MailGunApiClientFactoryTest extends ComponentTest {
     void getObject() {
         MailGunApiClient apiClient = mailGunApiClientFactory.getObject();
         String body = faker.backToTheFuture().quote();
-        Call<ResponseBody> call = apiClient.sendMail(Collections.singletonList(faker.internet().emailAddress()),
-                body, "subject");
+        Call<ResponseBody> call = apiClient.sendMail(
+                Collections.singletonList(faker.internet().emailAddress()),
+                body,
+                "subject",
+                Collections.singletonList(faker.internet().emailAddress()));
         assertEquals("domain.com", call.request().url().host());
         assertFalse(call.request().url().isHttps());
     }

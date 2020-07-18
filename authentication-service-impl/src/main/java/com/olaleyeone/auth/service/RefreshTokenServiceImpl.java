@@ -2,8 +2,8 @@ package com.olaleyeone.auth.service;
 
 import com.olaleyeone.audittrail.api.Activity;
 import com.olaleyeone.audittrail.context.TaskContext;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
-import com.olaleyeone.auth.data.entity.RefreshToken;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.RefreshToken;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -39,12 +39,17 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         userAuthentication.setLastActiveAt(refreshToken.getCreatedOn());
         userAuthentication.setBecomesInactiveAt(refreshToken.getAccessExpiresAt());
         userAuthentication.setAutoLogoutAt(refreshToken.getExpiresAt());
+        userAuthentication.setPublishedOn(null);
         return refreshToken;
     }
 
     private OffsetDateTime getExpiresAt() {
-        return OffsetDateTime.now().plusMinutes(settingService.getInteger(REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES,
-                REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES_VALUE));
+        Integer durationInMinutes = settingService.getInteger(REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES,
+                REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES_VALUE);
+        if (durationInMinutes <= 0) {
+            return null;
+        }
+        return OffsetDateTime.now().plusMinutes(durationInMinutes);
     }
 
     private OffsetDateTime getAccessExpiresAt() {

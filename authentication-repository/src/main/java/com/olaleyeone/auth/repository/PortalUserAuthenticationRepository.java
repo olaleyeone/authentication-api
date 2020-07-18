@@ -1,7 +1,7 @@
 package com.olaleyeone.auth.repository;
 
 import com.olaleyeone.auth.data.entity.PortalUser;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -26,7 +26,9 @@ public interface PortalUserAuthenticationRepository extends JpaRepository<Portal
     Optional<OffsetDateTime> getLastActive(PortalUser portalUser);
 
     @Modifying
-    @Query("UPDATE PortalUserAuthentication auth SET auth.deactivatedAt=CURRENT_TIMESTAMP" +
+    @Query("UPDATE PortalUserAuthentication auth" +
+            " SET auth.deactivatedAt=CURRENT_TIMESTAMP," +
+            " auth.publishedOn=null" +
             " WHERE auth.responseType='SUCCESSFUL'" +
             " AND auth.deactivatedAt IS NULL" +
             " AND auth.loggedOutAt IS NULL" +
@@ -37,7 +39,9 @@ public interface PortalUserAuthenticationRepository extends JpaRepository<Portal
     int deactivateOtherSessions(PortalUserAuthentication portalUserAuthentication);
 
     @Modifying
-    @Query("UPDATE PortalUserAuthentication auth SET auth.deactivatedAt=CURRENT_TIMESTAMP" +
+    @Query("UPDATE PortalUserAuthentication auth" +
+            " SET auth.deactivatedAt=CURRENT_TIMESTAMP," +
+            " auth.publishedOn=null" +
             " WHERE auth.responseType='SUCCESSFUL'" +
             " AND auth.deactivatedAt IS NULL" +
             " AND auth.loggedOutAt IS NULL" +

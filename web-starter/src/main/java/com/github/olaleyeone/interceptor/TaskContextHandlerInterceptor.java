@@ -53,15 +53,17 @@ public class TaskContextHandlerInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
         Task task = new Task();
-        task.setName(Optional.ofNullable(request.getAttribute(org.springframework.web.servlet.HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE))
-                .map(Object::toString)
-                .orElse(request.getServletPath()));
+        task.setName(String.format("%s %s", request.getMethod().toUpperCase(),
+                Optional.ofNullable(request.getAttribute(org.springframework.web.servlet.HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE))
+                        .map(Object::toString)
+                        .orElse(request.getServletPath())));
         task.setType(Task.WEB_REQUEST);
         task.setDuration(new Duration(OffsetDateTime.now(), null));
 
         WebRequest webRequest = new WebRequest();
         webRequest.setIpAddress(getActualIpAddress(request));
         webRequest.setUserAgent(request.getHeader(HttpHeaders.USER_AGENT));
+        webRequest.setHttpMethod(request.getMethod());
         webRequest.setUri(request.getRequestURI());
         try {
             AuthorizedRequest authorizedRequest = authorizedRequestProvider.get();

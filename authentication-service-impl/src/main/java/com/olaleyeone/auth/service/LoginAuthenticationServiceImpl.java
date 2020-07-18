@@ -2,16 +2,17 @@ package com.olaleyeone.auth.service;
 
 import com.olaleyeone.audittrail.api.Activity;
 import com.olaleyeone.audittrail.context.TaskContext;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
+import com.olaleyeone.auth.data.dto.LoginApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
-import com.olaleyeone.auth.data.dto.LoginApiRequest;
 import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.data.dto.RequestMetadata;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.BooleanUtils;
 
 import javax.inject.Named;
 import javax.inject.Provider;
@@ -24,6 +25,7 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
 
     private final PortalUserIdentifierRepository portalUserIdentifierRepository;
     private final PortalUserAuthenticationRepository portalUserAuthenticationRepository;
+    private final PortalUserAuthenticationDataService portalUserAuthenticationDataService;
     private final HashService hashService;
     private final Provider<TaskContext> taskContextProvider;
 
@@ -71,8 +73,16 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
                 () -> {
                     PortalUserAuthentication userAuthentication = makeAuthenticationResponse(
                             requestDto, requestMetadata, AuthenticationResponseType.SUCCESSFUL);
+
                     userAuthentication.setPortalUserIdentifier(userIdentifier);
-                    return portalUserAuthenticationRepository.save(userAuthentication);
+                    if (BooleanUtils.isTrue(requestDto.getInvalidateOtherSessions())) {
+                        portalUserAuthenticationRepository.deactivateOtherSessions(userIdentifier.getPortalUser());
+                    }
+                    PortalUserAuthentication portalUserAuthentication = portalUserAuthenticationRepository.save(userAuthentication);
+                    if (requestDto.getData() != null) {
+                        requestDto.getData().forEach(it -> portalUserAuthenticationDataService.addData(portalUserAuthentication, it));
+                    }
+                    return portalUserAuthentication;
                 });
     }
 
@@ -84,6 +94,7 @@ public class LoginAuthenticationServiceImpl implements LoginAuthenticationServic
         userAuthentication.setIdentifier(requestDto.getIdentifier());
         userAuthentication.setIpAddress(requestMetadata.getIpAddress());
         userAuthentication.setUserAgent(requestMetadata.getUserAgent());
+        userAuthentication.setFirebaseToken(requestDto.getFirebaseToken());
         return userAuthentication;
     }
 

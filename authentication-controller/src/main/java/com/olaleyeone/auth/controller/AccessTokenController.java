@@ -4,7 +4,7 @@ import com.github.olaleyeone.auth.annotations.Public;
 import com.github.olaleyeone.auth.data.AccessClaims;
 import com.github.olaleyeone.auth.data.AccessClaimsExtractor;
 import com.github.olaleyeone.rest.exception.ErrorResponse;
-import com.olaleyeone.auth.data.entity.RefreshToken;
+import com.olaleyeone.auth.data.entity.authentication.RefreshToken;
 import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.dto.AccessTokenApiRequest;
 import com.olaleyeone.auth.qualifier.JwtToken;
@@ -52,7 +52,9 @@ public class AccessTokenController {
 
         try {
             AccessClaims accessClaims = accessClaimsExtractor.getClaims(token);
-
+            if (accessClaims == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
             RefreshToken refreshToken = refreshTokenRepository.findActiveToken(Long.valueOf(accessClaims.getId()))
                     .orElseThrow(() -> new ErrorResponse(HttpStatus.UNAUTHORIZED));
             return accessTokenApiResponseHandler.getAccessToken(refreshToken);
@@ -73,6 +75,7 @@ public class AccessTokenController {
         return Arrays.asList(httpServletRequest.getCookies())
                 .stream()
                 .filter(cookie -> cookie.getName().equals(AccessTokenApiResponseHandler.REFRESH_TOKEN_COOKIE_NAME))
+//                .peek(cookie -> logger.info("{}", cookie.getValue()))
                 .findFirst()
                 .map(Cookie::getValue).orElseThrow(() -> new ErrorResponse(HttpStatus.UNAUTHORIZED));
     }

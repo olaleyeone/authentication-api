@@ -20,14 +20,15 @@ public class MailServiceImpl implements MailService {
 
     private final MailGunApiClient mailGunApi;
 
-//    @Activity("SEND EMAIL")
+    //    @Activity("SEND EMAIL")
     @SneakyThrows
     @Override
     public void sendEmail(HtmlEmailDto htmlEmailDto) {
         Response<ResponseBody> response = mailGunApi.sendMail(
                 htmlEmailDto.getRecipientEmails(),
                 htmlEmailDto.getHtmlMessage(),
-                htmlEmailDto.getSubject())
+                htmlEmailDto.getSubject(),
+                htmlEmailDto.getBcc())
                 .execute();
         if (response.isSuccessful()) {
             return;

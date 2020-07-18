@@ -3,7 +3,7 @@ package com.olaleyeone.auth.service;
 import com.olaleyeone.auth.data.dto.UserDataApiRequest;
 import com.olaleyeone.auth.data.dto.UserRegistrationApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUser;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.data.enums.AuthenticationType;
@@ -63,7 +63,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
         PortalUserAuthentication userAuthentication = userRegistrationService.registerUser(dto);
         assertNotNull(userAuthentication);
         assertNotNull(userAuthentication.getId());
-        assertEquals(AuthenticationType.USER_REGISTRATION, userAuthentication.getType());
+        assertEquals(AuthenticationType.SIGN_UP, userAuthentication.getType());
 
         assertNotNull(userAuthentication.getPortalUser());
         assertNotNull(userAuthentication.getPortalUser().getId());

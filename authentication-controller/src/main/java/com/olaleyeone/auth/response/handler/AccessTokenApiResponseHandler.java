@@ -1,11 +1,12 @@
 package com.olaleyeone.auth.response.handler;
 
 import com.olaleyeone.auth.data.dto.JwtDto;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
-import com.olaleyeone.auth.data.entity.RefreshToken;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.RefreshToken;
 import com.olaleyeone.auth.data.enums.JwtTokenType;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
+import com.olaleyeone.auth.integration.events.SessionUpdateEvent;
 import com.olaleyeone.auth.integration.security.AuthTokenGenerator;
 import com.olaleyeone.auth.qualifier.JwtToken;
 import com.olaleyeone.auth.repository.PortalUserDataRepository;
@@ -17,6 +18,7 @@ import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -52,6 +54,7 @@ public class AccessTokenApiResponseHandler {
 
     private final PortalUserIdentifierRepository portalUserIdentifierRepository;
     private final PortalUserDataRepository portalUserDataRepository;
+    private final ApplicationContext applicationContext;
 
     public HttpEntity<AccessTokenApiResponse> getAccessToken(PortalUserAuthentication portalUserAuthentication) {
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(portalUserAuthentication);
@@ -61,7 +64,7 @@ public class AccessTokenApiResponseHandler {
 
     public HttpEntity<AccessTokenApiResponse> getAccessToken(RefreshToken currentRefreshToken) {
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(currentRefreshToken.getActualAuthentication());
-
+        applicationContext.publishEvent(new SessionUpdateEvent(refreshToken.getActualAuthentication()));
         return getUserApiResponseHttpEntity(refreshToken);
     }
 

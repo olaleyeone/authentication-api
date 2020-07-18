@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.integration.security.auth;
 
-import com.olaleyeone.auth.data.entity.RefreshToken;
+import com.olaleyeone.auth.data.entity.authentication.RefreshToken;
 import com.olaleyeone.auth.data.entity.SignatureKey;
 import io.jsonwebtoken.Jwts;
 

@@ -5,9 +5,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import({MailConfiguration.class, KafkaProducerConfig.class, KafkaTopicConfig.class})
+@Import({
+        MailConfiguration.class,
+        KafkaProducerConfig.class
+})
 @ComponentScan({
         "com.olaleyeone.auth.integration",
+        "com.olaleyeone.auth.event",
         "com.olaleyeone.auth.messaging"
 })
 public class IntegrationConfiguration {

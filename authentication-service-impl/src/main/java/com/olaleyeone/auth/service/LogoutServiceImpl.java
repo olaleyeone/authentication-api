@@ -1,7 +1,7 @@
 package com.olaleyeone.auth.service;
 
 import com.olaleyeone.audittrail.api.Activity;
-import com.olaleyeone.auth.data.entity.PortalUserAuthentication;
+import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +20,7 @@ public class LogoutServiceImpl implements LogoutService {
     @Override
     public void logout(PortalUserAuthentication portalUserAuthentication) {
         portalUserAuthentication.setLoggedOutAt(OffsetDateTime.now());
+        portalUserAuthentication.setPublishedOn(null);
         portalUserAuthenticationRepository.save(portalUserAuthentication);
     }
 }
