@@ -1,6 +1,7 @@
 package com.olaleyeone.auth.controller;
 
 import com.github.olaleyeone.auth.annotations.Public;
+import com.github.olaleyeone.rest.ApiResponse;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.passwordreset.PasswordResetRequest;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
@@ -30,16 +31,17 @@ public class PasswordResetRequestController {
     @Public
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(path = "/password-resets", params = "email")
-    public void requestPasswordResetWithEmail(
+    public ApiResponse<Void> requestPasswordResetWithEmail(
             @RequestParam("email") String identifier,
             @RequestParam(name = "autoLogin", required = false) boolean autoLogin) {
         PortalUserIdentifier portalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(identifier, UserIdentifierType.EMAIL)
                 .orElse(null);
         if (portalUserIdentifier == null) {
-            return;
+            return new ApiResponse<>(null, "Successful", null);
         }
         Map.Entry<PasswordResetRequest, String> request = passwordResetRequestService.createRequest(portalUserIdentifier, autoLogin);
         PasswordResetRequest passwordResetRequest = request.getKey();
         passwordResetTokenEmailSender.sendResetLink(passwordResetRequest, requestMetadataProvider.get().getHost());
+        return new ApiResponse<>(null, "Successful", null);
     }
 }

@@ -40,5 +40,7 @@ public class UserSessionApiResponse {
         this.lastUpdatedOn = portalUserAuthentication.getLastUpdatedOn();
         this.deactivatedOn = Optional.ofNullable(portalUserAuthentication.getDeactivatedAt())
                 .orElse(portalUserAuthentication.getLoggedOutAt());
+
+        this.firebaseToken = portalUserAuthentication.getFirebaseToken();
     }
 }

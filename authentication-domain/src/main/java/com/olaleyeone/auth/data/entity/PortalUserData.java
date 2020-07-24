@@ -10,6 +10,9 @@ import javax.persistence.*;
 
 @Data
 @Entity
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"portal_user_id", "name"})
+})
 public class PortalUserData {
 
     @Id
