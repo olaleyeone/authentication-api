@@ -4,10 +4,7 @@ import com.github.olaleyeone.auth.data.AuthorizedRequest;
 import com.olaleyeone.audittrail.embeddable.Duration;
 import com.olaleyeone.audittrail.entity.Task;
 import com.olaleyeone.audittrail.entity.WebRequest;
-import com.olaleyeone.audittrail.impl.TaskContextFactory;
-import com.olaleyeone.audittrail.impl.TaskContextHolder;
-import com.olaleyeone.audittrail.impl.TaskContextImpl;
-import com.olaleyeone.audittrail.impl.TaskContextSaver;
+import com.olaleyeone.audittrail.impl.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -88,6 +85,9 @@ public class TaskContextHandlerInterceptor extends HandlerInterceptorAdapter {
             @Nullable Exception ex) {
         TaskContextImpl taskContext = taskContextHolder.getObject();
         Task task = taskContext.getTask();
+        if (ex != null) {
+            task.setFailure(CodeContextUtil.toFailure(ex));
+        }
         WebRequest webRequest = task.getWebRequest();
         webRequest.setStatusCode(response.getStatus());
 
