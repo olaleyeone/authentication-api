@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import com.github.olaleyeone.advice.ErrorAdvice;
 import com.github.olaleyeone.auth.data.AccessClaims;
+import com.github.olaleyeone.auth.data.AuthorizedRequest;
 import com.github.olaleyeone.auth.interceptors.AccessConstraintHandlerInterceptor;
 import com.github.olaleyeone.configuration.BeanValidationConfiguration;
 import com.github.olaleyeone.configuration.JacksonConfiguration;
@@ -31,6 +32,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.inject.Provider;
 import java.util.Collections;
 import java.util.Random;
 
@@ -97,11 +99,15 @@ public class ControllerTest {
         @Autowired
         private ApplicationContext applicationContext;
 
+        @Autowired
+        private Provider<AuthorizedRequest> authorizedRequestProvider;
+
         @Override
         public void addInterceptors(InterceptorRegistry registry) {
             AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
             AccessConstraintHandlerInterceptor accessConstraintHandlerInterceptor = new AccessConstraintHandlerInterceptor(
                     applicationContext,
+                    authorizedRequestProvider,
                     Collections.emptyList()
             );
             beanFactory.autowireBean(accessConstraintHandlerInterceptor);

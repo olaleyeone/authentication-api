@@ -54,14 +54,17 @@ class TaskContextHandlerInterceptorTest extends ComponentTest {
     private TaskContextHandlerInterceptor taskContextHandlerInterceptor;
 
     private String httpMethod;
+    private String url;
 
     @BeforeEach
     void setUp() {
         httpMethod = "post";
+        url = "https://api.domain.com/me/profile-picture";
     }
 
     @Test
     void preHandle() {
+        Mockito.doReturn(new StringBuffer(url)).when(request).getRequestURL();
         Mockito.doReturn(authorizedRequest).when(authorizedRequestProvider).get();
         String path = faker.internet().slug();
         Mockito.doReturn(path).when(request).getServletPath();
@@ -86,6 +89,10 @@ class TaskContextHandlerInterceptorTest extends ComponentTest {
                     assertNotNull(task.getWebRequest());
                     WebRequest webRequest = task.getWebRequest();
                     assertEquals(path, webRequest.getUri());
+                    assertEquals("https", webRequest.getScheme());
+                    assertEquals("api.domain.com", webRequest.getHost());
+                    assertEquals("/me/profile-picture", webRequest.getPath());
+
                     assertEquals(ipV4Address, webRequest.getIpAddress());
                     assertEquals(userAgent, webRequest.getUserAgent());
                     return true;

@@ -18,6 +18,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URL;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -61,6 +62,16 @@ public class TaskContextHandlerInterceptor extends HandlerInterceptorAdapter {
         webRequest.setIpAddress(getActualIpAddress(request));
         webRequest.setUserAgent(request.getHeader(HttpHeaders.USER_AGENT));
         webRequest.setHttpMethod(request.getMethod());
+
+        try {
+            URL url = new URL(request.getRequestURL().toString());
+            webRequest.setScheme(url.getProtocol());
+            webRequest.setHost(url.getHost());
+            webRequest.setPath(url.getPath());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+
         webRequest.setUri(request.getRequestURI());
         try {
             AuthorizedRequest authorizedRequest = authorizedRequestProvider.get();
@@ -69,7 +80,7 @@ public class TaskContextHandlerInterceptor extends HandlerInterceptorAdapter {
                 webRequest.setSessionId(authorizedRequest.getAccessClaims().getId());
             }
         } catch (Exception e) {
-
+            logger.error(e.getMessage(), e);
         }
         task.setWebRequest(webRequest);
 
