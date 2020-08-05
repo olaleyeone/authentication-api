@@ -1,7 +1,6 @@
 package com.olaleyeone.auth.data.entity;
 
 import com.olaleyeone.audittrail.api.IgnoreData;
-import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -9,18 +8,14 @@ import java.time.OffsetDateTime;
 
 @Data
 @Entity
-public class PortalUserIdentifierVerification {
+public class OneTimePassword {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private UserIdentifierType identifierType;
-
-    @Column(nullable = false)
-    private String identifier;
+    @ManyToOne(optional = false)
+    private PortalUserIdentifier identifier;
 
     private String verificationCode;
 

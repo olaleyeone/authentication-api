@@ -5,10 +5,11 @@ import com.olaleyeone.auth.test.entity.EntityTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Base64;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class PortalUserIdentifierVerificationTest extends EntityTest {
 
@@ -19,7 +20,7 @@ class PortalUserIdentifierVerificationTest extends EntityTest {
         portalUserIdentifierVerification = new PortalUserIdentifierVerification();
         portalUserIdentifierVerification.setIdentifier(faker.internet().emailAddress());
         portalUserIdentifierVerification.setIdentifierType(UserIdentifierType.EMAIL);
-        portalUserIdentifierVerification.setExpiresOn(LocalDateTime.now().plusSeconds(faker.number().randomDigit()));
+        portalUserIdentifierVerification.setExpiresOn(OffsetDateTime.now().plusSeconds(faker.number().randomDigit()));
         String digit = faker.number().digit();
         portalUserIdentifierVerification.setVerificationCode(digit);
         portalUserIdentifierVerification.setVerificationCodeHash(Base64.getEncoder().encodeToString(digit.getBytes()));
@@ -27,7 +28,7 @@ class PortalUserIdentifierVerificationTest extends EntityTest {
 
     @Test
     void prePersistWithoutCreatedOn() {
-        LocalDateTime now = LocalDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now();
         portalUserIdentifierVerification.setCreatedOn(now);
         saveAndFlush(portalUserIdentifierVerification);
         assertNotNull(portalUserIdentifierVerification);

@@ -3,7 +3,10 @@ package com.olaleyeone.auth.service;
 import com.olaleyeone.audittrail.api.Activity;
 import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.auth.data.dto.UserRegistrationApiRequest;
-import com.olaleyeone.auth.data.entity.*;
+import com.olaleyeone.auth.data.entity.PortalUser;
+import com.olaleyeone.auth.data.entity.PortalUserData;
+import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
+import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
@@ -17,7 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -108,7 +111,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     }
 
     private void resolveVerification(PortalUserIdentifier portalUserIdentifier, String verificationCode) {
-        LocalDateTime now = LocalDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now();
         List<PortalUserIdentifierVerification> list =
                 portalUserIdentifierVerificationRepository.getAllActive(portalUserIdentifier.getIdentifier());
         if (list.isEmpty()) {

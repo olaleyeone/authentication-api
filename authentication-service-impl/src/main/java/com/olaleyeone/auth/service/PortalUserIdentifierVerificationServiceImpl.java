@@ -4,8 +4,8 @@ import com.olaleyeone.audittrail.api.Activity;
 import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
-import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
+import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.repository.PortalUserIdentifierVerificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
@@ -13,7 +13,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -36,14 +36,13 @@ public class PortalUserIdentifierVerificationServiceImpl implements PortalUserId
     @Transactional
     @Override
     public Map.Entry<PortalUserIdentifierVerification, String> createVerification(String identifierArg, UserIdentifierType identifierType) {
-        LocalDateTime now = LocalDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now();
         String identifier = identifierArg;
         if (identifierType == UserIdentifierType.PHONE_NUMBER) {
             identifier = phoneNumberService.formatPhoneNumber(identifier);
         }
         taskContextProvider.get().setDescription(String.format("Generate verification code for %s [%s]",
                 identifierArg, identifierType.name()));
-
 
         PortalUserIdentifierVerification portalUserIdentifierVerification = new PortalUserIdentifierVerification();
         portalUserIdentifierVerification.setIdentifierType(identifierType);

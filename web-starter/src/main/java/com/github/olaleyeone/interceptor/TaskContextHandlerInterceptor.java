@@ -28,13 +28,6 @@ public class TaskContextHandlerInterceptor extends HandlerInterceptorAdapter {
 
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-//    @Getter
-//    @Setter
-//    @Value("${IP_V4_LOCALHOST:127.0.0.1}")
-//    private String IP_V4_LOCALHOST;
-//    @Value("${IP_V6_LOCALHOST:0:0:0:0:0:0:0:1}")
-//    private String IP_V6_LOCALHOST;
-
     @Getter
     @Setter
     private String proxyIpHeader = "X-REAL-IP";

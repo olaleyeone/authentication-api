@@ -55,4 +55,9 @@ class ServiceMockConfig {
     public PasswordResetRequestService passwordResetRequestService() {
         return Mockito.mock(PasswordResetRequestService.class);
     }
+
+    @Bean
+    public OneTimePasswordService oneTimePasswordService() {
+        return Mockito.mock(OneTimePasswordService.class);
+    }
 }

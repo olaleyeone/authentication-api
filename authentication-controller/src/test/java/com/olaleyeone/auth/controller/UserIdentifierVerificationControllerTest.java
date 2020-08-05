@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.controller;
 
+import com.olaleyeone.auth.constraints.ValidPhoneNumber;
 import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
@@ -29,6 +30,9 @@ class UserIdentifierVerificationControllerTest extends ControllerTest {
     @Autowired
     private PortalUserIdentifierRepository portalUserIdentifierRepository;
 
+    @Autowired
+    private ValidPhoneNumber.Validator validPhoneNumberValidator;
+
     private Pair<PortalUserIdentifierVerification, String> verificationResult;
 
     @BeforeEach
@@ -39,7 +43,7 @@ class UserIdentifierVerificationControllerTest extends ControllerTest {
     }
 
     @Test
-    void requestEmailVerificationCode() throws Exception {
+    void requestVerificationCode() throws Exception {
         String emailAddress = faker.internet().emailAddress();
         mockMvc.perform(MockMvcRequestBuilders.post("/user-emails/{identifier}/verification-code",
                 emailAddress))
@@ -53,14 +57,14 @@ class UserIdentifierVerificationControllerTest extends ControllerTest {
     }
 
     @Test
-    void requestEmailVerificationCodeWithInvalidEmail() throws Exception {
+    void requestVerificationCodeWithInvalidEmail() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/user-emails/{identifier}/verification-code",
                 faker.internet().ipV4Address()))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void requestEmailVerificationCodeWithVerifiedEmail() throws Exception {
+    void requestVerificationCodeWithVerifiedEmail() throws Exception {
         PortalUserIdentifier portalUserIdentifier = new PortalUserIdentifier();
         portalUserIdentifier.setVerified(true);
         Mockito.doReturn(Optional.of(portalUserIdentifier)).when(portalUserIdentifierRepository).findActiveByIdentifier(Mockito.any());
@@ -70,7 +74,7 @@ class UserIdentifierVerificationControllerTest extends ControllerTest {
     }
 
     @Test
-    void requestEmailVerificationCodeWithUnverifiedEmail() throws Exception {
+    void requestVerificationCodeWithUnverifiedEmail() throws Exception {
         PortalUserIdentifier portalUserIdentifier = new PortalUserIdentifier();
         portalUserIdentifier.setVerified(false);
         Mockito.doReturn(Optional.of(portalUserIdentifier)).when(portalUserIdentifierRepository).findActiveByIdentifier(Mockito.any());
@@ -80,12 +84,34 @@ class UserIdentifierVerificationControllerTest extends ControllerTest {
     }
 
     @Test
-    void requestEmailVerificationCodeShouldNotPropagateEmailError() throws Exception {
+    void requestVerificationCodeShouldNotPropagateEmailError() throws Exception {
         Mockito.doThrow(new RuntimeException()).when(verificationEmailSender).sendVerificationCode(Mockito.any(), Mockito.anyString());
         mockMvc.perform(MockMvcRequestBuilders.post("/user-emails/{identifier}/verification-code",
                 faker.internet().emailAddress()))
                 .andExpect(status().isCreated());
         Mockito.verify(verificationEmailSender, Mockito.times(1))
                 .sendVerificationCode(verificationResult.getKey(), verificationResult.getValue());
+    }
+
+    @Test
+    void requestVerificationCodeWithVerifiedPhoneNumber() throws Exception {
+        Mockito.doReturn(true).when(validPhoneNumberValidator).isValid(Mockito.any(), Mockito.any());
+        PortalUserIdentifier portalUserIdentifier = new PortalUserIdentifier();
+        portalUserIdentifier.setVerified(true);
+        Mockito.doReturn(Optional.of(portalUserIdentifier)).when(portalUserIdentifierRepository).findActiveByIdentifier(Mockito.any());
+        mockMvc.perform(MockMvcRequestBuilders.post("/user-phone-numbers/{identifier}/verification-code",
+                faker.phoneNumber().cellPhone()))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    void requestVerificationCodeWithUnverifiedPhoneNumber() throws Exception {
+        Mockito.doReturn(true).when(validPhoneNumberValidator).isValid(Mockito.any(), Mockito.any());
+        PortalUserIdentifier portalUserIdentifier = new PortalUserIdentifier();
+        portalUserIdentifier.setVerified(false);
+        Mockito.doReturn(Optional.of(portalUserIdentifier)).when(portalUserIdentifierRepository).findActiveByIdentifier(Mockito.any());
+        mockMvc.perform(MockMvcRequestBuilders.post("/user-phone-numbers/{identifier}/verification-code",
+                faker.phoneNumber().cellPhone()))
+                .andExpect(status().isCreated());
     }
 }

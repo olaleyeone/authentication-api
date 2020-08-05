@@ -6,6 +6,8 @@ import com.github.olaleyeone.auth.interceptors.AccessConstraintHandlerIntercepto
 import com.github.olaleyeone.configuration.BeanValidationConfiguration;
 import com.github.olaleyeone.configuration.JacksonConfiguration;
 import com.github.olaleyeone.configuration.PredicateConfiguration;
+import com.github.olaleyeone.converter.LocalDateConverter;
+import com.github.olaleyeone.converter.OffsetDateTimeConverter;
 import com.github.olaleyeone.interceptor.TaskContextHandlerInterceptor;
 import org.springdoc.webmvc.api.OpenApiResource;
 import org.springdoc.webmvc.ui.SwaggerWelcome;
@@ -17,10 +19,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.inject.Provider;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 @Configuration
@@ -49,6 +53,12 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Bean
     public ErrorAdvice errorAdvice() {
         return new ErrorAdvice();
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new LocalDateConverter("yyyy-MM-dd"));
+        registry.addConverter(new OffsetDateTimeConverter(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
     }
 
     @Override

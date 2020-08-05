@@ -1,14 +1,15 @@
 package com.olaleyeone.auth.controller;
 
 import com.github.olaleyeone.auth.annotations.Public;
+import com.github.olaleyeone.rest.ApiResponse;
+import com.github.olaleyeone.rest.exception.ErrorResponse;
+import com.olaleyeone.auth.constraints.ValidPhoneNumber;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.integration.email.VerificationEmailSender;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.service.PortalUserIdentifierVerificationService;
-import com.github.olaleyeone.rest.ApiResponse;
-import com.github.olaleyeone.rest.exception.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
@@ -54,16 +55,22 @@ public class UserIdentifierVerificationController {
         }
     }
 
-//    @Public
-//    @ResponseStatus(HttpStatus.CREATED)
-//    @PostMapping("/user-phone-numbers/{identifier}/verification-code")
-//    public void requestPhoneNumberVerificationCode(@PathVariable @ValidPhoneNumber String identifier) {
-//        Optional<PortalUserIdentifier> optionalPortalUserIdentifier = portalUserIdentifierRepository.findByIdentifier(identifier);
-//        if (optionalPortalUserIdentifier.isPresent() && BooleanUtils.isTrue(optionalPortalUserIdentifier.get().getVerified())) {
-//            throw new ErrorResponse(HttpStatus.CONFLICT, ApiResponse.builder()
-//                    .message(String.format("Phone number %s already verified by user"))
-//                    .build());
+    @Public
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/user-phone-numbers/{identifier}/verification-code")
+    public void requestPhoneNumberVerificationCode(@PathVariable @ValidPhoneNumber String identifier) {
+        Optional<PortalUserIdentifier> optionalPortalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(identifier);
+        if (optionalPortalUserIdentifier.isPresent() && BooleanUtils.isTrue(optionalPortalUserIdentifier.get().getVerified())) {
+            throw new ErrorResponse(HttpStatus.CONFLICT, ApiResponse.builder()
+                    .message(String.format("Phone number %s already verified by user", identifier))
+                    .build());
+        }
+        Map.Entry<PortalUserIdentifierVerification, String> verification =
+                portalUserIdentifierVerificationService.createVerification(identifier, UserIdentifierType.PHONE_NUMBER);
+//        try {
+//            verificationEmailSender.sendVerificationCode(verification.getKey(), verification.getValue());
+//        } catch (Exception e) {
+//            logger.error(e.getMessage(), e);
 //        }
-//        portalUserIdentifierVerificationService.createVerification(identifier, UserIdentifierType.PHONE_NUMBER);
-//    }
+    }
 }
