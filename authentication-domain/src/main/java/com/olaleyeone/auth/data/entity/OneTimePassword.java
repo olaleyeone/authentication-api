@@ -15,13 +15,13 @@ public class OneTimePassword {
     private Long id;
 
     @ManyToOne(optional = false)
-    private PortalUserIdentifier identifier;
+    private PortalUserIdentifier userIdentifier;
 
-    private String verificationCode;
+    private String password;
 
     @IgnoreData
     @Column(updatable = false, nullable = false)
-    private String verificationCodeHash;
+    private String hash;
 
     @Column(updatable = false, nullable = false)
     private OffsetDateTime createdOn;

@@ -3,13 +3,13 @@ package com.olaleyeone.auth.controller;
 import com.github.olaleyeone.auth.annotations.Public;
 import com.github.olaleyeone.rest.ApiResponse;
 import com.github.olaleyeone.rest.exception.ErrorResponse;
-import com.olaleyeone.auth.data.dto.LoginApiRequest;
+import com.olaleyeone.auth.data.dto.PasswordLoginApiRequest;
 import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.integration.events.SessionUpdateEvent;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
-import com.olaleyeone.auth.service.LoginAuthenticationService;
+import com.olaleyeone.auth.service.PasswordLoginAuthenticationService;
 import com.olaleyeone.data.dto.RequestMetadata;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
@@ -24,16 +24,16 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
-public class LoginController {
+public class PasswordLoginController {
 
-    private final LoginAuthenticationService authenticationService;
+    private final PasswordLoginAuthenticationService authenticationService;
     private final Provider<RequestMetadata> requestMetadata;
     private final AccessTokenApiResponseHandler accessTokenApiResponseHandler;
     private final ApplicationContext applicationContext;
 
     @Public
     @PostMapping("/login")
-    public HttpEntity<AccessTokenApiResponse> login(@Valid @RequestBody LoginApiRequest dto) {
+    public HttpEntity<AccessTokenApiResponse> login(@Valid @RequestBody PasswordLoginApiRequest dto) {
         PortalUserAuthentication portalUserAuthentication = authenticationService.getAuthenticationResponse(dto, requestMetadata.get());
         if (portalUserAuthentication.getResponseType() != AuthenticationResponseType.SUCCESSFUL) {
             if (portalUserAuthentication.getResponseType() == AuthenticationResponseType.INACTIVE_ACCOUNT) {

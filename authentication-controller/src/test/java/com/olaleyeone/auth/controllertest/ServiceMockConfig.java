@@ -1,9 +1,10 @@
 package com.olaleyeone.auth.controllertest;
 
 import com.olaleyeone.auth.integration.email.PasswordResetTokenEmailSender;
-import com.olaleyeone.auth.integration.etc.PhoneNumberService;
-import com.olaleyeone.auth.service.*;
 import com.olaleyeone.auth.integration.email.VerificationEmailSender;
+import com.olaleyeone.auth.integration.etc.PhoneNumberService;
+import com.olaleyeone.auth.integration.sms.OtpSmsSender;
+import com.olaleyeone.auth.service.*;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +18,8 @@ class ServiceMockConfig {
     }
 
     @Bean
-    public LoginAuthenticationService authenticationService() {
-        return Mockito.mock(LoginAuthenticationService.class);
+    public PasswordLoginAuthenticationService authenticationService() {
+        return Mockito.mock(PasswordLoginAuthenticationService.class);
     }
 
     @Bean
@@ -34,6 +35,11 @@ class ServiceMockConfig {
     @Bean
     public PortalUserIdentifierVerificationService portalUserIdentifierVerificationService() {
         return Mockito.mock(PortalUserIdentifierVerificationService.class);
+    }
+
+    @Bean
+    public TotpLoginAuthenticationService totpLoginAuthenticationService() {
+        return Mockito.mock(TotpLoginAuthenticationService.class);
     }
 
     @Bean
@@ -59,5 +65,10 @@ class ServiceMockConfig {
     @Bean
     public OneTimePasswordService oneTimePasswordService() {
         return Mockito.mock(OneTimePasswordService.class);
+    }
+
+    @Bean
+    public OtpSmsSender otpSmsSender() {
+        return Mockito.mock(OtpSmsSender.class);
     }
 }

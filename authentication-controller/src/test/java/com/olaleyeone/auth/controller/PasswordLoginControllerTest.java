@@ -3,10 +3,10 @@ package com.olaleyeone.auth.controller;
 import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
-import com.olaleyeone.auth.data.dto.LoginApiRequest;
+import com.olaleyeone.auth.data.dto.PasswordLoginApiRequest;
 import com.olaleyeone.auth.response.handler.AccessTokenApiResponseHandler;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
-import com.olaleyeone.auth.service.LoginAuthenticationService;
+import com.olaleyeone.auth.service.PasswordLoginAuthenticationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,33 +18,33 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class LoginControllerTest extends ControllerTest {
+class PasswordLoginControllerTest extends ControllerTest {
 
     @Autowired
-    private LoginAuthenticationService authenticationService;
+    private PasswordLoginAuthenticationService authenticationService;
 
     @Autowired
     private AccessTokenApiResponseHandler accessTokenApiResponseHandler;
 
-    private LoginApiRequest loginApiRequest;
+    private PasswordLoginApiRequest passwordLoginApiRequest;
 
     @BeforeEach
     void setUp() {
-        loginApiRequest = new LoginApiRequest();
-        loginApiRequest.setIdentifier(faker.internet().emailAddress());
-        loginApiRequest.setPassword(faker.internet().password());
+        passwordLoginApiRequest = new PasswordLoginApiRequest();
+        passwordLoginApiRequest.setIdentifier(faker.internet().emailAddress());
+        passwordLoginApiRequest.setPassword(faker.internet().password());
     }
 
     @Test
     void loginWithIncorrectCredentials() throws Exception {
-        Mockito.when(authenticationService.getAuthenticationResponse(Mockito.any(), Mockito.any()))
+        Mockito.when(authenticationService.getAuthenticationResponse(Mockito.any(PasswordLoginApiRequest.class), Mockito.any()))
                 .then(invocation -> {
                     PortalUserAuthentication userAuthentication = new PortalUserAuthentication();
                     userAuthentication.setResponseType(AuthenticationResponseType.INCORRECT_CREDENTIAL);
                     return userAuthentication;
                 });
         mockMvc.perform(MockMvcRequestBuilders.post("/login")
-                .with(body(loginApiRequest)))
+                .with(body(passwordLoginApiRequest)))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -53,7 +53,7 @@ class LoginControllerTest extends ControllerTest {
 
         AccessTokenApiResponse accessTokenApiResponse = new AccessTokenApiResponse();
 
-        Mockito.when(authenticationService.getAuthenticationResponse(Mockito.any(), Mockito.any()))
+        Mockito.when(authenticationService.getAuthenticationResponse(Mockito.any(PasswordLoginApiRequest.class), Mockito.any()))
                 .then(invocation -> {
                     PortalUserAuthentication userAuthentication = new PortalUserAuthentication();
                     userAuthentication.setResponseType(AuthenticationResponseType.SUCCESSFUL);
@@ -63,7 +63,7 @@ class LoginControllerTest extends ControllerTest {
                 .then(invocation -> ResponseEntity.ok(accessTokenApiResponse));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/login")
-                .with(body(loginApiRequest)))
+                .with(body(passwordLoginApiRequest)))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
                     AccessTokenApiResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), AccessTokenApiResponse.class);
@@ -75,7 +75,7 @@ class LoginControllerTest extends ControllerTest {
     @Test
     void loginToInactiveAccount() throws Exception {
 
-        Mockito.when(authenticationService.getAuthenticationResponse(Mockito.any(), Mockito.any()))
+        Mockito.when(authenticationService.getAuthenticationResponse(Mockito.any(PasswordLoginApiRequest.class), Mockito.any()))
                 .then(invocation -> {
                     PortalUserAuthentication userAuthentication = new PortalUserAuthentication();
                     userAuthentication.setResponseType(AuthenticationResponseType.INACTIVE_ACCOUNT);
@@ -83,7 +83,7 @@ class LoginControllerTest extends ControllerTest {
                 });
 
         mockMvc.perform(MockMvcRequestBuilders.post("/login")
-                .with(body(loginApiRequest)))
+                .with(body(passwordLoginApiRequest)))
                 .andExpect(status().isUnauthorized());
     }
 }

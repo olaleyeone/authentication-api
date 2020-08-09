@@ -17,11 +17,11 @@ class OneTimePasswordTest extends EntityTest {
     @BeforeEach
     void setUp() {
         oneTimePassword = new OneTimePassword();
-        oneTimePassword.setIdentifier(modelFactory.create(PortalUserIdentifier.class));
+        oneTimePassword.setUserIdentifier(modelFactory.create(PortalUserIdentifier.class));
         oneTimePassword.setExpiresOn(OffsetDateTime.now().plusSeconds(faker.number().randomDigit()));
         String digit = faker.number().digit();
-        oneTimePassword.setVerificationCode(digit);
-        oneTimePassword.setVerificationCodeHash(Base64.getEncoder().encodeToString(digit.getBytes()));
+        oneTimePassword.setPassword(digit);
+        oneTimePassword.setHash(Base64.getEncoder().encodeToString(digit.getBytes()));
     }
 
     @Test

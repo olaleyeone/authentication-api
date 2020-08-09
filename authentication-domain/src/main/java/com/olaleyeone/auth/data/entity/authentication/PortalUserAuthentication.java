@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.data.entity.authentication;
 
+import com.olaleyeone.auth.data.entity.OneTimePassword;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.passwordreset.PasswordResetRequest;
@@ -21,6 +22,9 @@ public class PortalUserAuthentication {
 
     @Column
     private String identifier;
+
+    @ManyToOne
+    private OneTimePassword oneTimePassword;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

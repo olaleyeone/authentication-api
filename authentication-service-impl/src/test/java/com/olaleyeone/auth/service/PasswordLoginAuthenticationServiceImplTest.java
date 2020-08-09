@@ -1,6 +1,6 @@
 package com.olaleyeone.auth.service;
 
-import com.olaleyeone.auth.data.dto.LoginApiRequest;
+import com.olaleyeone.auth.data.dto.PasswordLoginApiRequest;
 import com.olaleyeone.auth.data.dto.UserDataApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
@@ -20,10 +20,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class LoginAuthenticationServiceImplTest extends ServiceTest {
+class PasswordLoginAuthenticationServiceImplTest extends ServiceTest {
 
     @Autowired
-    private LoginAuthenticationService authenticationService;
+    private PasswordLoginAuthenticationService authenticationService;
 
     @Autowired
     private PortalUserAuthenticationDataRepository portalUserAuthenticationDataRepository;
@@ -31,14 +31,14 @@ class LoginAuthenticationServiceImplTest extends ServiceTest {
     @Autowired
     private HashService hashService;
 
-    private LoginApiRequest loginApiRequest;
+    private PasswordLoginApiRequest passwordLoginApiRequest;
     private RequestMetadata requestMetadata;
 
     @BeforeEach
     void setUp() {
-        loginApiRequest = new LoginApiRequest();
-        loginApiRequest.setIdentifier(faker.internet().emailAddress());
-        loginApiRequest.setPassword(faker.internet().password());
+        passwordLoginApiRequest = new PasswordLoginApiRequest();
+        passwordLoginApiRequest.setIdentifier(faker.internet().emailAddress());
+        passwordLoginApiRequest.setPassword(faker.internet().password());
         requestMetadata = new RequestMetadata();
         requestMetadata.setIpAddress(faker.internet().ipV4Address());
         requestMetadata.setUserAgent(faker.internet().userAgentAny());
@@ -46,21 +46,21 @@ class LoginAuthenticationServiceImplTest extends ServiceTest {
 
     @Test
     void authenticationShouldFailForUnknownUser() {
-        PortalUserAuthentication userAuthentication = authenticationService.getAuthenticationResponse(loginApiRequest, requestMetadata);
+        PortalUserAuthentication userAuthentication = authenticationService.getAuthenticationResponse(passwordLoginApiRequest, requestMetadata);
         assertNotNull(userAuthentication);
         assertNotNull(userAuthentication.getId());
         assertNotNull(userAuthentication.getDateCreated());
         assertEquals(AuthenticationResponseType.UNKNOWN_ACCOUNT, userAuthentication.getResponseType());
-        assertEquals(loginApiRequest.getIdentifier(), userAuthentication.getIdentifier());
+        assertEquals(passwordLoginApiRequest.getIdentifier(), userAuthentication.getIdentifier());
     }
 
     @Test
     void authenticationShouldFailForWrongCredential() {
         Mockito.when(hashService.isSameHash(Mockito.anyString(), Mockito.anyString())).thenReturn(false);
         PortalUserIdentifier userIdentifier = createUserIdentifier();
-        PortalUserAuthentication userAuthentication = authenticationService.getAuthenticationResponse(loginApiRequest, requestMetadata);
+        PortalUserAuthentication userAuthentication = authenticationService.getAuthenticationResponse(passwordLoginApiRequest, requestMetadata);
         Mockito.verify(hashService, Mockito.times(1))
-                .isSameHash(loginApiRequest.getPassword(), userIdentifier.getPortalUser().getPassword());
+                .isSameHash(passwordLoginApiRequest.getPassword(), userIdentifier.getPortalUser().getPassword());
         assertNotNull(userAuthentication);
         assertNotNull(userAuthentication.getId());
         assertEquals(AuthenticationResponseType.INCORRECT_CREDENTIAL, userAuthentication.getResponseType());
@@ -71,9 +71,9 @@ class LoginAuthenticationServiceImplTest extends ServiceTest {
     void authenticationShouldSucceedForCorrectCredential() {
         Mockito.when(hashService.isSameHash(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
         PortalUserIdentifier userIdentifier = createUserIdentifier();
-        PortalUserAuthentication userAuthentication = authenticationService.getAuthenticationResponse(loginApiRequest, requestMetadata);
+        PortalUserAuthentication userAuthentication = authenticationService.getAuthenticationResponse(passwordLoginApiRequest, requestMetadata);
         Mockito.verify(hashService, Mockito.times(1))
-                .isSameHash(loginApiRequest.getPassword(), userIdentifier.getPortalUser().getPassword());
+                .isSameHash(passwordLoginApiRequest.getPassword(), userIdentifier.getPortalUser().getPassword());
         assertNotNull(userAuthentication);
         assertNotNull(userAuthentication.getId());
         assertEquals(AuthenticationResponseType.SUCCESSFUL, userAuthentication.getResponseType());
@@ -93,8 +93,8 @@ class LoginAuthenticationServiceImplTest extends ServiceTest {
                 }).create();
 
         Mockito.when(hashService.isSameHash(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
-        loginApiRequest.setInvalidateOtherSessions(true);
-        PortalUserAuthentication userAuthentication = authenticationService.getAuthenticationResponse(loginApiRequest, requestMetadata);
+        passwordLoginApiRequest.setInvalidateOtherSessions(true);
+        PortalUserAuthentication userAuthentication = authenticationService.getAuthenticationResponse(passwordLoginApiRequest, requestMetadata);
 
         assertNotNull(userAuthentication);
         assertEquals(AuthenticationResponseType.SUCCESSFUL, userAuthentication.getResponseType());
@@ -111,8 +111,8 @@ class LoginAuthenticationServiceImplTest extends ServiceTest {
                 .name(faker.book().author())
                 .value(faker.book().title())
                 .build();
-        loginApiRequest.setData(Arrays.asList(dataApiRequest));
-        PortalUserAuthentication userAuthentication = authenticationService.getAuthenticationResponse(loginApiRequest, requestMetadata);
+        passwordLoginApiRequest.setData(Arrays.asList(dataApiRequest));
+        PortalUserAuthentication userAuthentication = authenticationService.getAuthenticationResponse(passwordLoginApiRequest, requestMetadata);
 
         assertNotNull(userAuthentication);
         assertEquals(AuthenticationResponseType.SUCCESSFUL, userAuthentication.getResponseType());
@@ -127,7 +127,7 @@ class LoginAuthenticationServiceImplTest extends ServiceTest {
     private PortalUserIdentifier createUserIdentifier() {
         return modelFactory.pipe(PortalUserIdentifier.class)
                 .then(it -> {
-                    it.setIdentifier(loginApiRequest.getIdentifier());
+                    it.setIdentifier(passwordLoginApiRequest.getIdentifier());
                     return it;
                 })
                 .create();

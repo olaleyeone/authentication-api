@@ -21,7 +21,7 @@ import java.util.Random;
 @Named
 public class OneTimePasswordServiceImpl implements OneTimePasswordService {
 
-    private final OneTimePasswordRepository portalUserIdentifierVerificationRepository;
+    private final OneTimePasswordRepository oneTimePasswordRepository;
     private final SettingService settingService;
     private final HashService hashService;
     private final Provider<TaskContext> taskContextProvider;
@@ -39,18 +39,18 @@ public class OneTimePasswordServiceImpl implements OneTimePasswordService {
                 identifier.getId()));
 
         OneTimePassword oneTimePassword = new OneTimePassword();
-        oneTimePassword.setIdentifier(identifier);
+        oneTimePassword.setUserIdentifier(identifier);
 
         taskContextProvider.get().execute(
                 "EXISTING OTP DEACTIVATION",
                 () -> {
                     List<OneTimePassword> allActive =
-                            portalUserIdentifierVerificationRepository.getAllActive(oneTimePassword.getIdentifier());
+                            oneTimePasswordRepository.getAllActive(oneTimePassword.getUserIdentifier());
                     taskContextProvider.get().setDescription(String.format("Deactivated %d existing OTPs for identifier %d",
                             allActive.size(), identifier.getId()));
                     allActive.forEach(verification -> {
                         verification.setDeactivatedOn(now);
-                        portalUserIdentifierVerificationRepository.save(verification);
+                        oneTimePasswordRepository.save(verification);
                     });
                 });
 
@@ -60,10 +60,10 @@ public class OneTimePasswordServiceImpl implements OneTimePasswordService {
 
         String verificationCode = generateVerificationCode();
         if (saveVerificationCode) {
-            oneTimePassword.setVerificationCode(verificationCode);
+            oneTimePassword.setPassword(verificationCode);
         }
-        oneTimePassword.setVerificationCodeHash(hashService.generateHash(verificationCode));
-        portalUserIdentifierVerificationRepository.save(oneTimePassword);
+        oneTimePassword.setHash(hashService.generateHash(verificationCode));
+        oneTimePasswordRepository.save(oneTimePassword);
         return Pair.of(oneTimePassword, verificationCode);
     }
 

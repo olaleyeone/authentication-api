@@ -1,23 +1,13 @@
 package com.olaleyeone.auth.data.dto;
 
-import lombok.Data;
+public interface LoginApiRequest {
+    String getIdentifier();
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.List;
+    String getPassword();
 
-@Data
-public class LoginApiRequest {
+    Boolean getInvalidateOtherSessions();
 
-    @NotBlank
-    private String identifier;
-    @NotBlank
-    private String password;
+    String getFirebaseToken();
 
-    private Boolean invalidateOtherSessions;
-
-    private String firebaseToken;
-
-    private List<@NotNull @Valid UserDataApiRequest> data;
+    java.util.List<UserDataApiRequest> getData();
 }

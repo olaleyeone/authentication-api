@@ -7,6 +7,7 @@ import com.olaleyeone.auth.constraints.ValidPhoneNumber;
 import com.olaleyeone.auth.data.entity.OneTimePassword;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
+import com.olaleyeone.auth.integration.sms.OtpSmsSender;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.service.OneTimePasswordService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.Email;
 import java.util.Map;
 import java.util.Optional;
 
@@ -33,11 +33,12 @@ public class OneTimePasswordController {
     private final OneTimePasswordService oneTimePasswordService;
     private final PortalUserIdentifierRepository portalUserIdentifierRepository;
     private final PhoneNumberService phoneNumberService;
+    private final OtpSmsSender otpSmsSender;
 
     @Public
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/user-phone-numbers/{phoneNumber}/otp")
-    public void requestOtp(@PathVariable @ValidPhoneNumber String phoneNumber) {
+    public ApiResponse<String> requestOtp(@PathVariable @ValidPhoneNumber String phoneNumber) {
         String formattedPhoneNumber = phoneNumberService.formatPhoneNumber(phoneNumber);
         Optional<PortalUserIdentifier> optionalPortalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(formattedPhoneNumber);
         if (!optionalPortalUserIdentifier.isPresent()) {
@@ -47,10 +48,11 @@ public class OneTimePasswordController {
         }
         Map.Entry<OneTimePassword, String> verification
                 = oneTimePasswordService.createOTP(optionalPortalUserIdentifier.get());
-//        try {
-//            verificationEmailSender.sendVerificationCode(verification.getKey(), verification.getValue());
-//        } catch (Exception e) {
-//            logger.error(e.getMessage(), e);
-//        }
+        try {
+            otpSmsSender.sendOtp(verification.getKey(), verification.getValue());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return new ApiResponse<>(verification.getKey().getId().toString(), "OTP created", null);
     }
 }

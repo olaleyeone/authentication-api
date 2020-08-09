@@ -10,7 +10,7 @@ import java.util.List;
 public interface OneTimePasswordRepository extends JpaRepository<OneTimePassword, Long> {
 
     @Query("SELECT v FROM OneTimePassword v" +
-            " WHERE v.identifier=?1" +
+            " WHERE v.userIdentifier=?1" +
             " AND v.usedOn IS NULL" +
             " AND v.deactivatedOn IS NULL" +
             " AND v.expiresOn>=CURRENT_TIMESTAMP")

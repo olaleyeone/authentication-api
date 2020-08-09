@@ -1,9 +1,6 @@
-package com.github.olaleyeone.mailsender.impl;
+package com.olaleyeone.auth.integration.sms;
 
-import com.github.olaleyeone.mailsender.api.MailGunApiClient;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -14,29 +11,18 @@ import org.springframework.beans.factory.FactoryBean;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.Base64;
 
 @RequiredArgsConstructor
-public class MailGunApiClientFactory implements FactoryBean<MailGunApiClient> {
+public class AfriTalkingApiClientFactory implements FactoryBean<AfriTalkingClient> {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final MailGunConfig mailGunConfig;
-
-    @Getter
-    @Setter
-    private String bearerToken;
-
-    @PostConstruct
-    public void init() {
-        bearerToken = Base64.getEncoder().encodeToString(("api:" + mailGunConfig.getMailGunMessagesApiKey()).getBytes());
-    }
+    private final AfriTalkingConfig afriTalkingConfig;
 
     @Override
     public Class<?> getObjectType() {
-        return MailGunApiClient.class;
+        return AfriTalkingClient.class;
     }
 
     @Override
@@ -45,14 +31,14 @@ public class MailGunApiClientFactory implements FactoryBean<MailGunApiClient> {
     }
 
     @Override
-    public MailGunApiClient getObject() {
+    public AfriTalkingClient getObject() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(mailGunConfig.getMailGunMessageBaseUrl())
+                .baseUrl(afriTalkingConfig.getBaseUrl())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(getOkHttpClient())
                 .validateEagerly(true)
                 .build();
-        return retrofit.create(MailGunApiClient.class);
+        return retrofit.create(AfriTalkingClient.class);
     }
 
     private OkHttpClient getOkHttpClient() {
@@ -62,14 +48,8 @@ public class MailGunApiClientFactory implements FactoryBean<MailGunApiClient> {
     }
 
     protected Response getRequestInterceptor(Interceptor.Chain chain) throws IOException {
-
         Request.Builder newRequestBuilder = chain.request().newBuilder();
-        newRequestBuilder.addHeader("Authorization", "Bearer " + bearerToken);
-        newRequestBuilder.url(chain.request().url().newBuilder()
-                .addQueryParameter("from", String.format("%s <%s>",
-                        mailGunConfig.getEmailSenderName(),
-                        mailGunConfig.getEmailSenderAddress()))
-                .build());
+        newRequestBuilder.addHeader("apiKey", afriTalkingConfig.getApiKey());
         return chain.proceed(newRequestBuilder.build());
     }
 }
