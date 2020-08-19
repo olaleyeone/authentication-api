@@ -32,8 +32,10 @@ public class AccessTokenApiResponse {
 
     @JsonProperty("token_type")
     private static final String tokenType = "Bearer";
+
     @JsonProperty("access_token")
     private String accessToken;
+
     @JsonProperty("expires_in")
     private Long secondsTillExpiry;
 

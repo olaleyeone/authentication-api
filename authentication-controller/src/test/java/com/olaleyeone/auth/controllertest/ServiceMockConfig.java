@@ -3,7 +3,7 @@ package com.olaleyeone.auth.controllertest;
 import com.olaleyeone.auth.integration.email.PasswordResetTokenEmailSender;
 import com.olaleyeone.auth.integration.email.VerificationEmailSender;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
-import com.olaleyeone.auth.integration.sms.OtpSmsSender;
+import com.olaleyeone.auth.integration.sms.SmsSender;
 import com.olaleyeone.auth.service.*;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
@@ -68,7 +68,7 @@ class ServiceMockConfig {
     }
 
     @Bean
-    public OtpSmsSender otpSmsSender() {
-        return Mockito.mock(OtpSmsSender.class);
+    public SmsSender otpSmsSender() {
+        return Mockito.mock(SmsSender.class);
     }
 }

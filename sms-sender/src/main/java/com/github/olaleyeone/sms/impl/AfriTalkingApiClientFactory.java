@@ -1,12 +1,11 @@
-package com.olaleyeone.auth.integration.sms;
+package com.github.olaleyeone.sms.impl;
 
+import com.github.olaleyeone.sms.api.AfriTalkingClient;
 import lombok.RequiredArgsConstructor;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -16,8 +15,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AfriTalkingApiClientFactory implements FactoryBean<AfriTalkingClient> {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    public static final String API_KEY = "apiKey";
     private final AfriTalkingConfig afriTalkingConfig;
 
     @Override
@@ -49,7 +47,7 @@ public class AfriTalkingApiClientFactory implements FactoryBean<AfriTalkingClien
 
     protected Response getRequestInterceptor(Interceptor.Chain chain) throws IOException {
         Request.Builder newRequestBuilder = chain.request().newBuilder();
-        newRequestBuilder.addHeader("apiKey", afriTalkingConfig.getApiKey());
+        newRequestBuilder.addHeader(API_KEY, afriTalkingConfig.getApiKey());
         return chain.proceed(newRequestBuilder.build());
     }
 }

@@ -36,6 +36,7 @@ dependencies {
     api(project(":${projectName}-service"))
     api(project(":${projectName}-integration"))
     implementation(project(":mail-sender"))
+    implementation(project(":sms-sender"))
 
     implementation "javax.inject:javax.inject:1"
     compileOnly "javax.annotation:javax.annotation-api:1.3.2"

@@ -15,6 +15,7 @@ public class UserSessionApiResponse {
 
     private String userId;
     private String sessionId;
+    private String identifier;
 
     private OffsetDateTime startedOn;
     private OffsetDateTime lastUpdatedOn;
@@ -31,8 +32,11 @@ public class UserSessionApiResponse {
 
     public UserSessionApiResponse(PortalUserAuthentication portalUserAuthentication) {
         this.authenticationType = portalUserAuthentication.getType();
+
         this.userId = portalUserAuthentication.getPortalUser().getId().toString();
         this.sessionId = portalUserAuthentication.getId().toString();
+        this.identifier = portalUserAuthentication.getIdentifier();
+
         this.userAgent = portalUserAuthentication.getUserAgent();
 
         this.startedOn = portalUserAuthentication.getDateCreated();

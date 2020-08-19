@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.integration.sms;
+package com.github.olaleyeone.sms.impl;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,7 +1,10 @@
 package com.olaleyeone.auth.configuration;
 
-import com.olaleyeone.auth.integration.sms.AfriTalkingApiClientFactory;
-import com.olaleyeone.auth.integration.sms.AfriTalkingConfig;
+import com.github.olaleyeone.sms.api.AfriTalkingClient;
+import com.github.olaleyeone.sms.api.SmsSender;
+import com.github.olaleyeone.sms.impl.AfriTalkingApiClientFactory;
+import com.github.olaleyeone.sms.impl.AfriTalkingConfig;
+import com.github.olaleyeone.sms.impl.SmsSenderImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -21,5 +24,10 @@ public class AfriTalkingConfiguration {
                 .username(environment.getProperty("AFRICASTKG_USERNAME"))
                 .apiKey(environment.getProperty("AFRICASTKG_API_KEY"))
                 .build();
+    }
+
+    @Bean
+    public SmsSender smsSender(AfriTalkingClient afriTalkingClient, AfriTalkingConfig afriTalkingConfig) {
+        return new SmsSenderImpl(afriTalkingClient, afriTalkingConfig);
     }
 }

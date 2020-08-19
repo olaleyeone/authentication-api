@@ -20,7 +20,6 @@ public class MailServiceImpl implements MailService {
 
     private final MailGunApiClient mailGunApi;
 
-    //    @Activity("SEND EMAIL")
     @SneakyThrows
     @Override
     public void sendEmail(HtmlEmailDto htmlEmailDto) {

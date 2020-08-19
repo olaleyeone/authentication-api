@@ -8,6 +8,7 @@ import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.integration.email.VerificationEmailSender;
+import com.olaleyeone.auth.integration.sms.SmsSender;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.service.PortalUserIdentifierVerificationService;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class UserIdentifierVerificationController {
     private final PortalUserIdentifierVerificationService portalUserIdentifierVerificationService;
     private final PortalUserIdentifierRepository portalUserIdentifierRepository;
     private final VerificationEmailSender verificationEmailSender;
+    private final SmsSender smsSender;
 
     @Public
     @ResponseStatus(HttpStatus.CREATED)
@@ -67,10 +69,10 @@ public class UserIdentifierVerificationController {
         }
         Map.Entry<PortalUserIdentifierVerification, String> verification =
                 portalUserIdentifierVerificationService.createVerification(identifier, UserIdentifierType.PHONE_NUMBER);
-//        try {
-//            verificationEmailSender.sendVerificationCode(verification.getKey(), verification.getValue());
-//        } catch (Exception e) {
-//            logger.error(e.getMessage(), e);
-//        }
+        try {
+            smsSender.sendVerificationCode(verification.getKey(), verification.getValue());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
     }
 }

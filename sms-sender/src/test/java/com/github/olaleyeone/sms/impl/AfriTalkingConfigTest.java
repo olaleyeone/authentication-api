@@ -1,9 +1,9 @@
-package com.olaleyeone.auth.integration.sms;
+package com.github.olaleyeone.sms.impl;
 
-import com.olaleyeone.auth.test.ComponentTest;
+import com.github.olaleyeone.sms.test.ComponentTest;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AfriTalkingConfigTest extends ComponentTest {
 

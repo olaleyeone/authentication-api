@@ -5,7 +5,7 @@ import com.olaleyeone.auth.controllertest.ControllerTest;
 import com.olaleyeone.auth.data.entity.OneTimePassword;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
-import com.olaleyeone.auth.integration.sms.OtpSmsSender;
+import com.olaleyeone.auth.integration.sms.SmsSender;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.service.OneTimePasswordService;
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,7 +27,7 @@ class OneTimePasswordControllerTest extends ControllerTest {
     @Autowired
     private PhoneNumberService phoneNumberService;
     @Autowired
-    private OtpSmsSender otpSmsSender;
+    private SmsSender smsSender;
 
     @Autowired
     private ValidPhoneNumber.Validator validPhoneNumberValidator;
@@ -51,7 +51,7 @@ class OneTimePasswordControllerTest extends ControllerTest {
                 .andExpect(status().isCreated());
         Mockito.verify(oneTimePasswordService, Mockito.times(1))
                 .createOTP(portalUserIdentifier);
-        Mockito.verify(otpSmsSender, Mockito.times(1))
+        Mockito.verify(smsSender, Mockito.times(1))
                 .sendOtp(oneTimePassword, password);
     }
 
@@ -69,14 +69,14 @@ class OneTimePasswordControllerTest extends ControllerTest {
         Mockito.doReturn(Pair.of(oneTimePassword, password))
                 .when(oneTimePasswordService).createOTP(portalUserIdentifier);
 
-        Mockito.doThrow(new RuntimeException()).when(otpSmsSender).sendOtp(Mockito.any(), Mockito.any());
+        Mockito.doThrow(new RuntimeException()).when(smsSender).sendOtp(Mockito.any(), Mockito.any());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user-phone-numbers/{identifier}/otp",
                 faker.phoneNumber().cellPhone()))
                 .andExpect(status().isCreated());
         Mockito.verify(oneTimePasswordService, Mockito.times(1))
                 .createOTP(portalUserIdentifier);
-        Mockito.verify(otpSmsSender, Mockito.times(1))
+        Mockito.verify(smsSender, Mockito.times(1))
                 .sendOtp(oneTimePassword, password);
     }
 

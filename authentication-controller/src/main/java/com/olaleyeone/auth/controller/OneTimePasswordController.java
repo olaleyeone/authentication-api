@@ -7,8 +7,9 @@ import com.olaleyeone.auth.constraints.ValidPhoneNumber;
 import com.olaleyeone.auth.data.entity.OneTimePassword;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
-import com.olaleyeone.auth.integration.sms.OtpSmsSender;
+import com.olaleyeone.auth.integration.sms.SmsSender;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
+import com.olaleyeone.auth.response.pojo.OtpApiResponse;
 import com.olaleyeone.auth.service.OneTimePasswordService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -33,12 +34,12 @@ public class OneTimePasswordController {
     private final OneTimePasswordService oneTimePasswordService;
     private final PortalUserIdentifierRepository portalUserIdentifierRepository;
     private final PhoneNumberService phoneNumberService;
-    private final OtpSmsSender otpSmsSender;
+    private final SmsSender smsSender;
 
     @Public
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/user-phone-numbers/{phoneNumber}/otp")
-    public ApiResponse<String> requestOtp(@PathVariable @ValidPhoneNumber String phoneNumber) {
+    public ApiResponse<OtpApiResponse> requestOtp(@PathVariable @ValidPhoneNumber String phoneNumber) {
         String formattedPhoneNumber = phoneNumberService.formatPhoneNumber(phoneNumber);
         Optional<PortalUserIdentifier> optionalPortalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(formattedPhoneNumber);
         if (!optionalPortalUserIdentifier.isPresent()) {
@@ -46,13 +47,18 @@ public class OneTimePasswordController {
                     .message(String.format("No user found with phone number %s", phoneNumber))
                     .build());
         }
+
+        PortalUserIdentifier identifier = optionalPortalUserIdentifier.get();
         Map.Entry<OneTimePassword, String> verification
-                = oneTimePasswordService.createOTP(optionalPortalUserIdentifier.get());
+                = oneTimePasswordService.createOTP(identifier);
         try {
-            otpSmsSender.sendOtp(verification.getKey(), verification.getValue());
+            smsSender.sendOtp(verification.getKey(), verification.getValue());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-        return new ApiResponse<>(verification.getKey().getId().toString(), "OTP created", null);
+        return new ApiResponse<>(OtpApiResponse.builder()
+                .identifier(identifier.getIdentifier())
+                .transactionId(verification.getKey().getId().toString())
+                .build(), "OTP created", null);
     }
 }

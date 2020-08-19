@@ -6,6 +6,7 @@ import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.integration.email.VerificationEmailSender;
+import com.olaleyeone.auth.integration.sms.SmsSender;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.service.PortalUserIdentifierVerificationService;
 import org.apache.commons.lang3.tuple.Pair;
@@ -32,6 +33,9 @@ class UserIdentifierVerificationControllerTest extends ControllerTest {
 
     @Autowired
     private ValidPhoneNumber.Validator validPhoneNumberValidator;
+
+    @Autowired
+    private SmsSender smsSender;
 
     private Pair<PortalUserIdentifierVerification, String> verificationResult;
 
@@ -113,5 +117,17 @@ class UserIdentifierVerificationControllerTest extends ControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/user-phone-numbers/{identifier}/verification-code",
                 faker.phoneNumber().cellPhone()))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    void requestVerificationCodeShouldNotPropagateSmsError() throws Exception {
+        Mockito.doThrow(new RuntimeException()).when(smsSender).sendVerificationCode(Mockito.any(), Mockito.anyString());
+        Mockito.doReturn(true).when(validPhoneNumberValidator).isValid(Mockito.any(), Mockito.any());
+        Mockito.doReturn(Optional.empty()).when(portalUserIdentifierRepository).findActiveByIdentifier(Mockito.any());
+        mockMvc.perform(MockMvcRequestBuilders.post("/user-phone-numbers/{identifier}/verification-code",
+                faker.phoneNumber().cellPhone()))
+                .andExpect(status().isCreated());
+        Mockito.verify(smsSender, Mockito.times(1))
+                .sendVerificationCode(Mockito.any(), Mockito.anyString());
     }
 }
