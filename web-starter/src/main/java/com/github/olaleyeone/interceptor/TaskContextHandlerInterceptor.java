@@ -96,7 +96,7 @@ public class TaskContextHandlerInterceptor extends HandlerInterceptorAdapter {
         webRequest.setStatusCode(response.getStatus());
 
         Duration duration = task.getDuration();
-        duration.setNanoSecondsTaken(duration.getStartedOn().until(OffsetDateTime.now(), ChronoUnit.NANOS));
+        duration.setNanoSecondsTaken(duration.getStartedAt().until(OffsetDateTime.now(), ChronoUnit.NANOS));
         taskContextSaver.save(taskContext);
     }
 

@@ -28,7 +28,7 @@ public interface PortalUserAuthenticationRepository extends JpaRepository<Portal
     @Modifying
     @Query("UPDATE PortalUserAuthentication auth" +
             " SET auth.deactivatedAt=CURRENT_TIMESTAMP," +
-            " auth.publishedOn=null" +
+            " auth.publishedAt=null" +
             " WHERE auth.responseType='SUCCESSFUL'" +
             " AND auth.deactivatedAt IS NULL" +
             " AND auth.loggedOutAt IS NULL" +
@@ -41,7 +41,7 @@ public interface PortalUserAuthenticationRepository extends JpaRepository<Portal
     @Modifying
     @Query("UPDATE PortalUserAuthentication auth" +
             " SET auth.deactivatedAt=CURRENT_TIMESTAMP," +
-            " auth.publishedOn=null" +
+            " auth.publishedAt=null" +
             " WHERE auth.responseType='SUCCESSFUL'" +
             " AND auth.deactivatedAt IS NULL" +
             " AND auth.loggedOutAt IS NULL" +

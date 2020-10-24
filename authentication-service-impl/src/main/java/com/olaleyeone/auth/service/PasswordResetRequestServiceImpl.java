@@ -55,14 +55,14 @@ public class PasswordResetRequestServiceImpl implements PasswordResetRequestServ
                     taskContextProvider.get().setDescription(String.format("Deactivated %d existing verification code(s) for user %s",
                             allActive.size(), portalUserIdentifier.getPortalUser().getId()));
                     allActive.forEach(verification -> {
-                        verification.setDeactivatedOn(now);
+                        verification.setDeactivatedAt(now);
                         passwordResetRequestRepository.save(verification);
                     });
                 });
 
-        passwordResetRequest.setCreatedOn(now);
+        passwordResetRequest.setCreatedAt(now);
         int duration = settingService.getInteger("PASSWORD_RESET_CODE_EXPIRY_PERIOD_IN_MINUTES", 15);
-        passwordResetRequest.setExpiresOn(now.plusMinutes(duration));
+        passwordResetRequest.setExpiresAt(now.plusMinutes(duration));
 
         String verificationCode = generateVerificationCode();
         if (saveResetCode) {

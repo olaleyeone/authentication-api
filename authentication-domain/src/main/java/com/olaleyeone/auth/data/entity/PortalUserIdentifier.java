@@ -26,7 +26,7 @@ public class PortalUserIdentifier implements Audited {
     @Column(nullable = false, unique = true)
     private String identifier;
 
-    private LocalDateTime dateVerified;
+    private LocalDateTime verifiedAt;
     private Boolean verified;
 
     @Delegate

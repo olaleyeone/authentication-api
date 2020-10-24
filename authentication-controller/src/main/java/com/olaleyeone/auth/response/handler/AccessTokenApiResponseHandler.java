@@ -14,6 +14,7 @@ import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.response.pojo.AccessTokenApiResponse;
 import com.olaleyeone.auth.response.pojo.UserDataApiResponse;
 import com.olaleyeone.auth.service.RefreshTokenService;
+import com.olaleyeone.data.dto.AccessTokenRequestDto;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -59,6 +60,12 @@ public class AccessTokenApiResponseHandler {
     public HttpEntity<AccessTokenApiResponse> getAccessToken(PortalUserAuthentication portalUserAuthentication) {
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(portalUserAuthentication);
 
+        return getUserApiResponseHttpEntity(refreshToken);
+    }
+
+    public HttpEntity<AccessTokenApiResponse> getAccessToken(RefreshToken currentRefreshToken, AccessTokenRequestDto requestDto) {
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(currentRefreshToken.getActualAuthentication(), requestDto);
+        applicationContext.publishEvent(new SessionUpdateEvent(refreshToken.getActualAuthentication()));
         return getUserApiResponseHttpEntity(refreshToken);
     }
 

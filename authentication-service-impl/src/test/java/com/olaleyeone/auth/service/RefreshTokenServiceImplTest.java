@@ -43,6 +43,6 @@ class RefreshTokenServiceImplTest extends ServiceTest {
     public void deactivateRefreshToken() {
         RefreshToken refreshToken = modelFactory.create(RefreshToken.class);
         refreshTokenService.deactivateRefreshToken(refreshToken);
-        assertNotNull(refreshToken.getTimeDeactivated());
+        assertNotNull(refreshToken.getDeactivatedAt());
     }
 }

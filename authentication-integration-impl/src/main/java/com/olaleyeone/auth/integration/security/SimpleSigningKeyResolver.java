@@ -39,11 +39,11 @@ public class SimpleSigningKeyResolver extends SigningKeyResolverAdapter {
     public void addKey(SignatureKey signatureKey) {
         try {
             lock.lock();
-            if (set.size() >= maxSize && signatureKey.getCreatedOn().isBefore(set.first().getValue())) {
+            if (set.size() >= maxSize && signatureKey.getCreatedAt().isBefore(set.first().getValue())) {
                 return;
             }
             keyMap.put(signatureKey.getKeyId(), signatureKey.getRsaPublicKey());
-            set.add(Pair.of(signatureKey.getKeyId(), signatureKey.getCreatedOn()));
+            set.add(Pair.of(signatureKey.getKeyId(), signatureKey.getCreatedAt()));
 
             while (set.size() > maxSize) {
                 Iterator<Map.Entry<String, LocalDateTime>> iterator = set.iterator();

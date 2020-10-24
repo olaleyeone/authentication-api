@@ -66,7 +66,7 @@ public class UserSessionPublisher {
                                 "UPDATE PUBLISHED SESSION",
                                 description,
                                 () -> transactionTemplate.execute(status -> {
-                                    userAuthentication.setPublishedOn(OffsetDateTime.now());
+                                    userAuthentication.setPublishedAt(OffsetDateTime.now());
                                     return portalUserAuthenticationRepository.save(userAuthentication);
                                 })));
                 completableFuture.complete(null);

@@ -45,8 +45,8 @@ class PortalUserAuthenticationTest extends EntityTest {
     @Test
     public void lastUpdatedShouldChange() {
         PortalUserAuthentication userAuthentication = modelFactory.create(PortalUserAuthentication.class);
-        userAuthentication.setLastUpdatedOn(null);
+        userAuthentication.setLastUpdatedAt(null);
         saveAndFlush(userAuthentication);
-        assertNotNull(userAuthentication.getLastUpdatedOn());
+        assertNotNull(userAuthentication.getLastUpdatedAt());
     }
 }

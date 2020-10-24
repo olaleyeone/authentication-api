@@ -11,10 +11,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.env.Environment;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -36,11 +41,27 @@ public class UserPublisherJob {
     private final AtomicReference<LocalDateTime> lastTrigger = new AtomicReference<>();
     private final Lock lock = new ReentrantLock();
 
+    private final Environment environment;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+
     @SneakyThrows
     @KafkaListener(topics = "${task.publish_users.topic.name}", groupId = "${kafka.groupId}")
     public void listen(String message) {
         logger.info("{}", message);
         LocalDateTime startTime = LocalDateTime.now();
+        processQueue(startTime);
+    }
+
+    @EventListener(ContextRefreshedEvent.class)
+    public void onStartup() {
+        if (jpaQuerySource.startQuery(QPortalUser.portalUser)
+                .where(QPortalUser.portalUser.publishedAt.isNull()).fetchCount() == 0) {
+            return;
+        }
+        kafkaTemplate.send(environment.getProperty("task.publish_users.topic.name"), OffsetDateTime.now().toString());
+    }
+
+    private void processQueue(LocalDateTime startTime) {
         lastTrigger.set(startTime);
         taskContextFactory.startBackgroundTask(
                 "PUBLISH USERS",
@@ -76,7 +97,7 @@ public class UserPublisherJob {
 
     private List<PortalUser> getNext(int offset) {
         return jpaQuerySource.startQuery(QPortalUser.portalUser)
-                .where(QPortalUser.portalUser.publishedOn.isNull())
+                .where(QPortalUser.portalUser.publishedAt.isNull())
                 .offset(offset)
                 .limit(20)
                 .fetch();

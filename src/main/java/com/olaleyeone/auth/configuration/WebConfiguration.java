@@ -9,6 +9,7 @@ import com.github.olaleyeone.configuration.PredicateConfiguration;
 import com.github.olaleyeone.converter.LocalDateConverter;
 import com.github.olaleyeone.converter.OffsetDateTimeConverter;
 import com.github.olaleyeone.interceptor.TaskContextHandlerInterceptor;
+import org.springdoc.webmvc.api.MultipleOpenApiResource;
 import org.springdoc.webmvc.api.OpenApiResource;
 import org.springdoc.webmvc.ui.SwaggerWelcome;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,7 @@ public class WebConfiguration implements WebMvcConfigurer {
                 authorizedRequestProvider,
                 Arrays.asList(BasicErrorController.class,
                         OpenApiResource.class,
+                        MultipleOpenApiResource.class,
                         SwaggerWelcome.class)
         );
         beanFactory.autowireBean(accessConstraintHandlerInterceptor);

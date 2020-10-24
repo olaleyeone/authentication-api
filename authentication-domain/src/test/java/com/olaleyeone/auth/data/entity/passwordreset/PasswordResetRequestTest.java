@@ -21,7 +21,7 @@ class PasswordResetRequestTest extends EntityTest {
     void setUp() {
         passwordResetRequest = new PasswordResetRequest();
         passwordResetRequest.setPortalUserIdentifier(modelFactory.create(PortalUserIdentifier.class));
-        passwordResetRequest.setExpiresOn(OffsetDateTime.now().plusSeconds(faker.number().randomDigit()));
+        passwordResetRequest.setExpiresAt(OffsetDateTime.now().plusSeconds(faker.number().randomDigit()));
         String digit = faker.number().digit();
         passwordResetRequest.setResetCode(digit);
         passwordResetRequest.setResetCodeHash(Base64.getEncoder().encodeToString(digit.getBytes()));
@@ -32,17 +32,17 @@ class PasswordResetRequestTest extends EntityTest {
     @Test
     void prePersistWithoutCreatedOn() {
         OffsetDateTime now = OffsetDateTime.now();
-        passwordResetRequest.setCreatedOn(now);
+        passwordResetRequest.setCreatedAt(now);
         saveAndFlush(passwordResetRequest);
         assertNotNull(passwordResetRequest);
-        assertEquals(now, passwordResetRequest.getCreatedOn());
+        assertEquals(now, passwordResetRequest.getCreatedAt());
     }
 
     @Test
     void prePersistWithCreatedOn() {
         saveAndFlush(passwordResetRequest);
         assertNotNull(passwordResetRequest);
-        assertNotNull(passwordResetRequest.getCreatedOn());
+        assertNotNull(passwordResetRequest.getCreatedAt());
     }
 
     @Test
@@ -55,7 +55,7 @@ class PasswordResetRequestTest extends EntityTest {
     public void getExpiryInstant() {
         PasswordResetRequest passwordResetRequest = new PasswordResetRequest();
         OffsetDateTime expiresAt = OffsetDateTime.now().plusMinutes(20);
-        passwordResetRequest.setExpiresOn(expiresAt);
+        passwordResetRequest.setExpiresAt(expiresAt);
         assertEquals(expiresAt.toInstant(), passwordResetRequest.getExpiryInstant());
     }
 
@@ -63,7 +63,7 @@ class PasswordResetRequestTest extends EntityTest {
     public void getSecondsTillExpiry() {
         PasswordResetRequest passwordResetRequest = new PasswordResetRequest();
         OffsetDateTime expiresAt = OffsetDateTime.now().plusMinutes(20);
-        passwordResetRequest.setExpiresOn(expiresAt);
+        passwordResetRequest.setExpiresAt(expiresAt);
         long secondsTillExpiry = Instant.now().until(expiresAt.toInstant(), ChronoUnit.SECONDS);
         assertTrue((secondsTillExpiry - passwordResetRequest.getSecondsTillExpiry()) <= 1);
     }

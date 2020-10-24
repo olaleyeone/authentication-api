@@ -12,9 +12,9 @@ public interface PasswordResetRequestRepository extends JpaRepository<PasswordRe
 
     @Query("SELECT v FROM PasswordResetRequest v" +
             " WHERE v.portalUserIdentifier.portalUser=?1" +
-            " AND v.usedOn IS NULL" +
-            " AND v.deactivatedOn IS NULL" +
-            " AND v.expiresOn>=CURRENT_TIMESTAMP")
+            " AND v.usedAt IS NULL" +
+            " AND v.deactivatedAt IS NULL" +
+            " AND v.expiresAt>=CURRENT_TIMESTAMP")
     List<PasswordResetRequest> getAllActive(PortalUser portalUser);
 
     @Query("SELECT p FROM PasswordResetRequest p" +

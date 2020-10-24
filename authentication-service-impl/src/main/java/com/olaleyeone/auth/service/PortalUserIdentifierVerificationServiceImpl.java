@@ -56,14 +56,14 @@ public class PortalUserIdentifierVerificationServiceImpl implements PortalUserId
                     taskContextProvider.get().setDescription(String.format("Deactivated %d existing verification code(s) for %s [%s]",
                             allActive.size(), identifierArg, identifierType.name()));
                     allActive.forEach(verification -> {
-                        verification.setDeactivatedOn(now);
+                        verification.setDeactivatedAt(now);
                         portalUserIdentifierVerificationRepository.save(verification);
                     });
                 });
 
-        portalUserIdentifierVerification.setCreatedOn(now);
+        portalUserIdentifierVerification.setCreatedAt(now);
         int duration = settingService.getInteger("IDENTIFIER_VERIFICATION_CODE_EXPIRY_PERIOD_IN_SECONDS", 600);
-        portalUserIdentifierVerification.setExpiresOn(now.plusSeconds(duration));
+        portalUserIdentifierVerification.setExpiresAt(now.plusSeconds(duration));
 
         String verificationCode = generateVerificationCode();
         if (saveVerificationCode) {

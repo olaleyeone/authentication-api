@@ -150,7 +150,7 @@ class TaskContextHandlerInterceptorTest extends ComponentTest {
     @Test
     void afterCompletion() {
         Task task = new Task();
-        task.setDuration(Duration.builder().startedOn(OffsetDateTime.now()).build());
+        task.setDuration(Duration.builder().startedAt(OffsetDateTime.now()).build());
         task.setWebRequest(new WebRequest());
         TaskContextImpl taskContext = new TaskContextImpl(task, null, taskContextHolder, null);
         Mockito.doReturn(taskContext).when(taskContextHolder).getObject();

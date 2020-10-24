@@ -47,7 +47,7 @@ class PasswordUpdateServiceImplTest extends ServiceTest {
                 .create(2);
         passwordUpdateService.updatePassword(refreshToken, apiRequest);
         entityManager.refresh(refreshToken);
-        assertNull(refreshToken.getTimeDeactivated());
+        assertNull(refreshToken.getDeactivatedAt());
         otherSessions.forEach(it -> {
             entityManager.refresh(it);
             assertNotNull(it.getDeactivatedAt());
@@ -67,7 +67,7 @@ class PasswordUpdateServiceImplTest extends ServiceTest {
         apiRequest.setInvalidateOtherSessions(null);
         passwordUpdateService.updatePassword(refreshToken, apiRequest);
         entityManager.refresh(refreshToken);
-        assertNull(refreshToken.getTimeDeactivated());
+        assertNull(refreshToken.getDeactivatedAt());
         otherSessions.forEach(it -> {
             entityManager.refresh(it);
             assertNull(it.getDeactivatedAt());
@@ -161,8 +161,8 @@ class PasswordUpdateServiceImplTest extends ServiceTest {
         Optional<PortalUserAuthentication> optionalPortalUserAuthentication = passwordUpdateService.updatePassword(passwordResetRequest, apiRequest);
         entityManager.flush();
         entityManager.refresh(passwordResetRequest);
-        assertNull(passwordResetRequest.getDeactivatedOn());
-        assertNotNull(passwordResetRequest.getUsedOn());
+        assertNull(passwordResetRequest.getDeactivatedAt());
+        assertNotNull(passwordResetRequest.getUsedAt());
         return optionalPortalUserAuthentication;
     }
 }

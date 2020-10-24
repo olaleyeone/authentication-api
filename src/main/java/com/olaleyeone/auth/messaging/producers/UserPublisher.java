@@ -19,7 +19,6 @@ import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import javax.inject.Provider;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
@@ -67,7 +66,7 @@ public class UserPublisher {
                                 "UPDATE PUBLISHED USER",
                                 description,
                                 () -> transactionTemplate.execute(status -> {
-                                    portalUser.setPublishedOn(OffsetDateTime.now());
+                                    portalUser.setPublishedAt(OffsetDateTime.now());
                                     return portalUserRepository.save(portalUser);
                                 })));
                 completableFuture.complete(null);

@@ -65,7 +65,7 @@ class UserPublisherTest extends ComponentTest {
         prepareMocks();
 
         userPublisher.publish(portalUser);
-        assertNotNull(portalUser.getPublishedOn());
+        assertNotNull(portalUser.getPublishedAt());
         Mockito.verify(portalUserRepository, Mockito.times(1))
                 .save(portalUser);
     }
@@ -96,7 +96,7 @@ class UserPublisherTest extends ComponentTest {
                 .send(Mockito.any(), Mockito.any(), Mockito.any());
 
         userPublisher.publish(portalUser);
-        assertNull(portalUser.getPublishedOn());
+        assertNull(portalUser.getPublishedAt());
         Mockito.verify(portalUserRepository, Mockito.never())
                 .save(portalUser);
     }

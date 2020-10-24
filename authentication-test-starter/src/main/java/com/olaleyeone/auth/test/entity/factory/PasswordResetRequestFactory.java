@@ -21,7 +21,7 @@ public class PasswordResetRequestFactory implements FactoryHelper<PasswordResetR
         passwordResetRequest.setPortalUserIdentifier(factory.create(PortalUserIdentifier.class));
         passwordResetRequest.setResetCode(faker.internet().password());
         passwordResetRequest.setResetCodeHash(faker.internet().password());
-        passwordResetRequest.setExpiresOn(OffsetDateTime.now().plusDays(2));
+        passwordResetRequest.setExpiresAt(OffsetDateTime.now().plusDays(2));
         passwordResetRequest.setIpAddress(faker.internet().ipV4Address());
         passwordResetRequest.setUserAgent(faker.internet().userAgentAny());
         return passwordResetRequest;

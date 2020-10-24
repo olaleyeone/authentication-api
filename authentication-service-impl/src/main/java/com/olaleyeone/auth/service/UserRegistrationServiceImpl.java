@@ -125,12 +125,12 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         portalUserIdentifier.setVerified(true);
         portalUserIdentifier.setVerification(portalUserIdentifierVerification);
 
-        portalUserIdentifierVerification.setUsedOn(now);
+        portalUserIdentifierVerification.setUsedAt(now);
         portalUserIdentifierVerificationRepository.save(portalUserIdentifierVerification);
 
         while (iterator.hasNext()) {
             PortalUserIdentifierVerification next = iterator.next();
-            next.setDeactivatedOn(now);
+            next.setDeactivatedAt(now);
             portalUserIdentifierVerificationRepository.save(next);
         }
     }

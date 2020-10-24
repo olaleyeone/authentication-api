@@ -34,6 +34,14 @@ public class OneTimePasswordServiceImpl implements OneTimePasswordService {
     @Transactional
     @Override
     public Map.Entry<OneTimePassword, String> createOTP(PortalUserIdentifier identifier) {
+        String password = generateVerificationCode();
+        return Pair.of(createOTP(identifier, password), password);
+    }
+
+    @Activity("GENERATE OTP")
+    @Transactional
+    @Override
+    public OneTimePassword createOTP(PortalUserIdentifier identifier, String password) {
         OffsetDateTime now = OffsetDateTime.now();
         taskContextProvider.get().setDescription(String.format("Generate OTP for identifier %d",
                 identifier.getId()));
@@ -49,22 +57,21 @@ public class OneTimePasswordServiceImpl implements OneTimePasswordService {
                     taskContextProvider.get().setDescription(String.format("Deactivated %d existing OTPs for identifier %d",
                             allActive.size(), identifier.getId()));
                     allActive.forEach(verification -> {
-                        verification.setDeactivatedOn(now);
+                        verification.setDeactivatedAt(now);
                         oneTimePasswordRepository.save(verification);
                     });
                 });
 
-        oneTimePassword.setCreatedOn(now);
+        oneTimePassword.setCreatedAt(now);
         int duration = settingService.getInteger("OTP_EXPIRY_PERIOD_IN_SECONDS", 600);
-        oneTimePassword.setExpiresOn(now.plusSeconds(duration));
+        oneTimePassword.setExpiresAt(now.plusSeconds(duration));
 
-        String verificationCode = generateVerificationCode();
         if (saveVerificationCode) {
-            oneTimePassword.setPassword(verificationCode);
+            oneTimePassword.setPassword(password);
         }
-        oneTimePassword.setHash(hashService.generateHash(verificationCode));
+        oneTimePassword.setHash(hashService.generateHash(password));
         oneTimePasswordRepository.save(oneTimePassword);
-        return Pair.of(oneTimePassword, verificationCode);
+        return oneTimePassword;
     }
 
     private String generateVerificationCode() {

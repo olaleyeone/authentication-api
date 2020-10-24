@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 public class TotpLoginApiRequest implements LoginApiRequest {
 
-    @NotBlank
+//    @NotBlank
     @Pattern(regexp = "\\d+")
     private String transactionId;
 

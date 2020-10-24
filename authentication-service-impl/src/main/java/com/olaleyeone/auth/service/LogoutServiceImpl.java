@@ -20,7 +20,7 @@ public class LogoutServiceImpl implements LogoutService {
     @Override
     public void logout(PortalUserAuthentication portalUserAuthentication) {
         portalUserAuthentication.setLoggedOutAt(OffsetDateTime.now());
-        portalUserAuthentication.setPublishedOn(null);
+        portalUserAuthentication.setPublishedAt(null);
         portalUserAuthenticationRepository.save(portalUserAuthentication);
     }
 }

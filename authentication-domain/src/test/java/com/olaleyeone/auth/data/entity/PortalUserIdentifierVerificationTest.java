@@ -20,7 +20,7 @@ class PortalUserIdentifierVerificationTest extends EntityTest {
         portalUserIdentifierVerification = new PortalUserIdentifierVerification();
         portalUserIdentifierVerification.setIdentifier(faker.internet().emailAddress());
         portalUserIdentifierVerification.setIdentifierType(UserIdentifierType.EMAIL);
-        portalUserIdentifierVerification.setExpiresOn(OffsetDateTime.now().plusSeconds(faker.number().randomDigit()));
+        portalUserIdentifierVerification.setExpiresAt(OffsetDateTime.now().plusSeconds(faker.number().randomDigit()));
         String digit = faker.number().digit();
         portalUserIdentifierVerification.setVerificationCode(digit);
         portalUserIdentifierVerification.setVerificationCodeHash(Base64.getEncoder().encodeToString(digit.getBytes()));
@@ -29,16 +29,16 @@ class PortalUserIdentifierVerificationTest extends EntityTest {
     @Test
     void prePersistWithoutCreatedOn() {
         OffsetDateTime now = OffsetDateTime.now();
-        portalUserIdentifierVerification.setCreatedOn(now);
+        portalUserIdentifierVerification.setCreatedAt(now);
         saveAndFlush(portalUserIdentifierVerification);
         assertNotNull(portalUserIdentifierVerification);
-        assertEquals(now, portalUserIdentifierVerification.getCreatedOn());
+        assertEquals(now, portalUserIdentifierVerification.getCreatedAt());
     }
 
     @Test
     void prePersistWithCreatedOn() {
         saveAndFlush(portalUserIdentifierVerification);
         assertNotNull(portalUserIdentifierVerification);
-        assertNotNull(portalUserIdentifierVerification.getCreatedOn());
+        assertNotNull(portalUserIdentifierVerification.getCreatedAt());
     }
 }

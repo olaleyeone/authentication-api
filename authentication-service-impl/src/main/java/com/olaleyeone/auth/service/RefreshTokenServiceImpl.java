@@ -5,6 +5,7 @@ import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.authentication.RefreshToken;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
+import com.olaleyeone.data.dto.AccessTokenRequestDto;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Named;
@@ -27,6 +28,16 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Activity("REFRESH TOKEN CREATION FOR USER")
     @Transactional
     @Override
+    public RefreshToken createRefreshToken(PortalUserAuthentication userAuthentication, AccessTokenRequestDto requestDto) {
+        if (requestDto.getFirebaseToken() != null) {
+            userAuthentication.setFirebaseToken(requestDto.getFirebaseToken().orElse(null));
+        }
+        return createRefreshToken(userAuthentication);
+    }
+
+    @Activity("REFRESH TOKEN CREATION FOR USER")
+    @Transactional
+    @Override
     public RefreshToken createRefreshToken(PortalUserAuthentication userAuthentication) {
         taskContextProvider.get().setDescription(
                 String.format("Create refresh token for logged in user %s", userAuthentication.getPortalUser().getId()));
@@ -36,10 +47,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         refreshToken.setAccessExpiresAt(getAccessExpiresAt());
         refreshTokenRepository.save(refreshToken);
 
-        userAuthentication.setLastActiveAt(refreshToken.getCreatedOn());
+        userAuthentication.setLastActiveAt(refreshToken.getCreatedAt());
         userAuthentication.setBecomesInactiveAt(refreshToken.getAccessExpiresAt());
         userAuthentication.setAutoLogoutAt(refreshToken.getExpiresAt());
-        userAuthentication.setPublishedOn(null);
+        userAuthentication.setPublishedAt(null);
         return refreshToken;
     }
 
@@ -62,7 +73,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public void deactivateRefreshToken(RefreshToken refreshToken) {
         taskContextProvider.get().setDescription(String.format("deactivate token with id %d", refreshToken.getId()));
-        refreshToken.setTimeDeactivated(OffsetDateTime.now());
+        refreshToken.setDeactivatedAt(OffsetDateTime.now());
         refreshTokenRepository.save(refreshToken);
     }
 }

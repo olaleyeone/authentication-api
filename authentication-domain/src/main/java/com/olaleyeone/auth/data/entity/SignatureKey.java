@@ -34,14 +34,15 @@ public class SignatureKey {
     private String format;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdOn;
+    private LocalDateTime createdAt;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, updatable = false)
     private JwtTokenType type;
 
     @PrePersist
     public void prePersist() {
-        createdOn = LocalDateTime.now();
+        createdAt = LocalDateTime.now();
     }
 
     public void setEncodedKey(byte[] data) {

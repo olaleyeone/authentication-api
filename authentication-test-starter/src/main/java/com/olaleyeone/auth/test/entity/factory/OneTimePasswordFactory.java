@@ -21,7 +21,7 @@ public class OneTimePasswordFactory implements FactoryHelper<OneTimePassword> {
         oneTimePassword.setUserIdentifier(factory.create(PortalUserIdentifier.class));
         oneTimePassword.setPassword(faker.internet().password());
         oneTimePassword.setHash(oneTimePassword.getPassword());
-        oneTimePassword.setExpiresOn(OffsetDateTime.now().plusMinutes(1));
+        oneTimePassword.setExpiresAt(OffsetDateTime.now().plusMinutes(1));
         return oneTimePassword;
     }
 }

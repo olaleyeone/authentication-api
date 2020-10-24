@@ -21,7 +21,7 @@ public class PortalUserIdentifierVerificationFactory implements FactoryHelper<Po
         verification.setIdentifier(faker.internet().emailAddress());
         verification.setIdentifierType(UserIdentifierType.EMAIL);
         verification.setVerificationCodeHash(faker.internet().emailAddress());
-        verification.setExpiresOn(OffsetDateTime.now().plusMinutes(1));
+        verification.setExpiresAt(OffsetDateTime.now().plusMinutes(1));
         return verification;
     }
 }

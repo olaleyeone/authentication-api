@@ -57,10 +57,10 @@ public class PasswordResetController {
         }
         PasswordResetRequest passwordResetRequest = passwordResetRequestRepository.findById(Long.valueOf(claims.getId()))
                 .orElseThrow(() -> new ErrorResponse(HttpStatus.FORBIDDEN));
-        if (passwordResetRequest.getUsedOn() != null) {
+        if (passwordResetRequest.getUsedAt() != null) {
             throw new ErrorResponse(HttpStatus.FORBIDDEN);
         }
-        if (passwordResetRequest.getExpiresOn().isBefore(OffsetDateTime.now())) {
+        if (passwordResetRequest.getExpiresAt().isBefore(OffsetDateTime.now())) {
             throw new ErrorResponse(HttpStatus.FORBIDDEN);
         }
         if (!passwordResetRequest.getPortalUserIdentifier().getIdentifier().equals(identifier)) {

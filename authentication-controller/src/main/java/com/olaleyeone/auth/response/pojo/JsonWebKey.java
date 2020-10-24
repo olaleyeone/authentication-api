@@ -32,6 +32,14 @@ public class JsonWebKey {
         this.exponent = encoder.encodeToString(rsaPublicKey.getPublicExponent().toByteArray());
         this.modulus = encoder.encodeToString(rsaPublicKey.getModulus().toByteArray());
 
-        this.createdOn = signatureKey.getCreatedOn();
+        this.createdOn = signatureKey.getCreatedAt();
+    }
+
+    public String getN(){
+        return modulus;
+    }
+
+    public String getE(){
+        return exponent;
     }
 }

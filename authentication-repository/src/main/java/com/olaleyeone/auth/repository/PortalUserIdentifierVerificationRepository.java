@@ -11,8 +11,8 @@ public interface PortalUserIdentifierVerificationRepository extends JpaRepositor
 
     @Query("SELECT v FROM PortalUserIdentifierVerification v" +
             " WHERE lower(v.identifier)=lower(?1)" +
-            " AND v.usedOn IS NULL" +
-            " AND v.deactivatedOn IS NULL" +
-            " AND v.expiresOn>=CURRENT_TIMESTAMP")
+            " AND v.usedAt IS NULL" +
+            " AND v.deactivatedAt IS NULL" +
+            " AND v.expiresAt>=CURRENT_TIMESTAMP")
     List<PortalUserIdentifierVerification> getAllActive(String identifier);
 }

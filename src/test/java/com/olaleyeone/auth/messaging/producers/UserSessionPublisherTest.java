@@ -65,7 +65,7 @@ class UserSessionPublisherTest extends ComponentTest {
         prepareMocks();
 
         publisher.publish(portalUserAuthentication);
-        assertNotNull(portalUserAuthentication.getPublishedOn());
+        assertNotNull(portalUserAuthentication.getPublishedAt());
         Mockito.verify(portalUserAuthenticationRepository, Mockito.times(1))
                 .save(portalUserAuthentication);
     }
@@ -96,7 +96,7 @@ class UserSessionPublisherTest extends ComponentTest {
                 .send(Mockito.any(), Mockito.any(), Mockito.any());
 
         publisher.publish(portalUserAuthentication);
-        assertNull(portalUserAuthentication.getPublishedOn());
+        assertNull(portalUserAuthentication.getPublishedAt());
         Mockito.verify(portalUserAuthenticationRepository, Mockito.never())
                 .save(portalUserAuthentication);
     }

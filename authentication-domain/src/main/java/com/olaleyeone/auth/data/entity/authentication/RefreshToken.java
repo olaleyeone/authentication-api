@@ -41,7 +41,7 @@ public class RefreshToken implements Audited {
     @Column(nullable = false, updatable = false)
     private OffsetDateTime expiresAt;
 
-    private OffsetDateTime timeDeactivated;
+    private OffsetDateTime deactivatedAt;
 
     public void setActualAuthentication(PortalUserAuthentication actualAuthentication) {
         this.actualAuthentication = actualAuthentication;

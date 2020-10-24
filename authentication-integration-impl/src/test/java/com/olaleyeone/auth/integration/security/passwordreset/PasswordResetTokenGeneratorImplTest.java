@@ -41,7 +41,7 @@ class PasswordResetTokenGeneratorImplTest extends ComponentTest {
     @BeforeEach
     void setUp() {
         passwordResetRequest = new PasswordResetRequest();
-        passwordResetRequest.setExpiresOn(OffsetDateTime.now().plusMinutes(1));
+        passwordResetRequest.setExpiresAt(OffsetDateTime.now().plusMinutes(1));
     }
 
     @Test

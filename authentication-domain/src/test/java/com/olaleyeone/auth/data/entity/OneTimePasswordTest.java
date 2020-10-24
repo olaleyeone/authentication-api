@@ -18,7 +18,7 @@ class OneTimePasswordTest extends EntityTest {
     void setUp() {
         oneTimePassword = new OneTimePassword();
         oneTimePassword.setUserIdentifier(modelFactory.create(PortalUserIdentifier.class));
-        oneTimePassword.setExpiresOn(OffsetDateTime.now().plusSeconds(faker.number().randomDigit()));
+        oneTimePassword.setExpiresAt(OffsetDateTime.now().plusSeconds(faker.number().randomDigit()));
         String digit = faker.number().digit();
         oneTimePassword.setPassword(digit);
         oneTimePassword.setHash(Base64.getEncoder().encodeToString(digit.getBytes()));
@@ -27,16 +27,16 @@ class OneTimePasswordTest extends EntityTest {
     @Test
     void prePersistWithoutCreatedOn() {
         OffsetDateTime now = OffsetDateTime.now();
-        oneTimePassword.setCreatedOn(now);
+        oneTimePassword.setCreatedAt(now);
         saveAndFlush(oneTimePassword);
         assertNotNull(oneTimePassword);
-        assertEquals(now, oneTimePassword.getCreatedOn());
+        assertEquals(now, oneTimePassword.getCreatedAt());
     }
 
     @Test
     void prePersistWithCreatedOn() {
         saveAndFlush(oneTimePassword);
         assertNotNull(oneTimePassword);
-        assertNotNull(oneTimePassword.getCreatedOn());
+        assertNotNull(oneTimePassword.getCreatedAt());
     }
 }

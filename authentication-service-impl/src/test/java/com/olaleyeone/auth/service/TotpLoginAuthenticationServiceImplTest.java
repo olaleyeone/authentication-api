@@ -124,7 +124,7 @@ class TotpLoginAuthenticationServiceImplTest extends ServiceTest {
 
     @Test
     void authenticateWithExpiredOtp() {
-        oneTimePassword.setExpiresOn(OffsetDateTime.now().minusSeconds(1));
+        oneTimePassword.setExpiresAt(OffsetDateTime.now().minusSeconds(1));
         Mockito.when(hashService.isSameHash(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
         PortalUserAuthentication userAuthentication = authenticationService.getAuthenticationResponse(loginApiRequest, requestMetadata);
         Mockito.verify(hashService, Mockito.times(1))

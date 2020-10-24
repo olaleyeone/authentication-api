@@ -29,18 +29,18 @@ public class PortalUserIdentifierVerification {
     private String verificationCodeHash;
 
     @Column(updatable = false, nullable = false)
-    private OffsetDateTime createdOn;
+    private OffsetDateTime createdAt;
     @Column(updatable = false, nullable = false)
-    private OffsetDateTime expiresOn;
+    private OffsetDateTime expiresAt;
 
-    private OffsetDateTime usedOn;
-    private OffsetDateTime deactivatedOn;
+    private OffsetDateTime usedAt;
+    private OffsetDateTime deactivatedAt;
 
     @PrePersist
     public void prePersist() {
-        if (createdOn != null) {
+        if (createdAt != null) {
             return;
         }
-        createdOn = OffsetDateTime.now();
+        createdAt = OffsetDateTime.now();
     }
 }

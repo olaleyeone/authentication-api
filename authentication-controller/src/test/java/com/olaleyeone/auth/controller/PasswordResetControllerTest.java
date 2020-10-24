@@ -55,7 +55,7 @@ class PasswordResetControllerTest extends ControllerTest {
 
         passwordResetRequest = new PasswordResetRequest();
         passwordResetRequest.setPortalUserIdentifier(portalUserIdentifier);
-        passwordResetRequest.setExpiresOn(OffsetDateTime.now().plusMinutes(20));
+        passwordResetRequest.setExpiresAt(OffsetDateTime.now().plusMinutes(20));
         passwordResetRequest.prePersist();
 
         emailAddress = faker.internet().emailAddress();
@@ -94,7 +94,7 @@ class PasswordResetControllerTest extends ControllerTest {
         AccessClaims accessClaims = initAccessClaims();
 
         Mockito.doReturn(Optional.of(passwordResetRequest)).when(passwordResetRequestRepository).findById(Mockito.any());
-        passwordResetRequest.setExpiresOn(OffsetDateTime.now());
+        passwordResetRequest.setExpiresAt(OffsetDateTime.now());
 
         mockMvc.perform(requestBuilder).andExpect(status().isForbidden());
 
@@ -106,7 +106,7 @@ class PasswordResetControllerTest extends ControllerTest {
         AccessClaims accessClaims = initAccessClaims();
 
         Mockito.doReturn(Optional.of(passwordResetRequest)).when(passwordResetRequestRepository).findById(Mockito.any());
-        passwordResetRequest.setUsedOn(OffsetDateTime.now());
+        passwordResetRequest.setUsedAt(OffsetDateTime.now());
 
         mockMvc.perform(requestBuilder).andExpect(status().isForbidden());
 

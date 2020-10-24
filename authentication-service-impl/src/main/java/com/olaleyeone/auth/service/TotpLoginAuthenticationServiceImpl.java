@@ -39,7 +39,9 @@ public class TotpLoginAuthenticationServiceImpl implements TotpLoginAuthenticati
                     optionalUserIdentifier);
             return loginAuthenticationService.createFailureResponse(apiRequest, userAuthentication);
         }
-        Optional<OneTimePassword> optionalOneTimePassword = oneTimePasswordRepository.findById(Long.valueOf(apiRequest.getTransactionId()));
+        PortalUserIdentifier userIdentifier = optionalUserIdentifier.get();
+
+        Optional<OneTimePassword> optionalOneTimePassword = oneTimePasswordRepository.getActive(userIdentifier, apiRequest.getPassword());
         if (!optionalOneTimePassword.isPresent()) {
             PortalUserAuthentication userAuthentication = loginAuthenticationService.makeAuthenticationResponse(
                     apiRequest,
@@ -49,18 +51,17 @@ public class TotpLoginAuthenticationServiceImpl implements TotpLoginAuthenticati
             return loginAuthenticationService.createFailureResponse(apiRequest, userAuthentication);
         }
 
-        PortalUserIdentifier userIdentifier = optionalUserIdentifier.get();
         OneTimePassword oneTimePassword = optionalOneTimePassword.get();
 
-        if (!oneTimePassword.getUserIdentifier().getId().equals(userIdentifier.getId())) {
-            PortalUserAuthentication userAuthentication = loginAuthenticationService.makeAuthenticationResponse(
-                    apiRequest,
-                    requestMetadata,
-                    AuthenticationResponseType.INCORRECT_IDENTIFIER,
-                    optionalUserIdentifier);
-            userAuthentication.setOneTimePassword(oneTimePassword);
-            return loginAuthenticationService.createFailureResponse(apiRequest, userAuthentication);
-        }
+//        if (!oneTimePassword.getUserIdentifier().getId().equals(userIdentifier.getId())) {
+//            PortalUserAuthentication userAuthentication = loginAuthenticationService.makeAuthenticationResponse(
+//                    apiRequest,
+//                    requestMetadata,
+//                    AuthenticationResponseType.INCORRECT_IDENTIFIER,
+//                    optionalUserIdentifier);
+//            userAuthentication.setOneTimePassword(oneTimePassword);
+//            return loginAuthenticationService.createFailureResponse(apiRequest, userAuthentication);
+//        }
 
         if (!hashService.isSameHash(apiRequest.getPassword(), oneTimePassword.getHash())) {
             PortalUserAuthentication userAuthentication = loginAuthenticationService.makeAuthenticationResponse(
@@ -72,7 +73,7 @@ public class TotpLoginAuthenticationServiceImpl implements TotpLoginAuthenticati
             return loginAuthenticationService.createInvalidCredentialResponse(apiRequest, userAuthentication);
         }
 
-        if (OffsetDateTime.now().isAfter(oneTimePassword.getExpiresOn())) {
+        if (OffsetDateTime.now().isAfter(oneTimePassword.getExpiresAt())) {
             PortalUserAuthentication userAuthentication = loginAuthenticationService.makeAuthenticationResponse(
                     apiRequest,
                     requestMetadata,

@@ -41,7 +41,7 @@ public class UserSessionApiResponse {
 
         this.startedOn = portalUserAuthentication.getDateCreated();
         this.lastActiveOn = portalUserAuthentication.getLastActiveAt();
-        this.lastUpdatedOn = portalUserAuthentication.getLastUpdatedOn();
+        this.lastUpdatedOn = portalUserAuthentication.getLastUpdatedAt();
         this.deactivatedOn = Optional.ofNullable(portalUserAuthentication.getDeactivatedAt())
                 .orElse(portalUserAuthentication.getLoggedOutAt());
 

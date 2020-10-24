@@ -55,7 +55,7 @@ class PasswordResetRequestServiceImplTest extends ServiceTest {
                 passwordResetRequestService.createRequest(portalUserIdentifier, false);
         entityManager.flush();
         entityManager.refresh(verification1.getKey());
-        assertNotNull(verification1.getKey().getDeactivatedOn());
-        assertNull(verification2.getKey().getDeactivatedOn());
+        assertNotNull(verification1.getKey().getDeactivatedAt());
+        assertNull(verification2.getKey().getDeactivatedAt());
     }
 }

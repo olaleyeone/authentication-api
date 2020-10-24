@@ -43,10 +43,10 @@ public class UserRegistrationController {
         applicationContext.publishEvent(NewUserEvent.builder()
                 .portalUser(portalUser)
                 .build());
-        if (StringUtils.isBlank(dto.getPassword())) {
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new AccessTokenApiResponse(portalUser));
-        }
+//        if (StringUtils.isBlank(dto.getPassword())) {
+//            return ResponseEntity.status(HttpStatus.CREATED)
+//                    .body(new AccessTokenApiResponse(portalUser));
+//        }
         HttpEntity<AccessTokenApiResponse> httpEntity = accessTokenApiResponseHandler.getAccessToken(portalUserAuthentication);
         applicationContext.publishEvent(new SessionUpdateEvent(portalUserAuthentication));
         return ResponseEntity.status(HttpStatus.CREATED)

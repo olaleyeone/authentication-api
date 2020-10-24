@@ -3,9 +3,7 @@ package com.olaleyeone.auth.messaging.listeners;
 import com.github.olaleyeone.entitysearch.JpaQuerySource;
 import com.olaleyeone.audittrail.context.Action;
 import com.olaleyeone.audittrail.impl.TaskContextFactory;
-import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
-import com.olaleyeone.auth.messaging.producers.UserPublisher;
 import com.olaleyeone.auth.messaging.producers.UserSessionPublisher;
 import com.olaleyeone.auth.repository.PortalUserRepository;
 import com.olaleyeone.auth.test.entity.EntityTest;
@@ -17,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.concurrent.CompletableFuture;
 
@@ -59,27 +56,27 @@ class UserSessionPublisherJobTest extends EntityTest {
     void listenWithData() {
         PortalUserAuthentication portalUser = modelFactory.pipe(PortalUserAuthentication.class)
                 .then(it -> {
-                    it.setPublishedOn(null);
+                    it.setPublishedAt(null);
                     return it;
                 })
                 .create();
 
         Mockito.doAnswer(invocation -> {
-            portalUser.setPublishedOn(OffsetDateTime.now());
+            portalUser.setPublishedAt(OffsetDateTime.now());
             entityManager.merge(portalUser);
-            assertNotNull(portalUser.getPublishedOn());
+            assertNotNull(portalUser.getPublishedAt());
             return CompletableFuture.completedFuture(null);
         }).when(messageProducer).publish(Mockito.any());
 
         userPublisherJob.listen("");
-        assertNotNull(portalUser.getPublishedOn());
+        assertNotNull(portalUser.getPublishedAt());
     }
 
     @Test
     void listenWithoutData() {
         modelFactory.pipe(PortalUserAuthentication.class)
                 .then(it -> {
-                    it.setPublishedOn(OffsetDateTime.now());
+                    it.setPublishedAt(OffsetDateTime.now());
                     return it;
                 })
                 .create();
@@ -92,7 +89,7 @@ class UserSessionPublisherJobTest extends EntityTest {
     void listenWithException() {
         PortalUserAuthentication userAuthentication = modelFactory.pipe(PortalUserAuthentication.class)
                 .then(it -> {
-                    it.setPublishedOn(null);
+                    it.setPublishedAt(null);
                     return it;
                 })
                 .create();

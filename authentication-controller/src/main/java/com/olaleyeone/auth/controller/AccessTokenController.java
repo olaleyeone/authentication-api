@@ -18,15 +18,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.Optional;
 
+@Validated
 @RequiredArgsConstructor
 @RestController
 public class AccessTokenController {
@@ -42,9 +45,10 @@ public class AccessTokenController {
 
     @Public
     @PostMapping("/oauth2/token")
-    public HttpEntity<AccessTokenApiResponse> getAccessToken(@RequestBody Optional<AccessTokenApiRequest> accessTokenApiRequest) {
+    public HttpEntity<AccessTokenApiResponse> getAccessToken(@RequestBody Optional<@Valid AccessTokenApiRequest> accessTokenApiRequest) {
 
         String token = getToken(accessTokenApiRequest);
+//        logger.info("token: {}", token);
 
         if (StringUtils.isBlank(token)) {
             throw new ErrorResponse(HttpStatus.UNAUTHORIZED);
@@ -57,26 +61,29 @@ public class AccessTokenController {
             }
             RefreshToken refreshToken = refreshTokenRepository.findActiveToken(Long.valueOf(accessClaims.getId()))
                     .orElseThrow(() -> new ErrorResponse(HttpStatus.UNAUTHORIZED));
+            if (accessTokenApiRequest.isPresent()) {
+                return accessTokenApiResponseHandler.getAccessToken(refreshToken, accessTokenApiRequest.get());
+            }
             return accessTokenApiResponseHandler.getAccessToken(refreshToken);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
     private String getToken(@RequestBody Optional<AccessTokenApiRequest> accessTokenApiRequest) {
-        String token = accessTokenApiRequest.map(AccessTokenApiRequest::getRefreshToken).orElse(null);
-        if (StringUtils.isNotBlank(token)) {
-            return token;
-        }
-        if (httpServletRequest.getCookies() == null) {
-            return null;
-        }
-        return Arrays.asList(httpServletRequest.getCookies())
-                .stream()
-                .filter(cookie -> cookie.getName().equals(AccessTokenApiResponseHandler.REFRESH_TOKEN_COOKIE_NAME))
+        return accessTokenApiRequest.map(AccessTokenApiRequest::getRefreshToken)
+                .orElseGet(() -> {
+                    if (httpServletRequest.getCookies() == null) {
+                        return null;
+                    }
+                    return Arrays.asList(httpServletRequest.getCookies())
+                            .stream()
+//                            .peek(cookie -> logger.info("{}: {}", cookie.getName(), cookie.getValue()))
+                            .filter(cookie -> cookie.getName().equals(AccessTokenApiResponseHandler.REFRESH_TOKEN_COOKIE_NAME))
 //                .peek(cookie -> logger.info("{}", cookie.getValue()))
-                .findFirst()
-                .map(Cookie::getValue).orElseThrow(() -> new ErrorResponse(HttpStatus.UNAUTHORIZED));
+                            .findFirst()
+                            .map(Cookie::getValue).orElseThrow(() -> new ErrorResponse(HttpStatus.UNAUTHORIZED));
+                });
     }
 }

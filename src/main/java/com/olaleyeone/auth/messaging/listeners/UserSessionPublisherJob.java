@@ -79,7 +79,7 @@ public class UserSessionPublisherJob {
         return jpaQuerySource.startQuery(QPortalUserAuthentication.portalUserAuthentication)
                 .innerJoin(QPortalUserAuthentication.portalUserAuthentication.portalUser)
                 .where(QPortalUserAuthentication.portalUserAuthentication.responseType.eq(AuthenticationResponseType.SUCCESSFUL))
-                .where(QPortalUserAuthentication.portalUserAuthentication.publishedOn.isNull())
+                .where(QPortalUserAuthentication.portalUserAuthentication.publishedAt.isNull())
                 .offset(offset)
                 .limit(20)
                 .fetch();

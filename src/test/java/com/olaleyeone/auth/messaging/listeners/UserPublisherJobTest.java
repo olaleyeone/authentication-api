@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.concurrent.CompletableFuture;
 
@@ -57,27 +56,27 @@ class UserPublisherJobTest extends EntityTest {
     void listenWithData() {
         PortalUser portalUser = modelFactory.pipe(PortalUser.class)
                 .then(it -> {
-                    it.setPublishedOn(null);
+                    it.setPublishedAt(null);
                     return it;
                 })
                 .create();
 
         Mockito.doAnswer(invocation -> {
-            portalUser.setPublishedOn(OffsetDateTime.now());
+            portalUser.setPublishedAt(OffsetDateTime.now());
             entityManager.merge(portalUser);
-            assertNotNull(portalUser.getPublishedOn());
+            assertNotNull(portalUser.getPublishedAt());
             return CompletableFuture.completedFuture(null);
         }).when(messageProducer).publish(Mockito.any());
 
         userPublisherJob.listen("");
-        assertNotNull(portalUser.getPublishedOn());
+        assertNotNull(portalUser.getPublishedAt());
     }
 
     @Test
     void listenWithoutData() {
         modelFactory.pipe(PortalUser.class)
                 .then(it -> {
-                    it.setPublishedOn(OffsetDateTime.now());
+                    it.setPublishedAt(OffsetDateTime.now());
                     return it;
                 })
                 .create();
@@ -90,7 +89,7 @@ class UserPublisherJobTest extends EntityTest {
     void listenWithException() {
         PortalUser portalUser = modelFactory.pipe(PortalUser.class)
                 .then(it -> {
-                    it.setPublishedOn(null);
+                    it.setPublishedAt(null);
                     return it;
                 })
                 .create();

@@ -43,19 +43,19 @@ public class PasswordResetRequest {
     private String resetCodeHash;
 
     @Column(updatable = false, nullable = false)
-    private OffsetDateTime createdOn;
+    private OffsetDateTime createdAt;
 
     @Column(updatable = false, nullable = false)
-    private OffsetDateTime expiresOn;
+    private OffsetDateTime expiresAt;
 
-    private OffsetDateTime usedOn;
-    private OffsetDateTime deactivatedOn;
+    private OffsetDateTime usedAt;
+    private OffsetDateTime deactivatedAt;
 
     private boolean autoLogin;
 
     @Transient
     public Instant getExpiryInstant() {
-        return TimeUtil.toInstant(expiresOn);
+        return TimeUtil.toInstant(expiresAt);
     }
 
     @Transient
@@ -65,8 +65,8 @@ public class PasswordResetRequest {
 
     @PrePersist
     public void prePersist() {
-        if (createdOn == null) {
-            createdOn = OffsetDateTime.now();
+        if (createdAt == null) {
+            createdAt = OffsetDateTime.now();
         }
         if (portalUserIdentifier != null) {
             portalUser = portalUserIdentifier.getPortalUser();

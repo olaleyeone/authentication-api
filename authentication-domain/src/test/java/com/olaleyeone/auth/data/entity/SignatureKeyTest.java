@@ -38,7 +38,7 @@ class SignatureKeyTest extends EntityTest {
     void prePersist() {
 
         saveAndFlush(signatureKey);
-        assertNotNull(signatureKey.getCreatedOn());
+        assertNotNull(signatureKey.getCreatedAt());
     }
 
     @Test

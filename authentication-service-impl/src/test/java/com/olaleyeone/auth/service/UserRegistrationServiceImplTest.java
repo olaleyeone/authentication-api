@@ -166,9 +166,9 @@ class UserRegistrationServiceImplTest extends ServiceTest {
         userRegistrationService.registerUser(dto);
 
         Iterator<PortalUserIdentifierVerification> iterator = verifications.iterator();
-        assertNotNull(iterator.next().getUsedOn());
+        assertNotNull(iterator.next().getUsedAt());
         while (iterator.hasNext()) {
-            assertNotNull(iterator.next().getDeactivatedOn());
+            assertNotNull(iterator.next().getDeactivatedAt());
         }
     }
 

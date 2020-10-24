@@ -63,13 +63,13 @@ public class PortalUserAuthentication {
     @Column(updatable = false, nullable = false)
     private OffsetDateTime dateCreated;
 
-    private OffsetDateTime lastUpdatedOn;
-    private OffsetDateTime publishedOn;
+    private OffsetDateTime lastUpdatedAt;
+    private OffsetDateTime publishedAt;
 
     @PrePersist
     public void prePersist() {
         dateCreated = OffsetDateTime.now();
-        lastUpdatedOn = OffsetDateTime.now();
+        lastUpdatedAt = OffsetDateTime.now();
         Optional.ofNullable(portalUserIdentifier)
                 .map(PortalUserIdentifier::getPortalUser)
                 .ifPresent(portalUser -> {
@@ -83,6 +83,6 @@ public class PortalUserAuthentication {
 
     @PreUpdate
     public void beforeUpdate() {
-        lastUpdatedOn = OffsetDateTime.now();
+        lastUpdatedAt = OffsetDateTime.now();
     }
 }

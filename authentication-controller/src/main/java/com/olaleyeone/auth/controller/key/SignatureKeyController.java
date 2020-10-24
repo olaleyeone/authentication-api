@@ -1,4 +1,4 @@
-package com.olaleyeone.auth.controller;
+package com.olaleyeone.auth.controller.key;
 
 import com.github.olaleyeone.auth.annotations.Public;
 import com.olaleyeone.auth.data.enums.JwtTokenType;

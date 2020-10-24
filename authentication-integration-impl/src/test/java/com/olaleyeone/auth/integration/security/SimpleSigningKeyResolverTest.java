@@ -47,7 +47,7 @@ class SimpleSigningKeyResolverTest extends ComponentTest {
     private SignatureKey createSignatureKey() {
         SignatureKey signatureKey = new SignatureKey();
         signatureKey.setKeyId(faker.idNumber().ssnValid());
-        signatureKey.setCreatedOn(LocalDateTime.now());
+        signatureKey.setCreatedAt(LocalDateTime.now());
         signatureKey.setAlgorithm(keyPair.getPublic().getAlgorithm());
         signatureKey.setEncodedKey(keyPair.getPublic().getEncoded());
         return signatureKey;
@@ -103,7 +103,7 @@ class SimpleSigningKeyResolverTest extends ComponentTest {
 
         for (int i = 0; i < signingKeyResolver.getMaxSize(); i++) {
             SignatureKey signatureKey = createSignatureKey();
-            signatureKey.setCreatedOn(LocalDateTime.now().plusDays(i + 1));
+            signatureKey.setCreatedAt(LocalDateTime.now().plusDays(i + 1));
             Mockito.doReturn(Optional.of(signatureKey))
                     .when(signatureKeyRepository)
                     .findByKeyIdAndType(Mockito.any(), Mockito.any());
@@ -130,7 +130,7 @@ class SimpleSigningKeyResolverTest extends ComponentTest {
 
         for (int i = 0; i < signingKeyResolver.getMaxSize(); i++) {
             SignatureKey signatureKey = createSignatureKey();
-            signatureKey.setCreatedOn(LocalDateTime.now().minusDays(i + 1));
+            signatureKey.setCreatedAt(LocalDateTime.now().minusDays(i + 1));
             Mockito.doReturn(Optional.of(signatureKey))
                     .when(signatureKeyRepository)
                     .findByKeyIdAndType(Mockito.any(), Mockito.any());

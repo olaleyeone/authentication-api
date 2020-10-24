@@ -8,4 +8,6 @@ import java.util.Map;
 public interface OneTimePasswordService {
 
     Map.Entry<OneTimePassword, String> createOTP(PortalUserIdentifier identifier);
+
+    OneTimePassword createOTP(PortalUserIdentifier identifier, String password);
 }
