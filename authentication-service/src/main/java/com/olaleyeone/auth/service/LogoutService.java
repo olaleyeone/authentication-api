@@ -5,4 +5,6 @@ import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 public interface LogoutService {
 
     void logout(PortalUserAuthentication portalUserAuthentication);
+
+    void deactivate(PortalUserAuthentication portalUserAuthentication);
 }

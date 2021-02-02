@@ -66,6 +66,8 @@ public class PortalUserAuthentication {
     private OffsetDateTime lastUpdatedAt;
     private OffsetDateTime publishedAt;
 
+    private Integer refreshTokenDurationInSeconds;
+
     @PrePersist
     public void prePersist() {
         dateCreated = OffsetDateTime.now();

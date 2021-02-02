@@ -2,6 +2,7 @@ package com.olaleyeone.auth.service;
 
 import com.olaleyeone.audittrail.api.Activity;
 import com.olaleyeone.audittrail.context.TaskContext;
+import com.olaleyeone.auth.data.dto.PasswordResetApiRequest;
 import com.olaleyeone.auth.data.dto.UserRegistrationApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
@@ -38,6 +39,7 @@ public class ImplicitAuthenticationServiceImpl implements ImplicitAuthentication
         userAuthentication.setIpAddress(requestMetadata.getIpAddress());
         userAuthentication.setUserAgent(requestMetadata.getUserAgent());
         userAuthentication.setFirebaseToken(dto.getFirebaseToken());
+        userAuthentication.setRefreshTokenDurationInSeconds(dto.getRefreshTokenDurationInSeconds());
 
         return portalUserAuthenticationRepository.save(userAuthentication);
     }
@@ -45,7 +47,9 @@ public class ImplicitAuthenticationServiceImpl implements ImplicitAuthentication
     @Activity("AUTO LOGIN")
     @Transactional
     @Override
-    public PortalUserAuthentication createPasswordResetAuthentication(PasswordResetRequest passwordResetRequest) {
+    public PortalUserAuthentication createPasswordResetAuthentication(
+            PasswordResetRequest passwordResetRequest,
+            PasswordResetApiRequest passwordUpdateApiRequest) {
         RequestMetadata requestMetadata = requestMetadataProvider.get();
         PortalUser portalUser = passwordResetRequest.getPortalUser();
         activityLoggerProvider.get().setDescription(
@@ -59,6 +63,7 @@ public class ImplicitAuthenticationServiceImpl implements ImplicitAuthentication
         userAuthentication.setResponseType(AuthenticationResponseType.SUCCESSFUL);
         userAuthentication.setIpAddress(requestMetadata.getIpAddress());
         userAuthentication.setUserAgent(requestMetadata.getUserAgent());
+        userAuthentication.setRefreshTokenDurationInSeconds(passwordUpdateApiRequest.getRefreshTokenDurationInSeconds());
         return portalUserAuthenticationRepository.save(userAuthentication);
     }
 

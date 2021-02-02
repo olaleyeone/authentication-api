@@ -65,6 +65,8 @@ public class AccessTokenController {
                 return accessTokenApiResponseHandler.getAccessToken(refreshToken, accessTokenApiRequest.get());
             }
             return accessTokenApiResponseHandler.getAccessToken(refreshToken);
+        } catch (ErrorResponse e) {
+            throw e;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

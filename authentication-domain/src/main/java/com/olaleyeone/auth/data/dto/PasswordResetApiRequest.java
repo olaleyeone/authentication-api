@@ -22,4 +22,6 @@ public class PasswordResetApiRequest {
 //
 //    @NotBlank
 //    private String resetToken;
+
+    private Integer refreshTokenDurationInSeconds;
 }

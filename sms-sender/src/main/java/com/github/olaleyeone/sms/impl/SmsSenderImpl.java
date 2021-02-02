@@ -31,7 +31,9 @@ public class SmsSenderImpl implements SmsSender {
                 afriTalkingConfig.getUsername()).execute();
 
         if (response.isSuccessful()) {
-            logger.info("{}: SMS sent to {}", response.code(), sms.getTo());
+            logger.info("{}: SMS sent to {}: {} @ {}", response.code(), sms.getTo(),
+                    sms.getFrom(),
+                    afriTalkingConfig.getUsername());
             return;
         }
         logger.error("===> SMS delivery to {} failed with code {} and message {} ",

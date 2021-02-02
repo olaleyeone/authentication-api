@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.service;
 
+import com.olaleyeone.auth.data.dto.PasswordResetApiRequest;
 import com.olaleyeone.auth.data.dto.UserRegistrationApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
@@ -9,5 +10,7 @@ public interface ImplicitAuthenticationService {
 
     PortalUserAuthentication createSignUpAuthentication(PortalUser portalUser, UserRegistrationApiRequest dto);
 
-    PortalUserAuthentication createPasswordResetAuthentication(PasswordResetRequest passwordResetRequest);
+    PortalUserAuthentication createPasswordResetAuthentication(
+            PasswordResetRequest passwordResetRequest,
+            PasswordResetApiRequest passwordUpdateApiRequest);
 }

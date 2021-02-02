@@ -12,6 +12,7 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.transaction.Transactional;
 import java.time.OffsetDateTime;
+import java.util.Optional;
 
 @Named
 @RequiredArgsConstructor
@@ -43,7 +44,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 String.format("Create refresh token for logged in user %s", userAuthentication.getPortalUser().getId()));
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setActualAuthentication(userAuthentication);
-        refreshToken.setExpiresAt(getExpiresAt());
+
+        refreshToken.setExpiresAt(getExpiresAt(Optional.ofNullable(userAuthentication.getRefreshTokenDurationInSeconds())
+                .orElseGet(() -> settingService.getInteger(REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES,
+                        REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES_VALUE) * 60)));
         refreshToken.setAccessExpiresAt(getAccessExpiresAt());
         refreshTokenRepository.save(refreshToken);
 
@@ -54,13 +58,11 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         return refreshToken;
     }
 
-    private OffsetDateTime getExpiresAt() {
-        Integer durationInMinutes = settingService.getInteger(REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES,
-                REFRESH_TOKEN_EXPIRY_DURATION_IN_MINUTES_VALUE);
-        if (durationInMinutes <= 0) {
+    private OffsetDateTime getExpiresAt(Integer durationInSeconds) {
+        if (durationInSeconds <= 0) {
             return null;
         }
-        return OffsetDateTime.now().plusMinutes(durationInMinutes);
+        return OffsetDateTime.now().plusSeconds(durationInSeconds);
     }
 
     private OffsetDateTime getAccessExpiresAt() {

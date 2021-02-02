@@ -46,4 +46,6 @@ public class UserRegistrationApiRequest {
     private String firebaseToken;
 
     private List<@NotNull @Valid UserDataApiRequest> data;
+
+    private Integer refreshTokenDurationInSeconds;
 }

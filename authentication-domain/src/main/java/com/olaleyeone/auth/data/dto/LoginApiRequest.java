@@ -1,5 +1,7 @@
 package com.olaleyeone.auth.data.dto;
 
+import java.util.List;
+
 public interface LoginApiRequest {
 
     String getIdentifier();
@@ -10,5 +12,7 @@ public interface LoginApiRequest {
 
     String getFirebaseToken();
 
-    java.util.List<UserDataApiRequest> getData();
+    List<UserDataApiRequest> getData();
+
+    Integer getRefreshTokenDurationInSeconds();
 }

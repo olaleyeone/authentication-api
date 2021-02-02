@@ -34,7 +34,8 @@ public class LoginAuthenticationService {
     }
 
     protected PortalUserAuthentication createInvalidCredentialResponse(
-            LoginApiRequest requestDto, PortalUserAuthentication userAuthentication) {
+            LoginApiRequest requestDto,
+            PortalUserAuthentication userAuthentication) {
         PortalUserIdentifier userIdentifier = userAuthentication.getPortalUserIdentifier();
         return taskContextProvider.get().executeAndReturn("FAILED LOGIN",
                 "Invalid credentials for account " + requestDto.getIdentifier(),
@@ -75,6 +76,7 @@ public class LoginAuthenticationService {
         userAuthentication.setIpAddress(requestMetadata.getIpAddress());
         userAuthentication.setUserAgent(requestMetadata.getUserAgent());
         userAuthentication.setFirebaseToken(requestDto.getFirebaseToken());
+        userAuthentication.setRefreshTokenDurationInSeconds(requestDto.getRefreshTokenDurationInSeconds());
         portalUserIdentifier.ifPresent(userAuthentication::setPortalUserIdentifier);
         return userAuthentication;
     }
@@ -92,6 +94,7 @@ public class LoginAuthenticationService {
         userAuthentication.setIpAddress(requestMetadata.getIpAddress());
         userAuthentication.setUserAgent(requestMetadata.getUserAgent());
         userAuthentication.setFirebaseToken(requestDto.getFirebaseToken());
+        userAuthentication.setRefreshTokenDurationInSeconds(requestDto.getRefreshTokenDurationInSeconds());
         portalUserIdentifier.ifPresent(userAuthentication::setPortalUserIdentifier);
         return userAuthentication;
     }

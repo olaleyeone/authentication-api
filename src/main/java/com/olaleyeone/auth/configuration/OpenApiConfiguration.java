@@ -29,6 +29,14 @@ public class OpenApiConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi all() {
+        return GroupedOpenApi.builder()
+                .packagesToScan("com.olaleyeone.auth.controller")
+                .group("all")
+                .build();
+    }
+
+    @Bean
     public GroupedOpenApi keyApis() {
         return GroupedOpenApi.builder()
                 .packagesToScan("com.olaleyeone.auth.controller.key")

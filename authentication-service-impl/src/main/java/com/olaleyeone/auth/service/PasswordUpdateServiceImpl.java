@@ -54,7 +54,9 @@ public class PasswordUpdateServiceImpl implements PasswordUpdateService {
     @Activity("PASSWORD RESET")
     @Transactional
     @Override
-    public Optional<PortalUserAuthentication> updatePassword(PasswordResetRequest passwordResetRequest, PasswordResetApiRequest passwordUpdateApiRequest) {
+    public Optional<PortalUserAuthentication> updatePassword(
+            PasswordResetRequest passwordResetRequest,
+            PasswordResetApiRequest passwordUpdateApiRequest) {
         PortalUser portalUser = passwordResetRequest.getPortalUser();
         taskContextProvider.get().setDescription(
                 String.format("Password reset by user %s", portalUser.getId()));
@@ -73,6 +75,7 @@ public class PasswordUpdateServiceImpl implements PasswordUpdateService {
         if (!passwordResetRequest.isAutoLogin()) {
             return Optional.empty();
         }
-        return Optional.of(implicitAuthenticationService.createPasswordResetAuthentication(passwordResetRequest));
+        return Optional.of(implicitAuthenticationService.createPasswordResetAuthentication(
+                passwordResetRequest, passwordUpdateApiRequest));
     }
 }

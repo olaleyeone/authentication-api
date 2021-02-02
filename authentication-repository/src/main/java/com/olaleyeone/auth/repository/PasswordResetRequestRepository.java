@@ -1,6 +1,7 @@
 package com.olaleyeone.auth.repository;
 
 import com.olaleyeone.auth.data.entity.PortalUser;
+import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.passwordreset.PasswordResetRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +23,10 @@ public interface PasswordResetRequestRepository extends JpaRepository<PasswordRe
             " JOIN FETCH p.portalUserIdentifier" +
             " WHERE p.id=?1")
     Optional<PasswordResetRequest> findById(Long id);
+
+    @Query("SELECT p FROM PasswordResetRequest p" +
+            " JOIN FETCH p.portalUser" +
+            " JOIN FETCH p.portalUserIdentifier" +
+            " WHERE p.portalUserIdentifier=?1 AND p.resetCode=?2")
+    Optional<PasswordResetRequest> findByIdentifierAndCode(PortalUserIdentifier userIdentifier, String code);
 }

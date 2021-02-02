@@ -23,4 +23,13 @@ public class LogoutServiceImpl implements LogoutService {
         portalUserAuthentication.setPublishedAt(null);
         portalUserAuthenticationRepository.save(portalUserAuthentication);
     }
+
+    @Activity("DEACTIVATE SESSION")
+    @Transactional
+    @Override
+    public void deactivate(PortalUserAuthentication portalUserAuthentication) {
+        portalUserAuthentication.setDeactivatedAt(OffsetDateTime.now());
+        portalUserAuthentication.setPublishedAt(null);
+        portalUserAuthenticationRepository.save(portalUserAuthentication);
+    }
 }

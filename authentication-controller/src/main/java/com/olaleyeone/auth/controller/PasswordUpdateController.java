@@ -15,7 +15,7 @@ import com.olaleyeone.data.dto.RequestMetadata;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,7 +33,7 @@ public class PasswordUpdateController {
     private final HashService hashService;
 
     @NotClientToken
-    @PostMapping("/password")
+    @PutMapping("/password")
     public UserApiResponse changePassword(@RequestBody @Valid PasswordUpdateApiRequest apiRequest) {
         RefreshToken refreshToken = refreshTokenRepository.findById(requestMetadataProvider.get().getRefreshTokenId())
                 .orElseThrow(NotFoundException::new);

@@ -20,4 +20,6 @@ public class PasswordLoginApiRequest implements LoginApiRequest {
     private String firebaseToken;
 
     private List<@NotNull @Valid UserDataApiRequest> data;
+
+    private Integer refreshTokenDurationInSeconds;
 }
