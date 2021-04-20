@@ -7,6 +7,7 @@ public enum AuthenticationResponseType {
     SUCCESSFUL,
     INACTIVE_ACCOUNT,
     UNKNOWN_OTP,
-    EXPIRED,
+    EXPIRED_OTP,
+    OTP_ALREADY_USED,
     INCORRECT_IDENTIFIER
 }

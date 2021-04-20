@@ -24,6 +24,7 @@ public class PortalUserAuthentication {
     private String identifier;
 
     @ManyToOne
+    @JoinColumn(unique = true)
     private OneTimePassword oneTimePassword;
 
     @Column(nullable = false)

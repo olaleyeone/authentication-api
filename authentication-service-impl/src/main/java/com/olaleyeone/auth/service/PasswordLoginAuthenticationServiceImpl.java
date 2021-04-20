@@ -9,6 +9,7 @@ import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.data.dto.RequestMetadata;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Named;
 import javax.transaction.Transactional;
@@ -36,7 +37,8 @@ public class PasswordLoginAuthenticationServiceImpl implements PasswordLoginAuth
             return loginAuthenticationService.createFailureResponse(apiRequest, userAuthentication);
         }
         PortalUserIdentifier userIdentifier = optionalUserIdentifier.get();
-        if (!hashService.isSameHash(apiRequest.getPassword(), userIdentifier.getPortalUser().getPassword())) {
+        if (StringUtils.isBlank(userIdentifier.getPortalUser().getPassword())
+                || !hashService.isSameHash(apiRequest.getPassword(), userIdentifier.getPortalUser().getPassword())) {
             PortalUserAuthentication userAuthentication = loginAuthenticationService.makeAuthenticationResponse(
                     apiRequest,
                     requestMetadata,

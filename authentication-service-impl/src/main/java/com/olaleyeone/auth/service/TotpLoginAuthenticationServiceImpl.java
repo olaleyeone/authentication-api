@@ -8,6 +8,7 @@ import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.data.enums.AuthenticationResponseType;
 import com.olaleyeone.auth.integration.security.HashService;
 import com.olaleyeone.auth.repository.OneTimePasswordRepository;
+import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.data.dto.RequestMetadata;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class TotpLoginAuthenticationServiceImpl implements TotpLoginAuthenticati
     private final HashService hashService;
     private final OneTimePasswordRepository oneTimePasswordRepository;
     private final LoginAuthenticationService loginAuthenticationService;
+    private final PortalUserAuthenticationRepository portalUserAuthenticationRepository;
 
     @Activity("PROCESS USER LOGIN")
     @Transactional
@@ -77,10 +79,20 @@ public class TotpLoginAuthenticationServiceImpl implements TotpLoginAuthenticati
             PortalUserAuthentication userAuthentication = loginAuthenticationService.makeAuthenticationResponse(
                     apiRequest,
                     requestMetadata,
-                    AuthenticationResponseType.EXPIRED,
+                    AuthenticationResponseType.EXPIRED_OTP,
                     optionalUserIdentifier);
             userAuthentication.setOneTimePassword(oneTimePassword);
             return loginAuthenticationService.createFailureResponse(apiRequest, userAuthentication);
+        }
+
+        if (portalUserAuthenticationRepository.countByOneTimePassword(oneTimePassword) > 0) {
+            PortalUserAuthentication userAuthentication = loginAuthenticationService.makeAuthenticationResponse(
+                    apiRequest,
+                    requestMetadata,
+                    AuthenticationResponseType.OTP_ALREADY_USED,
+                    optionalUserIdentifier);
+            userAuthentication.setOneTimePassword(oneTimePassword);
+            return loginAuthenticationService.createInvalidCredentialResponse(apiRequest, userAuthentication);
         }
 
         PortalUserAuthentication userAuthentication = loginAuthenticationService.makeAuthenticationResponse(

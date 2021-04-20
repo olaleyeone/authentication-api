@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.repository;
 
+import com.olaleyeone.auth.data.entity.OneTimePassword;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -48,4 +49,6 @@ public interface PortalUserAuthenticationRepository extends JpaRepository<Portal
             " AND (auth.autoLogoutAt IS NULL OR auth.autoLogoutAt>CURRENT_TIMESTAMP)" +
             " AND auth.portalUser = ?1")
     int deactivateOtherSessions(PortalUser portalUser);
+
+    int countByOneTimePassword(OneTimePassword oneTimePassword);
 }

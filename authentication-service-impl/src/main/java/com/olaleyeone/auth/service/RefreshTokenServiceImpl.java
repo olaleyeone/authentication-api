@@ -4,6 +4,7 @@ import com.olaleyeone.audittrail.api.Activity;
 import com.olaleyeone.audittrail.context.TaskContext;
 import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
 import com.olaleyeone.auth.data.entity.authentication.RefreshToken;
+import com.olaleyeone.auth.repository.PortalUserAuthenticationRepository;
 import com.olaleyeone.auth.repository.RefreshTokenRepository;
 import com.olaleyeone.data.dto.AccessTokenRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     private final SettingService settingService;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final PortalUserAuthenticationRepository portalUserAuthenticationRepository;
     private final Provider<TaskContext> taskContextProvider;
 
     @Activity("REFRESH TOKEN CREATION FOR USER")
@@ -55,6 +57,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         userAuthentication.setBecomesInactiveAt(refreshToken.getAccessExpiresAt());
         userAuthentication.setAutoLogoutAt(refreshToken.getExpiresAt());
         userAuthentication.setPublishedAt(null);
+        portalUserAuthenticationRepository.save(userAuthentication);
         return refreshToken;
     }
 

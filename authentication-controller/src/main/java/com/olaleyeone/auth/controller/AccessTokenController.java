@@ -3,6 +3,7 @@ package com.olaleyeone.auth.controller;
 import com.github.olaleyeone.auth.annotations.Public;
 import com.github.olaleyeone.auth.data.AccessClaims;
 import com.github.olaleyeone.auth.data.AccessClaimsExtractor;
+import com.github.olaleyeone.rest.ApiResponse;
 import com.github.olaleyeone.rest.exception.ErrorResponse;
 import com.olaleyeone.auth.data.entity.authentication.RefreshToken;
 import com.olaleyeone.auth.data.enums.JwtTokenType;
@@ -51,7 +52,9 @@ public class AccessTokenController {
 //        logger.info("token: {}", token);
 
         if (StringUtils.isBlank(token)) {
-            throw new ErrorResponse(HttpStatus.UNAUTHORIZED);
+            throw new ErrorResponse(HttpStatus.UNAUTHORIZED, ApiResponse.builder()
+                    .message("Missing refresh token")
+                    .build());
         }
 
         try {
@@ -60,7 +63,9 @@ public class AccessTokenController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
             RefreshToken refreshToken = refreshTokenRepository.findActiveToken(Long.valueOf(accessClaims.getId()))
-                    .orElseThrow(() -> new ErrorResponse(HttpStatus.UNAUTHORIZED));
+                    .orElseThrow(() -> new ErrorResponse(HttpStatus.UNAUTHORIZED, ApiResponse.builder()
+                            .message(String.format("Refresh token %s not found", accessClaims.getId()))
+                            .build()));
             if (accessTokenApiRequest.isPresent()) {
                 return accessTokenApiResponseHandler.getAccessToken(refreshToken, accessTokenApiRequest.get());
             }

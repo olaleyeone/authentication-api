@@ -131,7 +131,7 @@ class TotpLoginAuthenticationServiceImplTest extends ServiceTest {
                 .isSameHash(loginApiRequest.getPassword(), oneTimePassword.getHash());
         assertNotNull(userAuthentication);
         assertNotNull(userAuthentication.getId());
-        assertEquals(AuthenticationResponseType.EXPIRED, userAuthentication.getResponseType());
+        assertEquals(AuthenticationResponseType.EXPIRED_OTP, userAuthentication.getResponseType());
         assertEquals(userIdentifier, userAuthentication.getPortalUserIdentifier());
         assertEquals(userIdentifier.getPortalUser(), userAuthentication.getPortalUser());
         assertEquals(oneTimePassword, userAuthentication.getOneTimePassword());
