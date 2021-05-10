@@ -34,11 +34,12 @@ public class VerificationEmailSenderImpl implements VerificationEmailSender {
 
     @Async
     @Override
-    public void sendVerificationCode(PortalUserIdentifierVerification user, String verificationCode) {
+    public void sendVerificationCode(PortalUserIdentifierVerification user, String verificationCode, Map<String, Object> parameters) {
         taskContextFactory.startBackgroundTask("SEND EMAIL VERIFICATION CODE",
                 String.format("Send verification code to %s", user.getIdentifier()),
                 () -> {
                     Map<String, Object> params = new HashMap<>();
+                    params.putAll(parameters);
                     params.put("email", user.getIdentifier());
                     params.put("verificationCode", verificationCode);
 

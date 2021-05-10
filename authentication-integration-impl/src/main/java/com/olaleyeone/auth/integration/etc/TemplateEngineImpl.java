@@ -1,6 +1,7 @@
 package com.olaleyeone.auth.integration.etc;
 
 import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.FileTemplateLoader;
 import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -8,9 +9,11 @@ import freemarker.template.TemplateExceptionHandler;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.OutputStreamWriter;
 import java.util.Map;
 
@@ -21,11 +24,19 @@ public class TemplateEngineImpl implements TemplateEngine {
 
     private final Configuration configuration;
 
-    public TemplateEngineImpl() {
+    @SneakyThrows
+    public TemplateEngineImpl(Environment environment) {
         configuration = new Configuration(Configuration.VERSION_2_3_22);
         configuration.setDefaultEncoding("UTF-8");
         configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-        TemplateLoader templateLoader = new ClassTemplateLoader(getClass().getClassLoader(), "/templates/email/");
+        String templatesPath = environment.getProperty("EMAIL_TEMPLATES_PATH");
+        TemplateLoader templateLoader = null;
+        if (templatesPath != null) {
+            templateLoader = new FileTemplateLoader(new File(templatesPath));
+        }
+        if (templateLoader == null) {
+            templateLoader = new ClassTemplateLoader(getClass().getClassLoader(), "/templates/email/");
+        }
         configuration.setTemplateLoader(templateLoader);
     }
 

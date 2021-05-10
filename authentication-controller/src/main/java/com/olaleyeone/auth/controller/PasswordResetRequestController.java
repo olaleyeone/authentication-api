@@ -12,14 +12,14 @@ import com.olaleyeone.auth.service.PasswordResetRequestService;
 import com.olaleyeone.data.dto.RequestMetadata;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Provider;
+import javax.validation.constraints.Email;
 import java.util.Map;
 
+@Validated
 @RequiredArgsConstructor
 @RestController
 public class PasswordResetRequestController {
@@ -32,9 +32,26 @@ public class PasswordResetRequestController {
 
     @Public
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping(path = "/password-resets")
-    public ApiResponse<Void> requestPasswordReset(
-            @RequestParam("identifier") String identifier,
+    @PostMapping(path = "/user-identifiers/{identifier}/reset-links")
+    public ApiResponse<Void> requestPasswordResetLink(
+            @PathVariable("identifier") @Email String identifier,
+            @RequestParam(name = "autoLogin", required = false) boolean autoLogin) {
+        PortalUserIdentifier portalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(identifier)
+                .orElse(null);
+        if (portalUserIdentifier == null) {
+            return new ApiResponse<>(null, "Successful", null);
+        }
+        Map.Entry<PasswordResetRequest, String> request = passwordResetRequestService.createRequest(portalUserIdentifier, autoLogin);
+        PasswordResetRequest passwordResetRequest = request.getKey();
+        passwordResetTokenEmailSender.sendResetLink(passwordResetRequest, requestMetadataProvider.get().getHost());
+        return new ApiResponse<>(null, "Successful", null);
+    }
+
+    @Public
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(path = "/user-identifiers/{identifier}/reset-codes")
+    public ApiResponse<Void> requestPasswordResetCode(
+            @PathVariable("identifier") String identifier,
             @RequestParam(name = "autoLogin", required = false) boolean autoLogin) {
         PortalUserIdentifier portalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(identifier)
                 .orElse(null);
@@ -51,21 +68,4 @@ public class PasswordResetRequestController {
         }
         return new ApiResponse<>(null, "Successful", null);
     }
-
-//    @Public
-//    @ResponseStatus(HttpStatus.OK)
-//    @PostMapping(path = "/password-resets", params = "phoneNumber")
-//    public ApiResponse<Void> requestPasswordResetWithPhoneNumber(
-//            @RequestParam("phoneNumber") String identifier,
-//            @RequestParam(name = "autoLogin", required = false) boolean autoLogin) {
-//        PortalUserIdentifier portalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(identifier, UserIdentifierType.PHONE_NUMBER)
-//                .orElse(null);
-//        if (portalUserIdentifier == null) {
-//            return new ApiResponse<>(null, "Successful", null);
-//        }
-//        Map.Entry<PasswordResetRequest, String> request = passwordResetRequestService.createRequest(portalUserIdentifier, autoLogin);
-//        PasswordResetRequest passwordResetRequest = request.getKey();
-//        smsSender.sendResetCode(passwordResetRequest);
-//        return new ApiResponse<>(null, "Successful", null);
-//    }
 }

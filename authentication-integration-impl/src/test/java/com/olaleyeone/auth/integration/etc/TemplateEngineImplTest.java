@@ -4,6 +4,7 @@ import com.olaleyeone.auth.test.ComponentTest;
 import freemarker.core.InvalidReferenceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.env.MockEnvironment;
 
 import java.util.Collections;
 
@@ -15,7 +16,7 @@ class TemplateEngineImplTest extends ComponentTest {
 
     @BeforeEach
     void setUp() {
-        templateEngine = new TemplateEngineImpl();
+        templateEngine = new TemplateEngineImpl(new MockEnvironment());
     }
 
     @Test

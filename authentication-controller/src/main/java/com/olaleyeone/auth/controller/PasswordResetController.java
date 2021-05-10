@@ -25,10 +25,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.OffsetDateTime;
@@ -50,7 +47,7 @@ public class PasswordResetController {
 
     @Public
     @PostMapping(path = "/password", params = {"email", "resetToken"})
-    public HttpEntity<AccessTokenApiResponse> resetPasswordWithResetToken(
+    public HttpEntity<AccessTokenApiResponse> resetPasswordWithEmailAndResetToken(
             @RequestParam("email") String email,
             @RequestParam("resetToken") String resetToken,
             @Valid @RequestBody PasswordResetApiRequest apiRequest) {
@@ -76,10 +73,10 @@ public class PasswordResetController {
     }
 
     @Public
-    @PostMapping(path = "/password", params = {"identifier", "resetCode"})
+    @PostMapping(path = "password-resets/{resetCode}/password")
     public HttpEntity<AccessTokenApiResponse> resetPasswordWithResetCode(
             @RequestParam("identifier") String identifier,
-            @RequestParam("resetCode") String resetCode,
+            @PathVariable("resetCode") String resetCode,
             @Valid @RequestBody PasswordResetApiRequest apiRequest) {
 
         PortalUserIdentifier portalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(identifier)
