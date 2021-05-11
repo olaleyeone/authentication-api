@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Delegate;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Data
@@ -26,7 +26,7 @@ public class PortalUserIdentifier implements Audited {
     @Column(nullable = false, unique = true)
     private String identifier;
 
-    private LocalDateTime verifiedAt;
+    private OffsetDateTime verifiedAt;
     private Boolean verified;
 
     @Delegate

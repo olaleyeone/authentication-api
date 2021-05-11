@@ -2,10 +2,12 @@ package com.olaleyeone.auth.service;
 
 import com.olaleyeone.audittrail.api.Activity;
 import com.olaleyeone.audittrail.context.TaskContext;
+import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
 import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.integration.etc.PhoneNumberService;
 import com.olaleyeone.auth.integration.security.HashService;
+import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
 import com.olaleyeone.auth.repository.PortalUserIdentifierVerificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,6 +29,7 @@ public class PortalUserIdentifierVerificationServiceImpl implements PortalUserId
     private final PhoneNumberService phoneNumberService;
     private final HashService hashService;
     private final Provider<TaskContext> taskContextProvider;
+    private final PortalUserIdentifierRepository portalUserIdentifierRepository;
 
     private final Random random = new Random();
 
@@ -72,6 +75,19 @@ public class PortalUserIdentifierVerificationServiceImpl implements PortalUserId
         portalUserIdentifierVerification.setVerificationCodeHash(hashService.generateHash(verificationCode));
         portalUserIdentifierVerificationRepository.save(portalUserIdentifierVerification);
         return Pair.of(portalUserIdentifierVerification, verificationCode);
+    }
+
+    @Activity("USER IDENTIFIER VERIFIED")
+    @Transactional
+    @Override
+    public void applyVerification(PortalUserIdentifier userIdentifier, PortalUserIdentifierVerification userIdentifierVerification) {
+        userIdentifier.setVerification(userIdentifierVerification);
+        userIdentifier.setVerified(true);
+        OffsetDateTime now = OffsetDateTime.now();
+        userIdentifier.setVerifiedAt(now);
+        portalUserIdentifierRepository.save(userIdentifier);
+        userIdentifierVerification.setUsedAt(now);
+        portalUserIdentifierVerificationRepository.save(userIdentifierVerification);
     }
 
     private String generateVerificationCode() {

@@ -3,6 +3,7 @@ package com.olaleyeone.auth.controller;
 import com.github.olaleyeone.auth.annotations.Public;
 import com.github.olaleyeone.rest.ApiResponse;
 import com.github.olaleyeone.rest.exception.ErrorResponse;
+import com.github.olaleyeone.rest.exception.NotFoundException;
 import com.olaleyeone.auth.constraints.ValidPhoneNumber;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifier;
 import com.olaleyeone.auth.data.entity.PortalUserIdentifierVerification;
@@ -10,6 +11,7 @@ import com.olaleyeone.auth.data.enums.UserIdentifierType;
 import com.olaleyeone.auth.integration.email.VerificationEmailSender;
 import com.olaleyeone.auth.integration.sms.SmsSender;
 import com.olaleyeone.auth.repository.PortalUserIdentifierRepository;
+import com.olaleyeone.auth.repository.PortalUserIdentifierVerificationRepository;
 import com.olaleyeone.auth.service.PortalUserIdentifierVerificationService;
 import com.olaleyeone.data.dto.RequestMetadata;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,7 @@ public class UserIdentifierVerificationController {
     private final VerificationEmailSender verificationEmailSender;
     private final SmsSender smsSender;
     private final Provider<RequestMetadata> requestMetadataProvider;
+    private final PortalUserIdentifierVerificationRepository portalUserIdentifierVerificationRepository;
 
     @Public
     @ResponseStatus(HttpStatus.CREATED)
@@ -80,5 +83,33 @@ public class UserIdentifierVerificationController {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
+    }
+
+    @Public
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping("/user-identifiers/{identifier}/verification")
+    public void verifyUserIdentifier(
+            @PathVariable String identifier,
+            @RequestParam("verificationCode") String verificationCode) {
+        PortalUserIdentifier portalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(identifier)
+                .orElseThrow(NotFoundException::new);
+
+        if (BooleanUtils.isTrue(portalUserIdentifier.getVerified())) {
+            throw new ErrorResponse(HttpStatus.CONFLICT, ApiResponse.builder()
+                    .message(String.format("Identifier %s already verified by user", identifier))
+                    .build());
+        }
+        PortalUserIdentifierVerification portalUserIdentifierVerification = portalUserIdentifierVerificationRepository.getAllActive(portalUserIdentifier.getIdentifier())
+                .stream()
+                .filter(userIdentifierVerification -> userIdentifierVerification.getIdentifier().equals(portalUserIdentifier.getIdentifier()))
+                .findFirst()
+                .orElse(null);
+        if (portalUserIdentifierVerification == null) {
+            throw new ErrorResponse(HttpStatus.BAD_REQUEST, ApiResponse.builder()
+                    .message(String.format("Invalid verification code", identifier))
+                    .build());
+        }
+
+        portalUserIdentifierVerificationService.applyVerification(portalUserIdentifier, portalUserIdentifierVerification);
     }
 }

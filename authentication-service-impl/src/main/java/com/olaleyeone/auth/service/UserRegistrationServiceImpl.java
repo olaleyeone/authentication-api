@@ -122,7 +122,9 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         if (!hashService.isSameHash(verificationCode, portalUserIdentifierVerification.getVerificationCodeHash())) {
             throw new IllegalArgumentException();
         }
+
         portalUserIdentifier.setVerified(true);
+        portalUserIdentifier.setVerifiedAt(now);
         portalUserIdentifier.setVerification(portalUserIdentifierVerification);
 
         portalUserIdentifierVerification.setUsedAt(now);
