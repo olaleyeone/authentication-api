@@ -73,7 +73,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
         assertEquals(dto.getLastName(), portalUser.getLastName());
         assertEquals(dto.getOtherName(), portalUser.getOtherName());
         assertNotNull(portalUser.getId());
-        assertNotNull(portalUser.getCreatedOn());
+        assertNotNull(portalUser.getCreatedAt());
     }
 
     @Test
@@ -127,7 +127,7 @@ class UserRegistrationServiceImplTest extends ServiceTest {
 
         PortalUserIdentifier portalUserIdentifier = optionalPortalUserIdentifier.get();
         assertEquals(portalUser.getId(), portalUserIdentifier.getPortalUser().getId());
-        assertEquals(UserIdentifierType.EMAIL, portalUserIdentifier.getIdentifierType());
+        assertEquals(UserIdentifierType.EMAIL_ADDRESS, portalUserIdentifier.getIdentifierType());
     }
 
     @Test

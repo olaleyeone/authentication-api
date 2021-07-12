@@ -79,7 +79,7 @@ public class AccessTokenApiResponseHandler {
         AccessTokenApiResponse accessTokenApiResponse = new AccessTokenApiResponse(refreshToken.getPortalUser());
         List<PortalUserIdentifier> userIdentifiers = portalUserIdentifierRepository.findByPortalUser(refreshToken.getPortalUser());
 
-        accessTokenApiResponse.setEmailAddresses(getIdentifiers(userIdentifiers, UserIdentifierType.EMAIL));
+        accessTokenApiResponse.setEmailAddresses(getIdentifiers(userIdentifiers, UserIdentifierType.EMAIL_ADDRESS));
         accessTokenApiResponse.setPhoneNumbers(getIdentifiers(userIdentifiers, UserIdentifierType.PHONE_NUMBER));
 
         accessTokenApiResponse.setData(portalUserDataRepository.findByPortalUser(refreshToken.getPortalUser())

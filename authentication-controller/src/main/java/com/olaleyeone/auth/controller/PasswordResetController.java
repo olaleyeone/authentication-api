@@ -54,7 +54,7 @@ public class PasswordResetController {
 
         PortalUserIdentifier portalUserIdentifier = portalUserIdentifierRepository.findActiveByIdentifier(email)
                 .orElseThrow(NotFoundException::new);
-        if (portalUserIdentifier.getIdentifierType() == UserIdentifierType.EMAIL) {
+        if (portalUserIdentifier.getIdentifierType() == UserIdentifierType.EMAIL_ADDRESS) {
             AccessClaims claims;
             try {
                 claims = accessClaimsExtractor.getClaims(resetToken);

@@ -129,8 +129,8 @@ class AccessTokenApiResponseHandlerTest extends ComponentTest {
         Iterator<String> phoneNumberIterator = phoneNumbers.iterator();
 
         Mockito.doReturn(Arrays.asList(
-                getPortalUserIdentifier(emailIterator.next(), UserIdentifierType.EMAIL),
-                getPortalUserIdentifier(emailIterator.next(), UserIdentifierType.EMAIL),
+                getPortalUserIdentifier(emailIterator.next(), UserIdentifierType.EMAIL_ADDRESS),
+                getPortalUserIdentifier(emailIterator.next(), UserIdentifierType.EMAIL_ADDRESS),
                 getPortalUserIdentifier(phoneNumberIterator.next(), UserIdentifierType.PHONE_NUMBER),
                 getPortalUserIdentifier(phoneNumberIterator.next(), UserIdentifierType.PHONE_NUMBER)
         )).when(portalUserIdentifierRepository).findByPortalUser(Mockito.any());

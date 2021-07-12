@@ -25,7 +25,7 @@ class RefreshTokenTest extends EntityTest {
         refreshToken.setAccessExpiresAt(accessExpiresAt);
         saveAndFlush(refreshToken);
         entityManager.refresh(refreshToken);
-        assertNotNull(refreshToken.getCreatedOn());
+        assertNotNull(refreshToken.getCreatedAt());
         assertNotNull(refreshToken.getPortalUser());
         assertEquals(expiresAt, refreshToken.getExpiresAt());
         assertEquals(accessExpiresAt, refreshToken.getAccessExpiresAt());

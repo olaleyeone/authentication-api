@@ -98,7 +98,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     private PortalUserIdentifier createEmailIdentifier(PortalUser portalUser, UserRegistrationApiRequest dto) {
         PortalUserIdentifier portalUserIdentifier = new PortalUserIdentifier();
         portalUserIdentifier.setIdentifier(dto.getEmail().trim());
-        portalUserIdentifier.setIdentifierType(UserIdentifierType.EMAIL);
+        portalUserIdentifier.setIdentifierType(UserIdentifierType.EMAIL_ADDRESS);
         portalUserIdentifier.setPortalUser(portalUser);
         if (StringUtils.isNotBlank(dto.getEmailVerificationCode())) {
             taskContextProvider.get().execute(

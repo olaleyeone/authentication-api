@@ -38,7 +38,7 @@ public class UserSessionPublisherJob {
     private final Lock lock = new ReentrantLock();
 
     @SneakyThrows
-    @KafkaListener(topics = "${task.publish_user_session.topic.name}", groupId = "${kafka.groupId}")
+    @KafkaListener(topics = "${task.publish_user_sessions.topic.name}", groupId = "${kafka.groupId}")
     public void listen(String message) {
         logger.info("{}", message);
         LocalDateTime startTime = LocalDateTime.now();

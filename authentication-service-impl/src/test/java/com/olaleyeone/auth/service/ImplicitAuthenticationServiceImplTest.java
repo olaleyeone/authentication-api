@@ -1,5 +1,6 @@
 package com.olaleyeone.auth.service;
 
+import com.olaleyeone.auth.data.dto.PasswordResetApiRequest;
 import com.olaleyeone.auth.data.dto.UserRegistrationApiRequest;
 import com.olaleyeone.auth.data.entity.PortalUser;
 import com.olaleyeone.auth.data.entity.authentication.PortalUserAuthentication;
@@ -46,7 +47,8 @@ class ImplicitAuthenticationServiceImplTest extends ServiceTest {
     @Test
     void createPasswordResetAuthentication() {
         PasswordResetRequest passwordResetRequest = modelFactory.create(PasswordResetRequest.class);
-        PortalUserAuthentication passwordResetAuthentication = authenticationService.createPasswordResetAuthentication(passwordResetRequest);
+        PortalUserAuthentication passwordResetAuthentication =
+                authenticationService.createPasswordResetAuthentication(passwordResetRequest, new PasswordResetApiRequest());
 
         PortalUserIdentifier portalUserIdentifier = passwordResetRequest.getPortalUserIdentifier();
 

@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Import;
 
 @Configuration
 @Import({
-        MailConfiguration.class,
+//        MailConfiguration.class,
         KafkaProducerConfig.class,
-        AfriTalkingConfiguration.class
+//        AfriTalkingConfiguration.class
 })
 @ComponentScan({
         "com.olaleyeone.auth.integration",

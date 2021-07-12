@@ -19,7 +19,7 @@ class PortalUserIdentifierVerificationTest extends EntityTest {
     void setUp() {
         portalUserIdentifierVerification = new PortalUserIdentifierVerification();
         portalUserIdentifierVerification.setIdentifier(faker.internet().emailAddress());
-        portalUserIdentifierVerification.setIdentifierType(UserIdentifierType.EMAIL);
+        portalUserIdentifierVerification.setIdentifierType(UserIdentifierType.EMAIL_ADDRESS);
         portalUserIdentifierVerification.setExpiresAt(OffsetDateTime.now().plusSeconds(faker.number().randomDigit()));
         String digit = faker.number().digit();
         portalUserIdentifierVerification.setVerificationCode(digit);

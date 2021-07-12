@@ -54,6 +54,11 @@ class SecurityMockConfig {
             }
 
             @Override
+            public boolean isAccessTokenExpired() {
+                return false;
+            }
+
+            @Override
             public AccessClaims getAccessClaims() {
                 return accessClaims();
             }

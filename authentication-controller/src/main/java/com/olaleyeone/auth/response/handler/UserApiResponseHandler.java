@@ -31,7 +31,7 @@ public class UserApiResponseHandler {
         userApiResponse.setIdentifiers(userIdentifiers
                 .stream().map(UserIdentifierApiResponse::new)
                 .collect(Collectors.toList()));
-        userApiResponse.setEmailAddresses(getIdentifiers(userIdentifiers, UserIdentifierType.EMAIL));
+        userApiResponse.setEmailAddresses(getIdentifiers(userIdentifiers, UserIdentifierType.EMAIL_ADDRESS));
         userApiResponse.setPhoneNumbers(getIdentifiers(userIdentifiers, UserIdentifierType.PHONE_NUMBER));
 
         userApiResponse.setData(portalUserDataRepository.findByPortalUser(portalUser)

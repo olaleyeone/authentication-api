@@ -36,7 +36,7 @@ public class UserRegistrationApiRequest {
     private String phoneNumberVerificationCode;
 
     @Email
-    @UniqueIdentifier(UserIdentifierType.EMAIL)
+    @UniqueIdentifier(UserIdentifierType.EMAIL_ADDRESS)
     private String email;
 
     private String emailVerificationCode;

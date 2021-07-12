@@ -15,14 +15,14 @@ public class PortalUserIdentifierTest extends EntityTest {
     void shouldNotSaveWithoutUser() {
         PortalUserIdentifier userIdentifier = new PortalUserIdentifier();
         userIdentifier.setIdentifier(UUID.randomUUID().toString());
-        userIdentifier.setIdentifierType(UserIdentifierType.EMAIL);
+        userIdentifier.setIdentifierType(UserIdentifierType.EMAIL_ADDRESS);
         assertThrows(PersistenceException.class, () -> saveAndFlush(userIdentifier));
     }
 
     @Test
     void shouldSaveWithUser() {
         String identifier = UUID.randomUUID().toString();
-        UserIdentifierType identifierType = UserIdentifierType.EMAIL;
+        UserIdentifierType identifierType = UserIdentifierType.EMAIL_ADDRESS;
         PortalUser user = modelFactory.create(PortalUser.class);
 
         PortalUserIdentifier userIdentifier = new PortalUserIdentifier();
@@ -34,6 +34,6 @@ public class PortalUserIdentifierTest extends EntityTest {
         assertEquals(identifier, userIdentifier.getIdentifier());
         assertEquals(identifierType, userIdentifier.getIdentifierType());
         assertEquals(user.getId(), userIdentifier.getPortalUser().getId());
-        assertNotNull(userIdentifier.getCreatedOn());
+        assertNotNull(userIdentifier.getCreatedAt());
     }
 }

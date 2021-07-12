@@ -19,7 +19,7 @@ public class PortalUserIdentifierFactory implements FactoryHelper<PortalUserIden
         PortalUserIdentifier userIdentifier = new PortalUserIdentifier();
         userIdentifier.setPortalUser(factory.create(PortalUser.class));
         userIdentifier.setIdentifier(faker.internet().emailAddress());
-        userIdentifier.setIdentifierType(UserIdentifierType.EMAIL);
+        userIdentifier.setIdentifierType(UserIdentifierType.EMAIL_ADDRESS);
         return userIdentifier;
     }
 }

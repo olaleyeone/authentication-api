@@ -17,10 +17,10 @@ public class UserSessionApiResponse {
     private String sessionId;
     private String identifier;
 
-    private OffsetDateTime startedOn;
-    private OffsetDateTime lastUpdatedOn;
-    private OffsetDateTime lastActiveOn;
-    private OffsetDateTime deactivatedOn;
+    private OffsetDateTime startedAt;
+    private OffsetDateTime lastUpdatedAt;
+    private OffsetDateTime lastActiveAt;
+    private OffsetDateTime deactivatedAt;
 
     private AuthenticationType authenticationType;
 
@@ -39,10 +39,10 @@ public class UserSessionApiResponse {
 
         this.userAgent = portalUserAuthentication.getUserAgent();
 
-        this.startedOn = portalUserAuthentication.getDateCreated();
-        this.lastActiveOn = portalUserAuthentication.getLastActiveAt();
-        this.lastUpdatedOn = portalUserAuthentication.getLastUpdatedAt();
-        this.deactivatedOn = Optional.ofNullable(portalUserAuthentication.getDeactivatedAt())
+        this.startedAt = portalUserAuthentication.getDateCreated();
+        this.lastActiveAt = portalUserAuthentication.getLastActiveAt();
+        this.lastUpdatedAt = portalUserAuthentication.getLastUpdatedAt();
+        this.deactivatedAt = Optional.ofNullable(portalUserAuthentication.getDeactivatedAt())
                 .orElse(portalUserAuthentication.getLoggedOutAt());
 
         this.firebaseToken = portalUserAuthentication.getFirebaseToken();

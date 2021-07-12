@@ -17,7 +17,7 @@ public class PortalUserIdentifierFactory implements FactoryHelper<PortalUserIden
     public PortalUserIdentifier apply(Faker faker, ModelFactory factory) {
         PortalUserIdentifier userIdentifier = new PortalUserIdentifier();
         userIdentifier.setId(faker.number().randomNumber());
-        userIdentifier.setIdentifierType(UserIdentifierType.EMAIL);
+        userIdentifier.setIdentifierType(UserIdentifierType.EMAIL_ADDRESS);
         userIdentifier.setIdentifier(faker.name().username());
         return userIdentifier;
     }

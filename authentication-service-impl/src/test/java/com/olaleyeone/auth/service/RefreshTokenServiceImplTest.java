@@ -35,7 +35,7 @@ class RefreshTokenServiceImplTest extends ServiceTest {
         assertNotNull(refreshToken.getId());
         assertEquals(userAuthentication.getId(), refreshToken.getActualAuthentication().getId());
         int durationInSeconds = duration * 60;
-        long actualExpiryDurationInSeconds = refreshToken.getCreatedOn().until(refreshToken.getExpiresAt(), ChronoUnit.SECONDS);
+        long actualExpiryDurationInSeconds = refreshToken.getCreatedAt().until(refreshToken.getExpiresAt(), ChronoUnit.SECONDS);
         assertTrue((durationInSeconds - 1) == actualExpiryDurationInSeconds || durationInSeconds == actualExpiryDurationInSeconds);
     }
 

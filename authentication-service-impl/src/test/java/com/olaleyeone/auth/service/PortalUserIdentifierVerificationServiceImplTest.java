@@ -36,7 +36,7 @@ class PortalUserIdentifierVerificationServiceImplTest extends ServiceTest {
     @Test
     void createVerificationForEmail() {
         Map.Entry<PortalUserIdentifierVerification, String> verification =
-                portalUserIdentifierVerificationService.createVerification(faker.internet().emailAddress(), UserIdentifierType.EMAIL);
+                portalUserIdentifierVerificationService.createVerification(faker.internet().emailAddress(), UserIdentifierType.EMAIL_ADDRESS);
         assertNotNull(verification.getKey());
         assertNotNull(verification.getKey().getId());
         assertEquals(hash, verification.getKey().getVerificationCodeHash());
@@ -48,9 +48,9 @@ class PortalUserIdentifierVerificationServiceImplTest extends ServiceTest {
     void deactivatePreviousCode() {
         String emailAddress = faker.internet().emailAddress();
         Map.Entry<PortalUserIdentifierVerification, String> verification1 =
-                portalUserIdentifierVerificationService.createVerification(emailAddress, UserIdentifierType.EMAIL);
+                portalUserIdentifierVerificationService.createVerification(emailAddress, UserIdentifierType.EMAIL_ADDRESS);
         Map.Entry<PortalUserIdentifierVerification, String> verification2 =
-                portalUserIdentifierVerificationService.createVerification(emailAddress, UserIdentifierType.EMAIL);
+                portalUserIdentifierVerificationService.createVerification(emailAddress, UserIdentifierType.EMAIL_ADDRESS);
         entityManager.flush();
         entityManager.refresh(verification1.getKey());
         assertNotNull(verification1.getKey().getDeactivatedAt());

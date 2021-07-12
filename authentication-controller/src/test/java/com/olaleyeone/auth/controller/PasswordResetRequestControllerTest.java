@@ -39,7 +39,7 @@ class PasswordResetRequestControllerTest extends ControllerTest {
                 .param("email", emailAddress))
                 .andExpect(status().isOk());
         Mockito.verify(portalUserIdentifierRepository, Mockito.times(1))
-                .findActiveByIdentifier(emailAddress, UserIdentifierType.EMAIL);
+                .findActiveByIdentifier(emailAddress, UserIdentifierType.EMAIL_ADDRESS);
     }
 
     @Test
