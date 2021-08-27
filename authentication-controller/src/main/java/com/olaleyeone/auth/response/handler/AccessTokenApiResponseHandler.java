@@ -101,7 +101,9 @@ public class AccessTokenApiResponseHandler {
         httpHeaders.setPragma("no-cache");
 
         String refreshTokenPath = StringUtils.isBlank(contextPath) ? "/" : (contextPath + TOKEN_ENDPOINT);
-        httpHeaders.add(HttpHeaders.SET_COOKIE, String.format("%s=%s; Max-Age=%d; Path=%s;%s",
+        httpHeaders.add(HttpHeaders.SET_COOKIE, String.format
+
+                ("%s=%s; Max-Age=%d; Path=%s;%s",
                 REFRESH_TOKEN_COOKIE_NAME,
                 refreshTokenJwt.getToken(),
                 refreshToken.getSecondsTillExpiry(),

@@ -19,9 +19,7 @@ public class AccessTokenApiResponse {
     private String displayName;
     private String firstName;
     private String lastName;
-
     private Gender gender;
-
     private Set<String> emailAddresses;
     private Set<String> phoneNumbers;
     private List<UserDataApiResponse> data;
