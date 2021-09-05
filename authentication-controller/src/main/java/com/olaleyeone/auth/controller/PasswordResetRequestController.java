@@ -72,6 +72,7 @@ public class PasswordResetRequestController {
         PortalUserIdentifier portalUserIdentifier = passwordResetRequest.getPortalUserIdentifier();
         applicationContext.publishEvent(PasswordResetRequestMessage
                 .builder()
+                .userId(portalUserIdentifier.getPortalUser().getId().toString())
                 .identifier(portalUserIdentifier.getIdentifier())
                 .identifierType(portalUserIdentifier.getIdentifierType())
                 .requestHost(requestMetadataProvider.get().getHost())

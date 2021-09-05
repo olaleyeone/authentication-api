@@ -10,8 +10,8 @@ import java.time.OffsetDateTime;
 @Getter
 public class PasswordResetRequestMessage {
 
+    private String userId;
     private UserIdentifierType identifierType;
-
     private String identifier;
 
     private String resetCode;

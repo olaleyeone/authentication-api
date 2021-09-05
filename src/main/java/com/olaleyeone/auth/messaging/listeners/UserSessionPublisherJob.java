@@ -61,12 +61,12 @@ public class UserSessionPublisherJob {
         List<PortalUserAuthentication> userAuthentications;
         do {
             userAuthentications = getNext(failures.size());
-            userAuthentications.forEach(portalUser -> {
+            userAuthentications.forEach(userAuthentication -> {
                 try {
-                    messageProducer.publish(portalUser).get();
+                    messageProducer.publish(userAuthentication).get();
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
-                    failures.add(portalUser);
+                    failures.add(userAuthentication);
                 }
             });
             if (startTime != lastTrigger.get()) {
